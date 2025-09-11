@@ -1,0 +1,60 @@
+services:
+  postgres-general:
+    build:
+      context: .
+      dockerfile: ./postgres/postgres-general.Dockerfile
+    container_name: postgres-pt-general
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-general:/var/lib/postgresql/data
+    env_file:
+      - ./pt-general/.env
+    networks:
+      - app-network
+
+  # pt-general:
+  #   build:
+  #     context: ./pt-general
+  #     dockerfile: Dockerfile
+  #   container_name: pt-general
+  #   ports:
+  #     - "8000:3000"
+  #   env_file:
+  #     - ./pt-general/.env
+  #   networks:
+  #     - app-network
+  #   depends_on:
+  #     - postgres-general
+
+  grafana:
+    build:
+      context: .
+      dockerfile: ./grafana/Dockerfile
+    container_name: pt-grafana
+    ports:
+      - "9876:3000"
+    env_file:
+      - ./grafana/.env
+    networks:
+      - app-network
+
+  nginx:
+    image: nginx:1.24.0-alpine
+    container_name: gateway
+    ports:
+      - "5173:80"
+    volumes:
+      - ./gateway/local.nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - app-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  postgres-general:
+
+
+networks:
+  app-network:
+    driver: bridge

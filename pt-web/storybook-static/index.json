@@ -1,0 +1,14 @@
+{
+  "v": 5,
+  "entries": {
+    "components-hellobutton--default": {
+      "type": "story",
+      "id": "components-hellobutton--default",
+      "name": "Default",
+      "title": "Components/HelloButton",
+      "importPath": "./src/components/ButtonHello/ButtonHello.stories.tsx",
+      "componentPath": "./src/components/ButtonHello/ButtonHello.tsx",
+      "tags": ["dev", "test"]
+    }
+  }
+}
