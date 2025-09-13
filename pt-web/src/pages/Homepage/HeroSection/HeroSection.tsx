@@ -52,24 +52,24 @@ export function Hero() {
       className={styles.hero}
       aria-label="Вступительный блок"
     >
-      <div className={styles.hero__content}>
-        <p className={styles.hero__eyebrow}>
+      <div className={styles.heroContent}>
+        <p className={styles.heroEyebrow}>
           Онлайн-поддержка психического здоровья
         </p>
 
-        <h1 className={styles.hero__title}>
+        <h1 className={styles.heroTitle}>
           {TITLE}
         </h1>
 
-        <p className={styles.hero__subtitle}>
+        <p className={styles.heroSubtitle}>
           {SUBTITLE}
         </p>
 
-        <ul className={styles.hero__list}>
-          {BENEFITS.map((text) => (
+        <ul className={styles.heroList}>
+          {BENEFITS.map(text => (
             <li
               key={text}
-              className={styles.hero__listItem}
+              className={styles.heroListItem}
             >
               {text}
             </li>
@@ -77,24 +77,22 @@ export function Hero() {
         </ul>
 
         <form
-          className={styles.hero__cta}
+          className={styles.heroCta}
           onSubmit={handleSubmit}
         >
           <label
             htmlFor="hero-intent"
-            className={styles.hero__label}
+            className={styles.heroLabel}
           >
             С чего начнём сегодня?
           </label>
 
-          <div className={styles.hero__controls}>
+          <div className={styles.heroControls}>
             <select
               id="hero-intent"
-              className={styles.hero__select}
+              className={styles.heroSelect}
               value={intent}
-              onChange={(e) => {
-                setIntent(e.target.value);
-              }}
+              onChange={e => setIntent(e.target.value)}
             >
               <option
                 value=""
@@ -115,7 +113,7 @@ export function Hero() {
 
             <button
               type="submit"
-              className={styles.hero__button}
+              className={styles.heroButton}
             >
               {CTA_TEXT}
             </button>

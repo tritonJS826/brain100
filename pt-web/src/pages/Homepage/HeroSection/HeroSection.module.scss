@@ -3,115 +3,118 @@
 .hero {
   width: 100%;
   height: 900px;
-  padding: 70px;
+  padding: vars.$pad-xl;
   background: url("/pictures/23002.jpg") no-repeat center center;
   background-size: cover;
 }
 
-.hero__content {
+.heroContent {
   display: grid;
   align-content: start;
-  gap: 30px;
+  gap: vars.$gap-lg;
 }
 
-.hero__eyebrow {
+.heroEyebrow {
   margin: 170px 0 0;
-  color: white;
+  color: vars.$color-bg;
   font-weight: 700;
   text-transform: uppercase;
-  font-size: 26px;
+  font-size: vars.$font-lg;
 }
 
-.hero__title {
-  font-size: 66px;
-  color: white;
+.heroTitle {
+  font-size: vars.$font-4xl;
+  color: vars.$color-bg;
   font-weight: 800;
+  line-height: vars.$line-height-tight;
 }
 
-.hero__subtitle {
+.heroSubtitle {
   margin: 0;
-  font-size: 30px;
-  color: white;
+  font-size: vars.$font-2xl;
+  color: vars.$color-bg;
 }
 
-.hero__list {
-  margin: 8px 0 0;
+.heroList {
+  margin: vars.$gap-xs 0 0;
   list-style: none;
   display: grid;
-  gap: 15px;
-  font-size: 20px;
+  gap: vars.$gap-sm;
+  font-size: vars.$font-md;
 }
 
-.hero__listItem {
+.heroListItem {
   position: relative;
   padding-left: 28px;
-  color: white;
+  color: vars.$color-bg;
   font-weight: 600;
 }
 
-.hero__listItem::before {
+.heroListItem::before {
   content: "✓";
   position: absolute;
   left: 0;
   top: 0;
   transform: translateY(1px);
-  color: white;
+  color: vars.$color-bg;
   font-weight: 700;
 }
 
-.hero__cta {
+.heroCta {
   display: grid;
-  gap: 10px;
-  margin-top: 18px;
+  gap: vars.$gap-sm;
+  margin-top: vars.$gap-sm;
 }
 
-.hero__label {
+.heroLabel {
   font-weight: 700;
-  color: white;
+  color: vars.$color-bg;
 }
 
-.hero__controls {
+.heroControls {
   max-width: 50%;
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: 14px;
+  gap: vars.$gap-sm;
 }
 
-.hero__select {
+.heroSelect {
   appearance: none;
-  padding: 18px;
-  border: 1px solid rgb(0 0 0 / 8%);
-  border-radius: 10px;
-  background: #fff;
+  padding: vars.$pad-sm;
+  border: 1px solid vars.$color-border;
+  border-radius: vars.$radius-md;
+  background: vars.$color-bg;
   font-weight: 600;
   color: vars.$color-primary;
+  font-size: vars.$font-md;
 }
 
-.hero__button {
-  padding: 16px 22px;
+.heroButton {
+  padding: vars.$pad-sm vars.$pad-md;
   border: none;
-  border-radius: 999px;
+  border-radius: vars.$radius-pill;
   background: vars.$color-cta-bg;
   color: vars.$color-primary;
   font-weight: 800;
+  font-size: vars.$font-md;
   transition:
     transform 0.06s ease,
-    color 0.15s ease;
+    color vars.$transition-fast;
 }
 
-.hero__button:hover {
+.heroButton:hover {
   transform: translateY(-1px);
   color: vars.$color-primary-hover;
 }
 
-@media (width <= 980px) {
+@media (max-width: 980px) {
   .hero {
     height: 1020px;
     grid-template-columns: 1fr;
     gap: vars.$gap-md;
   }
 
-  .hero__media {
+  .heroMedia {
     order: -1;
     place-items: center;
   }

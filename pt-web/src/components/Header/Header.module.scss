@@ -1,0 +1,129 @@
+@use "src/styles/variables" as vars;
+
+.header {
+  width: 100%;
+  height: vars.$header-height;
+  border-bottom: 1px solid vars.$color-border;
+}
+
+.nav {
+  width: 100%;
+  height: vars.$header-height;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.navList {
+  display: flex;
+  align-items: center;
+  gap: vars.$gap-lg;
+}
+
+.navItem {
+  position: relative;
+}
+
+.navLink {
+  position: relative;
+  z-index: 2;
+  font-size: vars.$font-md;
+  font-weight: 600;
+  color: vars.$color-primary;
+  padding: vars.$link-padding-y vars.$link-padding-x;
+  text-decoration: none;
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0%;
+    height: 2px;
+    background-color: vars.$color-cta-bg;
+    transition: width vars.$transition-fast;
+  }
+
+  &:hover {
+    color: vars.$color-cta-bg;
+  }
+
+  &:hover::after {
+    width: 100%;
+  }
+
+  &:focus {
+    outline: none;
+    color: vars.$color-primary-hover;
+  }
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logoImg {
+  height: vars.$icon-lg;
+  width: auto;
+}
+
+.cta {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: vars.$pad-md vars.$pad-lg;
+  background-color: vars.$color-cta-bg;
+  color: vars.$color-primary;
+  text-decoration: none;
+  font-size: vars.$font-md;
+  font-weight: 600;
+  border-radius: vars.$radius-pill;
+  transition:
+    color vars.$transition-fast,
+    transform 0.05s ease;
+  will-change: transform;
+
+  &:hover {
+    color: vars.$color-primary-hover;
+    transform: translateY(-1px);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgb(113 202 237 / 35%);
+  }
+}
+
+@media (max-width: 1140px) {
+  .navList:last-child {
+    gap: vars.$gap-md;
+  }
+
+  .cta {
+    padding: vars.$pad-sm vars.$pad-md;
+    font-size: vars.$font-sm;
+  }
+}
+
+@media (max-width: 980px) {
+  .nav {
+    justify-content: space-between;
+  }
+
+  .navList:last-child {
+    justify-content: flex-end;
+    gap: vars.$gap-sm;
+  }
+
+  .navList:first-child {
+    display: none;
+  }
+
+  .cta {
+    font-size: vars.$font-xs;
+  }
+}
