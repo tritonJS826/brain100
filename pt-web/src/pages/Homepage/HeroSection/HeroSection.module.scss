@@ -107,7 +107,7 @@
   color: vars.$color-primary-hover;
 }
 
-@media (width <= 980px) {
+@media (max-width: 980px) {
   .hero {
     height: 1020px;
     grid-template-columns: 1fr;
