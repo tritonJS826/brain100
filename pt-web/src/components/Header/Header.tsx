@@ -10,7 +10,7 @@ const NAV_LINKS_LEFT = [
 ] as const;
 
 const NAV_LINKS_RIGHT = [
-  {label: "Обо мне", href: "#about-me"},
+  {label: "Специалисты", href: "#about-me"},
   {label: "Контакты", href: "#contacts"},
 ] as const;
 
