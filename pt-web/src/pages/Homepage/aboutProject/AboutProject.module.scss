@@ -1,0 +1,120 @@
+@use "src/styles/variables" as vars;
+
+.about {
+  width: 100%;
+  padding: vars.$pad-y vars.$gap-md;
+}
+
+.head {
+  text-align: center;
+  margin: 0 auto vars.$gap-xl;
+  display: grid;
+  gap: 12px;
+}
+
+.eyebrow {
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: vars.$color-primary;
+  font-size: 15px;
+}
+
+.title {
+  margin: 0;
+  font-weight: 800;
+  color: vars.$color-primary;
+  font-size: clamp(32px, 5vw, 56px);
+  line-height: 1.08;
+}
+
+.subtitle {
+  margin: 0;
+  color: vars.$color-text;
+  font-size: clamp(18px, 2vw, 20px);
+}
+
+.grid {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: vars.$gap-xl;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 60px 1fr;
+  gap: vars.$gap-md;
+  align-items: start;
+  background: linear-gradient(180deg, #fff 0%, #f7fbff 100%);
+  border: 1px solid rgb(0 0 0 / 6%);
+  border-radius: vars.$radius;
+  padding: 22px;
+}
+
+.iconBox {
+  width: 60px;
+  height: 60px;
+  display: grid;
+  place-items: center;
+  background: rgb(113 202 237 / 18%);
+  border-radius: 14px;
+}
+
+.icon {
+  width: 30px;
+  height: 30px;
+  color: vars.$color-primary;
+}
+
+.body {
+  display: grid;
+  gap: 8px;
+}
+
+.itemTitle {
+  margin: 0;
+  color: vars.$color-primary;
+  font-weight: 800;
+  font-size: 22px;
+  line-height: 1.2;
+}
+
+.itemText {
+  margin: 0;
+  color: vars.$color-text;
+  font-size: 17px;
+  line-height: 1.55;
+}
+
+@media (width >= 1280px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (width <= 920px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .item {
+    grid-template-columns: 52px 1fr;
+    padding: 18px;
+  }
+
+  .iconBox {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+  }
+
+  .icon {
+    width: 26px;
+    height: 26px;
+  }
+}
