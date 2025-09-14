@@ -22,21 +22,35 @@
 }
 
 .nav__link {
+  position: relative;
   font-size: 20px;
   font-weight: 600;
   color: vars.$color-primary;
   padding: vars.$link-padding-y vars.$link-padding-x;
-  border-bottom: 1px solid transparent;
+  text-decoration: none; // убираем стандартное
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0%;
+    height: 2px;
+    background-color: vars.$color-cta-bg;
+    transition: width 0.2s ease;
+  }
 
   &:hover {
-    color: vars.$color-primary-hover;
-    border-color: vars.$color-primary-hover;
-    cursor: pointer;
+    color: vars.$color-cta-bg;
+  }
+
+  &:hover::after {
+    width: 100%;
   }
 
   &:focus {
     outline: none;
-    border-color: vars.$color-primary-hover;
+    color: vars.$color-primary-hover;
   }
 }
 
