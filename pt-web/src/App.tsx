@@ -1,9 +1,9 @@
-import {HelloButton} from "src/components/ButtonHello/ButtonHello";
+import {HomePage} from "src/pages/Homepage/Homepage";
 
 export function App() {
   return (
     <div>
-      <HelloButton />
+      <HomePage />
     </div>
   );
 }
