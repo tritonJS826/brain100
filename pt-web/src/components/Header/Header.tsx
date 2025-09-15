@@ -1,19 +1,20 @@
-import logo from "src/assets/brightside-health-logo.svg";
+import {Link} from "react-router-dom";
+import logo from "src/assets/brain100.png";
 import {PATHS} from "src/routes/routes";
 import styles from "src/components/Header/Header.module.scss";
 
 const CTA_TEXT = "Поддержка";
 
 const NAV_LINKS_LEFT = [
-  {label: "О проекте", href: PATHS.ABOUT},
-  {label: "Состояния и эмоции", href: PATHS.MENTAL_HEALTH.ROOT},
-  {label: "Диагностика", href: PATHS.DIAGNOSTICS.ROOT},
-  {label: "Здоровье и энергия", href: PATHS.BIOHACKING.ROOT},
+  {label: "О проекте", to: PATHS.ABOUT},
+  {label: "Состояния и эмоции", to: PATHS.MENTAL_HEALTH.LIST},
+  {label: "Диагностика", to: PATHS.DIAGNOSTICS.LIST},
+  {label: "Здоровье и энергия", to: PATHS.BIOHACKING.LIST},
 ] as const;
 
 const NAV_LINKS_RIGHT = [
-  {label: "Специалисты", href: PATHS.SPECIALISTS.ROOT},
-  {label: "Контакты", href: PATHS.CONTACTS},
+  {label: "Специалисты", to: PATHS.SPECIALISTS.LIST},
+  {label: "Контакты", to: PATHS.CONTACTS},
 ] as const;
 
 export function Header() {
@@ -26,56 +27,56 @@ export function Header() {
         className={styles.nav}
         aria-label="Navigation"
       >
-        <ul className={styles.nav__list}>
+        <ul className={styles.navList}>
           {NAV_LINKS_LEFT.map(item => (
             <li
-              key={item.href}
-              className={styles.nav__item}
+              key={item.to}
+              className={styles.navItem}
             >
-              <a
-                href={item.href}
-                className={styles.nav__link}
+              <Link
+                to={item.to}
+                className={styles.navLink}
               >
                 {item.label}
-              </a>
+              </Link>
             </li>
           ))}
         </ul>
 
-        <a
-          href={PATHS.HOME}
+        <Link
+          to={PATHS.HOME}
           className={styles.logo}
           aria-label="Home"
         >
           <img
             src={logo}
             alt="logo"
-            className={styles.logo__img}
+            className={styles.logoImg}
           />
-        </a>
+        </Link>
 
-        <ul className={styles.nav__list}>
+        <ul className={styles.navList}>
           {NAV_LINKS_RIGHT.map(item => (
             <li
-              key={item.href}
-              className={styles.nav__item}
+              key={item.to}
+              className={styles.navItem}
             >
-              <a
-                href={item.href}
-                className={styles.nav__link}
+              <Link
+                to={item.to}
+                className={styles.navLink}
               >
                 {item.label}
-              </a>
+              </Link>
             </li>
           ))}
 
-          <li className={styles.nav__item}>
-            <a
-              href={PATHS.SUPPORT.ROOT}
+          <li className={styles.navItem}>
+            <Link
+              to={PATHS.SUPPORT.LIST}
               className={styles.cta}
             >
               {CTA_TEXT}
-            </a>
+            </Link>
           </li>
         </ul>
       </nav>

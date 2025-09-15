@@ -1,9 +1,9 @@
-@use "../../styles/variables" as vars;
+@use "src/styles/variables" as vars;
 
 .header {
   width: 100%;
   height: vars.$header-height;
-  border-bottom: 1px solid vars.$border-color;
+  border-bottom: 1px solid vars.$color-border;
 }
 
 .nav {
@@ -14,20 +14,20 @@
   justify-content: space-around;
 }
 
-.nav__list {
+.navList {
   display: flex;
   align-items: center;
-  gap: 35px;
+  gap: vars.$gap-lg;
 }
 
-.nav__item {
+.navItem {
   position: relative;
 }
 
-.nav__link {
+.navLink {
   position: relative;
   z-index: 2;
-  font-size: 20px;
+  font-size: vars.$font-md;
   font-weight: 600;
   color: vars.$color-primary;
   padding: vars.$link-padding-y vars.$link-padding-x;
@@ -41,7 +41,7 @@
     width: 0%;
     height: 2px;
     background-color: vars.$color-cta-bg;
-    transition: width 0.2s ease;
+    transition: width vars.$transition-fast;
   }
 
   &:hover {
@@ -64,8 +64,8 @@
   justify-content: center;
 }
 
-.logo__img {
-  height: 40px;
+.logoImg {
+  height: vars.$icon-xxl;
   width: auto;
 }
 
@@ -75,15 +75,15 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 20px 25px;
+  padding: vars.$pad-sm vars.$pad-md;
   background-color: vars.$color-cta-bg;
   color: vars.$color-primary;
   text-decoration: none;
-  font-size: 20px;
+  font-size: vars.$font-md;
   font-weight: 600;
   border-radius: vars.$radius-pill;
   transition:
-    color 0.15s ease,
+    color vars.$transition-fast,
     transform 0.05s ease;
   will-change: transform;
 
@@ -98,15 +98,14 @@
   }
 }
 
-/* заменили range-синтаксис на классический для совместимости линтера */
 @media (width <= 1140px) {
-  .nav__list:last-child {
-    gap: 20px;
+  .navList:last-child {
+    gap: vars.$gap-md;
   }
 
   .cta {
-    padding: 16px 20px;
-    font-size: 18px;
+    padding: vars.$pad-sm vars.$pad-md;
+    font-size: vars.$font-sm;
   }
 }
 
@@ -115,16 +114,16 @@
     justify-content: space-between;
   }
 
-  .nav__list:last-child {
+  .navList:last-child {
     justify-content: flex-end;
-    gap: 12px;
+    gap: vars.$gap-sm;
   }
 
-  .nav__list:first-child {
+  .navList:first-child {
     display: none;
   }
 
   .cta {
-    font-size: 16px;
+    font-size: vars.$font-xs;
   }
 }
