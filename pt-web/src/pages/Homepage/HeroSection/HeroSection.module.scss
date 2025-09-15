@@ -4,22 +4,28 @@
   width: 100%;
   height: 900px;
   padding: vars.$pad-xl;
-  background: url("/pictures/23002.jpg") no-repeat center center;
+  background: url("/pictures/hero.jpg") no-repeat center center;
   background-size: cover;
+  background-position: right center;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 .heroContent {
+  max-width: 60%;
   display: grid;
   align-content: start;
   gap: vars.$gap-lg;
+  text-align: right;
 }
 
 .heroEyebrow {
-  margin: 170px 0 0;
+  margin: 50px 0 0;
   color: vars.$color-bg;
   font-weight: 700;
   text-transform: uppercase;
-  font-size: vars.$font-lg;
+  font-size: vars.$font-xl;
 }
 
 .heroTitle {
@@ -40,12 +46,13 @@
   list-style: none;
   display: grid;
   gap: vars.$gap-sm;
-  font-size: vars.$font-md;
+  font-size: vars.$font-lg;
+  justify-items: end;
 }
 
 .heroListItem {
   position: relative;
-  padding-left: 28px;
+  padding-right: 10px;
   color: vars.$color-bg;
   font-weight: 600;
 }
@@ -53,7 +60,7 @@
 .heroListItem::before {
   content: "✓";
   position: absolute;
-  left: 0;
+  right: 500px;
   top: 0;
   transform: translateY(1px);
   color: vars.$color-bg;
@@ -64,6 +71,7 @@
   display: grid;
   gap: vars.$gap-sm;
   margin-top: vars.$gap-sm;
+  justify-items: end;
 }
 
 .heroLabel {
@@ -72,15 +80,17 @@
 }
 
 .heroControls {
-  max-width: 50%;
+  max-width: 100%;
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: auto 1fr;
   gap: vars.$gap-sm;
+  justify-content: end;
 }
 
 .heroSelect {
   appearance: none;
   padding: vars.$pad-sm;
+  width: 600px;
   border: 1px solid vars.$color-border;
   border-radius: vars.$radius-md;
   background: vars.$color-bg;
@@ -90,7 +100,7 @@
 }
 
 .heroButton {
-  padding: vars.$pad-sm vars.$pad-md;
+  padding: vars.$pad-sm vars.$pad-xl;
   border: none;
   border-radius: vars.$radius-pill;
   background: vars.$color-cta-bg;
@@ -110,12 +120,20 @@
 @media (width <= 980px) {
   .hero {
     height: 1020px;
-    grid-template-columns: 1fr;
-    gap: vars.$gap-md;
+    justify-content: center; // на мобилке центрируем
+    text-align: center;
   }
 
-  .heroMedia {
-    order: -1;
-    place-items: center;
+  .heroContent {
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .heroList {
+    justify-items: center;
+  }
+
+  .heroCta {
+    justify-items: center;
   }
 }

@@ -1,5 +1,5 @@
 import {Link} from "react-router-dom";
-import logo from "src/assets/brightside-health-logo.svg";
+import logo from "src/assets/brain100.png";
 import {PATHS} from "src/routes/routes";
 import styles from "src/components/Header/Header.module.scss";
 
