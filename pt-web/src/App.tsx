@@ -1,9 +1,9 @@
-import {HelloButton} from "src/components/ButtonHello/ButtonHello";
+import {Header} from "src/components/Header/Header";
 
 export function App() {
   return (
     <div>
-      <HelloButton />
+      <Header />
     </div>
   );
 }
