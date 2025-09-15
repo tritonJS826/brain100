@@ -4,13 +4,13 @@ export const ANCHORS = {
   MENTAL_HEALTH: "#mental-health",
   DIAGNOSTICS: "#diagnostics",
   BIOHACKING: "#biohacking",
-  ABOUT_ME: "#about-me",
+  SUPPORT: "#support",
+  SPECIALISTS: "#specialists",
   CONTACTS: "#contacts",
 } as const;
 
 export const PATHS = {
   HOME: "/" as const,
-
   ABOUT: "/about" as const,
 
   MENTAL_HEALTH: {
@@ -28,7 +28,15 @@ export const PATHS = {
     ARTICLE: "/biohacking/:slug" as const,
   },
 
-  SPECIALIST: "/about-me" as const,
+  SUPPORT: {
+    ROOT: "/support" as const,
+    DETAIL: "/support/:slug" as const,
+  },
+
+  SPECIALISTS: {
+    ROOT: "/specialists" as const,
+    DETAIL: "/specialists/:id" as const,
+  },
 
   CONTACTS: "/contacts" as const,
 
@@ -53,12 +61,16 @@ export const buildPath = {
   mentalHealthRoot: () => PATHS.MENTAL_HEALTH.ROOT,
   diagnosticsRoot: () => PATHS.DIAGNOSTICS.ROOT,
   biohackingRoot: () => PATHS.BIOHACKING.ROOT,
+  supportRoot: () => PATHS.SUPPORT.ROOT,
+  specialistsRoot: () => PATHS.SPECIALISTS.ROOT,
 
   mentalHealthDetail: (slug: string) => `/mental-health/${slug}`,
   test: (slug: string) => `/diagnostics/${slug}`,
   article: (slug: string) => `/biohacking/${slug}`,
+  supportDetail: (slug: string) => `/support/${slug}`,
+  specialistDetail: (id: string | number) => `/specialists/${id}`,
 
-  specialist: () => PATHS.SPECIALIST,
+  about: () => PATHS.ABOUT,
   contacts: () => PATHS.CONTACTS,
 
   adminRoot: () => PATHS.ADMIN.ROOT,
@@ -75,6 +87,7 @@ export const buildPath = {
   anchorMentalHealth: () => `/${ANCHORS.MENTAL_HEALTH}`,
   anchorDiagnostics: () => `/${ANCHORS.DIAGNOSTICS}`,
   anchorBiohacking: () => `/${ANCHORS.BIOHACKING}`,
-  anchorAboutMe: () => `/${ANCHORS.ABOUT_ME}`,
+  anchorSupport: () => `/${ANCHORS.SUPPORT}`,
+  anchorSpecialists: () => `/${ANCHORS.SPECIALISTS}`,
   anchorContacts: () => `/${ANCHORS.CONTACTS}`,
 } as const;
