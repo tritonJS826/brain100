@@ -4,7 +4,7 @@ import styles from "src/components/Header/Header.module.scss";
 const CTA_TEXT = "Пройти тест";
 const NAV_LINKS_LEFT = [
   {label: "О проекте", href: "#about"},
-  {label: "Психическое здоровье", href: "#mental-health"},
+  {label: "Состояния и эмоции", href: "#mental-health"},
   {label: "Диагностика", href: "#diagnostics"},
   {label: "Здоровье и энергия", href: "#biohacking"},
 ] as const;
