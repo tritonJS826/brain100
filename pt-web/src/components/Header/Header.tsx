@@ -3,7 +3,8 @@ import logo from "src/assets/brightside-health-logo.svg";
 import {PATHS} from "src/routes/routes";
 import styles from "src/components/Header/Header.module.scss";
 
-const CTA_TEXT = "Пройти тест";
+const CTA_TEXT = "Поддержка";
+
 const NAV_LINKS_LEFT = [
   {label: "О проекте", to: PATHS.ABOUT},
   {label: "Состояния и эмоции", to: PATHS.MENTAL_HEALTH.LIST},
@@ -24,7 +25,7 @@ export function Header() {
     >
       <nav
         className={styles.nav}
-        aria-label="Основная навигация"
+        aria-label="Navigation"
       >
         <ul className={styles.navList}>
           {NAV_LINKS_LEFT.map(item => (
@@ -45,7 +46,7 @@ export function Header() {
         <Link
           to={PATHS.HOME}
           className={styles.logo}
-          aria-label="На главную"
+          aria-label="Home"
         >
           <img
             src={logo}
