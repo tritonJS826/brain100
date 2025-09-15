@@ -1,0 +1,115 @@
+@use "src/styles/variables" as vars;
+
+.footer {
+  width: 100%;
+  background: vars.$color-primary;
+  color: #fff;
+  padding: 48px 20px 24px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: vars.$gap-xl;
+  max-width: vars.$container-max;
+  margin: 0 auto;
+}
+
+.col {
+  display: grid;
+  gap: 16px;
+}
+
+.colTitle {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #cfe0ff;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.item {
+  margin: 0;
+  padding: 0;
+}
+
+.link {
+  display: inline-block;
+  text-decoration: none;
+  color: #fff;
+  font-size: 16px;
+  border-bottom: 1px solid transparent;
+  padding: 6px 0;
+}
+
+.link:hover {
+  color: vars.$color-cta-bg;
+  border-bottom-color: vars.$color-cta-bg;
+}
+
+.divider {
+  height: 1px;
+  background: rgb(255 255 255 / 24%);
+  margin: 32px 0 20px;
+}
+
+.bottom {
+  max-width: vars.$container-max;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.socialLink {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  border-radius: vars.$radius-md;
+  align-items: center;
+  justify-content: center;
+  background: rgb(255 255 255 / 10%);
+}
+
+.socialLink:hover {
+  background: rgb(255 255 255 / 18%);
+}
+
+.socialIcon {
+  width: 20px;
+  height: 20px;
+  color: #fff;
+}
+
+.copy {
+  margin: 0;
+  font-size: 14px;
+  color: #e6ecff;
+}
+
+@media (width <= 980px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (width <= 560px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bottom {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
