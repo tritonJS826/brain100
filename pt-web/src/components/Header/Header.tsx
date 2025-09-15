@@ -1,17 +1,19 @@
-import logo from "public/brightside-health-logo.svg";
+import logo from "src/assets/brightside-health-logo.svg";
+import {PATHS} from "src/routes/routes";
 import styles from "src/components/Header/Header.module.scss";
 
-const CTA_TEXT = "Пройти тест";
+const CTA_TEXT = "Поддержка";
+
 const NAV_LINKS_LEFT = [
-  {label: "О проекте", href: "#about"},
-  {label: "Состояния и эмоции", href: "#mental-health"},
-  {label: "Диагностика", href: "#diagnostics"},
-  {label: "Здоровье и энергия", href: "#biohacking"},
+  {label: "О проекте", href: PATHS.ABOUT},
+  {label: "Состояния и эмоции", href: PATHS.MENTAL_HEALTH.ROOT},
+  {label: "Диагностика", href: PATHS.DIAGNOSTICS.ROOT},
+  {label: "Здоровье и энергия", href: PATHS.BIOHACKING.ROOT},
 ] as const;
 
 const NAV_LINKS_RIGHT = [
-  {label: "Специалисты", href: "#about-me"},
-  {label: "Контакты", href: "#contacts"},
+  {label: "Специалисты", href: PATHS.SPECIALISTS.ROOT},
+  {label: "Контакты", href: PATHS.CONTACTS},
 ] as const;
 
 export function Header() {
@@ -22,7 +24,7 @@ export function Header() {
     >
       <nav
         className={styles.nav}
-        aria-label="Основная навигация"
+        aria-label="Navigation"
       >
         <ul className={styles.nav__list}>
           {NAV_LINKS_LEFT.map(item => (
@@ -41,13 +43,13 @@ export function Header() {
         </ul>
 
         <a
-          href="#home"
+          href={PATHS.HOME}
           className={styles.logo}
-          aria-label="На главную"
+          aria-label="Home"
         >
           <img
             src={logo}
-            alt="Логотип"
+            alt="logo"
             className={styles.logo__img}
           />
         </a>
@@ -66,9 +68,10 @@ export function Header() {
               </a>
             </li>
           ))}
+
           <li className={styles.nav__item}>
             <a
-              href="#diagnostics"
+              href={PATHS.SUPPORT.ROOT}
               className={styles.cta}
             >
               {CTA_TEXT}

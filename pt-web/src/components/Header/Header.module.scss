@@ -1,4 +1,3 @@
-@use "../../styles/mixins" as mixin;
 @use "../../styles/variables" as vars;
 
 .header {
@@ -21,13 +20,18 @@
   gap: 35px;
 }
 
+.nav__item {
+  position: relative;
+}
+
 .nav__link {
   position: relative;
+  z-index: 2;
   font-size: 20px;
   font-weight: 600;
   color: vars.$color-primary;
   padding: vars.$link-padding-y vars.$link-padding-x;
-  text-decoration: none; // убираем стандартное
+  text-decoration: none;
 
   &::after {
     content: "";
@@ -54,12 +58,20 @@
   }
 }
 
+.logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .logo__img {
   height: 40px;
   width: auto;
 }
 
 .cta {
+  position: relative;
+  z-index: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -86,10 +98,21 @@
   }
 }
 
+/* заменили range-синтаксис на классический для совместимости линтера */
+@media (width <= 1140px) {
+  .nav__list:last-child {
+    gap: 20px;
+  }
+
+  .cta {
+    padding: 16px 20px;
+    font-size: 18px;
+  }
+}
+
 @media (width <= 980px) {
   .nav {
-    grid-template-columns: 1fr auto;
-    font-size: 16px;
+    justify-content: space-between;
   }
 
   .nav__list:last-child {
