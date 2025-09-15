@@ -1,11 +1,21 @@
-import {Brain, ShieldCheck, Stethoscope, UsersRound} from "lucide-react";
+import {
+  Brain,
+  ClipboardList,
+  LifeBuoy,
+  MessageSquare,
+  PhoneCall,
+  Sparkles,
+  UserRound,
+  UsersRound,
+} from "lucide-react";
 import styles from "src/pages/Homepage/servicesSection/servicesSection.module.scss";
 
 const ID_SERVICES = "services";
-const EYEBROW = "Что мы предлагаем";
-const TITLE = "Поддержка, основанная на результатах.";
+const EYEBROW = "Услуги";
+const TITLE = "Поддержка, основанная на данных и простых шагах.";
 const SUBTITLE =
-  "Индивидуальный план, внимание к данным и сопровождение на каждом шаге.";
+  "Диагностика, персональные рекомендации и практики биохакинга. " +
+  "Без лекарств. С фокусом на ежедневный прогресс.";
 
 type Item = {
   title: string;
@@ -15,46 +25,60 @@ type Item = {
 
 const ITEMS: ReadonlyArray<Item> = [
   {
-    title: "Психиатрия",
+    title: "Диагностика",
     text:
-        "Когда нужна медикаментозная поддержка. Быстрый подбор схемы с "
-        + "учётом переносимости и эффективности.",
-    Icon: Stethoscope,
+      "Главный расширенный тест и набор коротких тестов. " +
+      "Понимание текущего состояния и персональные рекомендации.",
+    Icon: ClipboardList,
   },
   {
-    title: "Терапия",
+    title: "Биохакинг и энергия",
     text:
-        "Когнитивно-поведенческий подход и практические навыки для "
-        + "устойчивых изменений.",
+      "Сон, питание, привычки и восстановление ресурса. " +
+      "Простые шаги, которые реально держатся.",
     Icon: Brain,
   },
   {
-    title: "Профилактика кризисов",
+    title: "SOS / Первая помощь",
     text:
-        "Протоколы и упражнения для снижения рисков и стабилизации "
-        + "состояния.",
-    Icon: ShieldCheck,
+      "Быстрые инструкции при панической атаке и других острых " +
+      "состояниях. Подбор горячих линий.",
+    Icon: LifeBuoy,
   },
   {
-    title: "Подросткам",
+    title: "Консилиум",
     text:
-        "Безопасное пространство и персональная поддержка для "
-        + "подростков от 13 лет.",
+      "Совместное обсуждение сложных случаев и маршрутизация. " +
+      "Помогаем выбрать следующий шаг.",
     Icon: UsersRound,
   },
   {
-    title: "Первая помощь",
+    title: "Консультация специалиста",
     text:
-        "Советы и техники, которые помогают справиться с острой "
-        + "тревогой или панической атакой прямо сейчас.",
-    Icon: ShieldCheck,
+      "Личные консультации, ответы на вопросы, поддержка в " +
+      "достижении цели.",
+    Icon: MessageSquare,
   },
   {
-    title: "Здоровье и энергия",
+    title: "Личный кабинет",
     text:
-        "Рекомендации по сну, питанию и восстановлению ресурса. "
-        + "Биохакинг простыми шагами.",
-    Icon: Brain,
+      "История прохождения тестов, персональные советы и " +
+      "рассылка на e-mail.",
+    Icon: UserRound,
+  },
+  {
+    title: "Горячая кнопка",
+    text:
+      "Показывает доступность специалиста. Быстрый переход к " +
+      "связи и оплате, когда вы готовы.",
+    Icon: PhoneCall,
+  },
+  {
+    title: "Практики и материалы",
+    text:
+      "Подборка упражнений, чек-листов и мини-курсов для " +
+      "ежедневной практики.",
+    Icon: Sparkles,
   },
 ] as const;
 
@@ -71,40 +95,46 @@ export function ServicesSection() {
             <p className={styles.eyebrow}>
               {EYEBROW}
             </p>
+
             <h2 className={styles.title}>
               {TITLE}
             </h2>
+
             <p className={styles.subtitle}>
               {SUBTITLE}
             </p>
           </div>
 
           <ul className={styles.list}>
-            {ITEMS.map(({title, text, Icon}) => (
-              <li
-                key={title}
-                className={styles.card}
-              >
-                <span className={styles.iconBox}>
-                  <Icon className={styles.icon} />
-                </span>
-                <div className={styles.body}>
-                  <h3 className={styles.cardTitle}>
-                    {title}
-                  </h3>
-                  <p className={styles.cardText}>
-                    {text}
-                  </p>
-                </div>
-              </li>
-            ))}
+            {ITEMS.map(({title, text, Icon}) => {
+              return (
+                <li
+                  key={title}
+                  className={styles.card}
+                >
+                  <span className={styles.iconBox}>
+                    <Icon className={styles.icon} />
+                  </span>
+
+                  <div className={styles.body}>
+                    <h3 className={styles.cardTitle}>
+                      {title}
+                    </h3>
+
+                    <p className={styles.cardText}>
+                      {text}
+                    </p>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         </div>
 
         <div className={styles.imageBox}>
           <img
             src="/pictures/men.jpg"
-            alt="Человек, получающий поддержку"
+            alt="Иллюстрация: поддержка и работа с состояниями"
             className={styles.image}
           />
         </div>
