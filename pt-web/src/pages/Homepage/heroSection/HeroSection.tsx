@@ -1,5 +1,5 @@
 import {useState} from "react";
-import styles from "src/pages/Homepage/HeroSection/HeroSection.module.scss";
+import styles from "src/pages/Homepage/heroSection/HeroSection.module.scss";
 
 const TITLE = "Здесь начинается путь к спокойствию.";
 const SUBTITLE = "Персональная поддержка и ресурсы для психического здоровья.";
