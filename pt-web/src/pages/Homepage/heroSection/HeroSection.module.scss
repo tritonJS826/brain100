@@ -2,28 +2,33 @@
 
 .hero {
   width: 100%;
-  height: 900px;
-  padding: vars.$pad-xl;
+  min-height: 960px;
+  padding: vars.$pad-md;
   background: url("src/assets/pictures/hero.avif") no-repeat center center;
   background-size: cover;
+  display: grid;
+  align-items: center;
 }
 
 .heroContent {
   display: grid;
   align-content: start;
   gap: vars.$gap-lg;
+  max-width: 880px;
 }
 
 .heroEyebrow {
-  margin: 170px 0 0;
+  margin: 150px 0 0;
   color: vars.$color-bg;
   font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  font-size: vars.$font-lg;
+  font-size: clamp(vars.$font-sm, 1.2vw, vars.$font-lg);
 }
 
 .heroTitle {
-  font-size: vars.$font-4xl;
+  margin: 0;
+  font-size: clamp(vars.$font-xl, 3.4vw, vars.$font-4xl);
   color: vars.$color-bg;
   font-weight: 800;
   line-height: vars.$line-height-tight;
@@ -31,8 +36,9 @@
 
 .heroSubtitle {
   margin: 0;
-  font-size: vars.$font-2xl;
+  font-size: clamp(vars.$font-md, 1.8vw, vars.$font-2xl);
   color: vars.$color-bg;
+  line-height: vars.$line-height-base;
 }
 
 .heroList {
@@ -40,7 +46,7 @@
   list-style: none;
   display: grid;
   gap: vars.$gap-sm;
-  font-size: vars.$font-md;
+  font-size: clamp(vars.$font-sm, 1.4vw, vars.$font-md);
 }
 
 .heroListItem {
@@ -69,10 +75,11 @@
 .heroLabel {
   font-weight: 700;
   color: vars.$color-bg;
+  font-size: clamp(vars.$font-sm, 1.4vw, vars.$font-md);
 }
 
 .heroControls {
-  max-width: 50%;
+  max-width: 720px;
   display: grid;
   grid-template-columns: 1fr auto;
   gap: vars.$gap-sm;
@@ -87,6 +94,7 @@
   font-weight: 600;
   color: vars.$color-primary;
   font-size: vars.$font-md;
+  min-height: 44px;
 }
 
 .heroButton {
@@ -100,6 +108,8 @@
   transition:
     transform 0.06s ease,
     color vars.$transition-fast;
+  white-space: nowrap;
+  min-height: 44px;
 }
 
 .heroButton:hover {
@@ -107,15 +117,130 @@
   color: vars.$color-primary-hover;
 }
 
-@media (width <= 980px) {
+@media (width <= 1440px) {
   .hero {
-    height: 1020px;
-    grid-template-columns: 1fr;
+    min-height: 900px;
+    padding: vars.$pad-lg;
+    background-position: 55% center;
+  }
+
+  .heroContent {
+    max-width: 820px;
+  }
+}
+
+@media (width <= 1080px) {
+  .hero {
+    min-height: 780px;
+    padding: vars.$pad-lg;
+    background-position: 60% center;
+  }
+
+  .heroContent {
+    max-width: 760px;
     gap: vars.$gap-md;
   }
 
-  .heroMedia {
-    order: -1;
-    place-items: center;
+  .heroEyebrow {
+    margin-top: 90px;
+  }
+
+  .heroControls {
+    max-width: 600px;
+  }
+}
+
+@media (width <= 860px) {
+  .hero {
+    min-height: 720px;
+    padding: vars.$pad-lg vars.$pad-md;
+    background-position: 70% center;
+  }
+
+  .heroContent {
+    max-width: 660px;
+    gap: vars.$gap-md;
+  }
+
+  .heroEyebrow {
+    margin-top: 70px;
+  }
+
+  .heroControls {
+    grid-template-columns: 1fr;
+    max-width: 520px;
+  }
+
+  .heroButton {
+    width: 100%;
+  }
+}
+
+@media (width <= 600px) {
+  .hero {
+    min-height: 640px;
+    padding: vars.$pad-md;
+    background-position: 75% center;
+  }
+
+  .heroEyebrow {
+    margin-top: 44px;
+  }
+
+  .heroTitle {
+    font-size: clamp(vars.$font-lg, 8vw, vars.$font-3xl);
+  }
+
+  .heroSubtitle {
+    font-size: clamp(vars.$font-sm, 4.4vw, vars.$font-lg);
+  }
+
+  .heroListItem {
+    padding-left: 22px;
+  }
+}
+
+@media (width <= 420px) {
+  .hero {
+    max-width: 100%;
+    min-height: 560px;
+    padding: vars.$pad-sm;
+  }
+
+  .heroContent {
+    gap: vars.$gap-sm;
+  }
+
+  .heroLabel {
+    line-height: 1.35;
+  }
+
+  .heroSelect {
+    font-size: vars.$font-sm;
+    padding: 10px 12px;
+  }
+
+  .heroButton {
+    font-size: vars.$font-sm;
+    padding: 10px 14px;
+  }
+}
+
+@media (width <= 340px) {
+  .hero {
+    min-height: 520px;
+    background-position: 82% center;
+  }
+
+  .heroEyebrow {
+    margin-top: 24px;
+  }
+
+  .heroTitle {
+    font-size: vars.$font-xl;
+  }
+
+  .heroSubtitle {
+    font-size: vars.$font-sm;
   }
 }

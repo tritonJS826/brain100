@@ -1,13 +1,15 @@
 import {useState} from "react";
+import {useNavigate} from "react-router-dom";
+import {PATHS} from "src/routes/routes";
 import styles from "src/pages/Homepage/HeroSection/HeroSection.module.scss";
 
-const TITLE = "Здесь начинается путь к спокойствию.";
-const SUBTITLE = "Персональная поддержка и ресурсы для психического здоровья.";
+const TITLE = "Начните путь к устойчивому спокойствию.";
+const SUBTITLE = "Материалы, тесты и специалисты — всё в одном месте, с акцентом на бережную поддержку.";
 const BENEFITS = [
-  "Бесплатная диагностика и индивидуальный план",
-  "Поддержка специалиста в удобное время",
-  "Простые тесты и полезные статьи",
-  "Советы по восстановлению энергии",
+  "Короткая диагностика и персональные рекомендации",
+  "Консультации специалистов в удобное время",
+  "Понятные статьи о состояниях и самопомощи",
+  "Практики для восстановления энергии",
 ] as const;
 
 const CTA_TEXT = "Начать";
@@ -19,31 +21,18 @@ const OPTION_TEST_LABEL = "Пройти тест";
 const OPTION_STATES_LABEL = "Узнать о состояниях";
 const OPTION_CONTACT_LABEL = "Связаться со специалистом";
 
-const TARGET_DIAGNOSTICS = "diagnostics";
-const TARGET_STATES = "mental-health";
-const TARGET_CONTACTS = "contacts";
-
-function navigateToId(id: string): void {
-  const el = document.getElementById(id);
-  if (el) {
-    el.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
-  } else {
-    window.location.hash = `#${id}`;
-  }
-}
-
 export function Hero() {
   const [intent, setIntent] = useState<string>("");
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-
     if (intent === OPTION_TEST_VALUE) {
-      navigateToId(TARGET_DIAGNOSTICS);
+      navigate(PATHS.DIAGNOSTICS.LIST);
     } else if (intent === OPTION_STATES_VALUE) {
-      navigateToId(TARGET_STATES);
+      navigate(PATHS.MENTAL_HEALTH.LIST);
     } else if (intent === OPTION_CONTACT_VALUE) {
-      navigateToId(TARGET_CONTACTS);
+      navigate(PATHS.SPECIALISTS.LIST);
     }
   };
 
@@ -66,7 +55,7 @@ export function Hero() {
         </p>
 
         <ul className={styles.heroList}>
-          {BENEFITS.map(text => (
+          {BENEFITS.map((text) => (
             <li
               key={text}
               className={styles.heroListItem}
@@ -92,7 +81,7 @@ export function Hero() {
               id="hero-intent"
               className={styles.heroSelect}
               value={intent}
-              onChange={e => setIntent(e.target.value)}
+              onChange={(e) => setIntent(e.target.value)}
             >
               <option
                 value=""

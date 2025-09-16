@@ -115,7 +115,7 @@ export function Header() {
               Все состояния
             </NavLink>
             <ul className={styles.dockList}>
-              {MENTAL_ITEMS.map(i => (
+              {MENTAL_ITEMS.map((i) => (
                 <li key={i.slug}>
                   <NavLink
                     to={buildPath.mentalHealthDetail(i.slug)}
@@ -141,7 +141,7 @@ export function Header() {
               Все тесты
             </NavLink>
             <ul className={styles.dockList}>
-              {DIAGNOSTIC_TESTS.map(t => (
+              {DIAGNOSTIC_TESTS.map((t) => (
                 <li key={t.slug}>
                   <NavLink
                     to={buildPath.diagnosticsDetail(t.slug)}
@@ -167,7 +167,7 @@ export function Header() {
               Все статьи
             </NavLink>
             <ul className={styles.dockList}>
-              {BIOHACKING_ARTICLES.map(a => (
+              {BIOHACKING_ARTICLES.map((a) => (
                 <li key={a.slug}>
                   <NavLink
                     to={buildPath.biohackingDetail(a.slug)}
@@ -225,6 +225,8 @@ export function Header() {
     } as Record<MenuKey, React.ReactNode>;
   }, []);
 
+  const ALL_LINKS = [...LEFT_LINKS, ...RIGHT_LINKS];
+
   return (
     <header
       className={styles.header}
@@ -246,83 +248,66 @@ export function Header() {
           />
         </Link>
 
-        <ul
-          className={styles.navList}
-          aria-label="Site sections"
-          onMouseLeave={scheduleClose}
-        >
-          {LEFT_LINKS.map(item => (
-            <li
-              key={item.key}
-              className={styles.navItem}
-              onMouseEnter={() => onEnterNav(item.key)}
-              aria-haspopup="true"
-              aria-expanded={dockOpen && activeKey === item.key}
-            >
-              <NavLink
-                to={
-                  item.key === "about"
-                    ? PATHS.ABOUT
-                    : item.key === "mental"
-                      ? PATHS.MENTAL_HEALTH.LIST
-                      : item.key === "diagnostics"
-                        ? PATHS.DIAGNOSTICS.LIST
-                        : PATHS.BIOHACKING.LIST
-                }
-                className={({isActive}) => `${styles.navLink} ${isActive ? styles.active : ""}`}
+        <div className={styles.navCenter}>
+          <ul
+            className={styles.navAll}
+            aria-label="Main sections"
+            onMouseLeave={scheduleClose}
+          >
+            {ALL_LINKS.map((item) => (
+              <li
+                key={item.key}
+                className={styles.navItem}
+                onMouseEnter={() => onEnterNav(item.key)}
+                aria-haspopup="true"
+                aria-expanded={dockOpen && activeKey === item.key}
               >
-                {item.label}
-              </NavLink>
-            </li>
-          ))}
-        </ul>
+                <NavLink
+                  to={
+                    item.key === "about"
+                      ? PATHS.ABOUT
+                      : item.key === "mental"
+                        ? PATHS.MENTAL_HEALTH.LIST
+                        : item.key === "diagnostics"
+                          ? PATHS.DIAGNOSTICS.LIST
+                          : item.key === "biohacking"
+                            ? PATHS.BIOHACKING.LIST
+                            : item.key === "specialists"
+                              ? PATHS.SPECIALISTS.LIST
+                              : PATHS.CONTACTS
+                  }
+                  className={({isActive}) => `${styles.navLink} ${isActive ? styles.active : ""}`}
+                >
+                  {item.label}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-        <ul
-          className={styles.navList}
-          aria-label="Quick links"
-          onMouseLeave={scheduleClose}
+        <NavLink
+          to={PATHS.SUPPORT.LIST}
+          className={styles.cta}
         >
-          {RIGHT_LINKS.map(item => (
-            <li
-              key={item.key}
-              className={styles.navItem}
-              onMouseEnter={() => onEnterNav(item.key)}
-              aria-haspopup="true"
-              aria-expanded={dockOpen && activeKey === item.key}
-            >
-              <NavLink
-                to={item.key === "specialists" ? PATHS.SPECIALISTS.LIST : PATHS.CONTACTS}
-                className={({isActive}) => `${styles.navLink} ${isActive ? styles.active : ""}`}
-              >
-                {item.label}
-              </NavLink>
-            </li>
-          ))}
+          {CTA_TEXT}
+        </NavLink>
 
-          <li className={styles.navItemOnly}>
-            <NavLink
-              to={PATHS.SUPPORT.LIST}
-              className={styles.cta}
-            >
-              {CTA_TEXT}
-            </NavLink>
-          </li>
-
-          <li className={styles.burgerWrap}>
-            <button
-              type="button"
-              className={`${styles.burger} ${drawerOpen ? styles.burgerOpen : ""}`}
-              aria-label="Open menu"
-              aria-expanded={drawerOpen}
-              aria-controls="mobile-drawer"
-              onClick={() => setDrawerOpen(v => !v)}
-            >
+        <li className={styles.burgerWrap}>
+          <button
+            type="button"
+            className={`${styles.burger} ${drawerOpen ? styles.burgerOpen : ""}`}
+            aria-label="Open menu"
+            aria-expanded={drawerOpen}
+            aria-controls="mobile-drawer"
+            onClick={() => setDrawerOpen(v => !v)}
+          >
+            <span className={styles.burgerInner}>
               <span />
               <span />
               <span />
-            </button>
-          </li>
-        </ul>
+            </span>
+          </button>
+        </li>
       </nav>
 
       <aside
@@ -366,7 +351,7 @@ export function Header() {
         </div>
 
         <ul className={styles.drawerList}>
-          {[...LEFT_LINKS, ...RIGHT_LINKS].map(item => (
+          {ALL_LINKS.map((item) => (
             <li key={item.key}>
               <NavLink
                 to={
