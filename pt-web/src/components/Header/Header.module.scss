@@ -1,47 +1,71 @@
-@use "../../styles/variables" as vars;
+@use "src/styles/variables" as vars;
 
 .header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
   width: 100%;
   height: vars.$header-height;
-  border-bottom: 1px solid vars.$border-color;
+  background-color: rgb(255 255 255 / 65%);
+  backdrop-filter: saturate(180%) blur(10px);
+  border-bottom: 1px solid vars.$color-border;
 }
 
 .nav {
-  width: 100%;
-  height: vars.$header-height;
-  display: flex;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 vars.$container-gap;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  justify-content: space-around;
+  column-gap: vars.$gap-lg;
 }
 
-.nav__list {
-  display: flex;
+.logo {
+  display: inline-flex;
   align-items: center;
-  gap: 35px;
+  text-decoration: none;
 }
 
-.nav__item {
+.logoImg {
+  height: 50px;
+  width: auto;
+  display: block;
+}
+
+.middle {
+  display: flex;
+  justify-content: center;
+}
+
+.navList {
+  display: flex;
+  align-items: center;
+  gap: vars.$gap-lg;
+}
+
+.navItem {
   position: relative;
 }
 
-.nav__link {
+.navLink {
   position: relative;
-  z-index: 2;
-  font-size: 20px;
+  font-size: vars.$font-lg;
   font-weight: 600;
   color: vars.$color-primary;
   padding: vars.$link-padding-y vars.$link-padding-x;
   text-decoration: none;
+  transition: color vars.$transition-fast;
 
   &::after {
     content: "";
     position: absolute;
     left: 0;
-    bottom: 0;
+    bottom: -6px;
     width: 0%;
     height: 2px;
     background-color: vars.$color-cta-bg;
-    transition: width 0.2s ease;
+    transition: width vars.$transition-fast;
   }
 
   &:hover {
@@ -51,45 +75,39 @@
   &:hover::after {
     width: 100%;
   }
+}
 
-  &:focus {
-    outline: none;
-    color: vars.$color-primary-hover;
+.active {
+  color: vars.$color-primary-hover;
+
+  &::after {
+    width: 100%;
+    background-color: vars.$color-primary-hover;
   }
 }
 
-.logo {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.logo__img {
-  height: 40px;
-  width: auto;
-}
-
+/* CTA */
 .cta {
-  position: relative;
-  z-index: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 20px 25px;
-  background-color: vars.$color-cta-bg;
+  padding: vars.$pad-sm vars.$pad-md;
+  background: linear-gradient(180deg, vars.$color-cta-bg, #53bde3);
   color: vars.$color-primary;
   text-decoration: none;
-  font-size: 20px;
-  font-weight: 600;
+  font-size: vars.$font-md;
+  font-weight: 700;
   border-radius: vars.$radius-pill;
+  box-shadow: 0 6px 16px rgb(113 202 237 / 35%);
   transition:
-    color 0.15s ease,
-    transform 0.05s ease;
-  will-change: transform;
+    transform 0.08s ease,
+    box-shadow vars.$transition-fast,
+    color vars.$transition-fast;
 
   &:hover {
-    color: vars.$color-primary-hover;
     transform: translateY(-1px);
+    color: vars.$color-primary-hover;
+    box-shadow: 0 8px 20px rgb(113 202 237 / 45%);
   }
 
   &:focus {
@@ -98,33 +116,42 @@
   }
 }
 
-/* заменили range-синтаксис на классический для совместимости линтера */
-@media (width <= 1140px) {
-  .nav__list:last-child {
-    gap: 20px;
+/* Адаптив */
+@media (width <= 1200px) {
+  .navList {
+    gap: vars.$gap-md;
   }
 
-  .cta {
-    padding: 16px 20px;
-    font-size: 18px;
+  .navLink {
+    font-size: vars.$font-md;
   }
 }
 
 @media (width <= 980px) {
   .nav {
-    justify-content: space-between;
+    grid-template-columns: auto 1fr auto;
+    column-gap: vars.$gap-md;
   }
 
-  .nav__list:last-child {
-    justify-content: flex-end;
-    gap: 12px;
+  .navList {
+    gap: vars.$gap-sm;
   }
 
-  .nav__list:first-child {
-    display: none;
+  .middle {
+    justify-content: flex-start;
+  }
+
+  .navLink {
+    font-size: vars.$font-sm;
+    padding: 6px 8px;
   }
 
   .cta {
-    font-size: 16px;
+    font-size: vars.$font-sm;
+    padding: vars.$pad-sm vars.$pad-md;
+  }
+
+  .logoImg {
+    height: 32px;
   }
 }

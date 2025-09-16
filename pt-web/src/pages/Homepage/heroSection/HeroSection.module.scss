@@ -1,0 +1,121 @@
+@use "src/styles/variables" as vars;
+
+.hero {
+  width: 100%;
+  height: 900px;
+  padding: vars.$pad-xl;
+  background: url("src/assets/pictures/hero.avif") no-repeat center center;
+  background-size: cover;
+}
+
+.heroContent {
+  display: grid;
+  align-content: start;
+  gap: vars.$gap-lg;
+}
+
+.heroEyebrow {
+  margin: 170px 0 0;
+  color: vars.$color-bg;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: vars.$font-lg;
+}
+
+.heroTitle {
+  font-size: vars.$font-4xl;
+  color: vars.$color-bg;
+  font-weight: 800;
+  line-height: vars.$line-height-tight;
+}
+
+.heroSubtitle {
+  margin: 0;
+  font-size: vars.$font-2xl;
+  color: vars.$color-bg;
+}
+
+.heroList {
+  margin: vars.$gap-xs 0 0;
+  list-style: none;
+  display: grid;
+  gap: vars.$gap-sm;
+  font-size: vars.$font-md;
+}
+
+.heroListItem {
+  position: relative;
+  padding-left: 28px;
+  color: vars.$color-bg;
+  font-weight: 600;
+}
+
+.heroListItem::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translateY(1px);
+  color: vars.$color-bg;
+  font-weight: 700;
+}
+
+.heroCta {
+  display: grid;
+  gap: vars.$gap-sm;
+  margin-top: vars.$gap-sm;
+}
+
+.heroLabel {
+  font-weight: 700;
+  color: vars.$color-bg;
+}
+
+.heroControls {
+  max-width: 50%;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: vars.$gap-sm;
+}
+
+.heroSelect {
+  appearance: none;
+  padding: vars.$pad-sm;
+  border: 1px solid vars.$color-border;
+  border-radius: vars.$radius-md;
+  background: vars.$color-bg;
+  font-weight: 600;
+  color: vars.$color-primary;
+  font-size: vars.$font-md;
+}
+
+.heroButton {
+  padding: vars.$pad-sm vars.$pad-md;
+  border: none;
+  border-radius: vars.$radius-pill;
+  background: vars.$color-cta-bg;
+  color: vars.$color-primary;
+  font-weight: 800;
+  font-size: vars.$font-md;
+  transition:
+    transform 0.06s ease,
+    color vars.$transition-fast;
+}
+
+.heroButton:hover {
+  transform: translateY(-1px);
+  color: vars.$color-primary-hover;
+}
+
+@media (width <= 980px) {
+  .hero {
+    height: 1020px;
+    grid-template-columns: 1fr;
+    gap: vars.$gap-md;
+  }
+
+  .heroMedia {
+    order: -1;
+    place-items: center;
+  }
+}
