@@ -308,8 +308,6 @@
   border-top: 1px solid vars.$color-border;
 }
 
-/* ====== Media ====== */
-
 @media (width <= 1440px) {
   .navList {
     gap: vars.$gap-lg;
