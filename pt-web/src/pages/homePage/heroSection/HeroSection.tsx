@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {PATHS} from "src/routes/routes";
-import styles from "src/pages/Homepage/HeroSection/HeroSection.module.scss";
+import styles from "src/pages/homePage/heroSection/HeroSection.module.scss";
 
 const TITLE = "Начните путь к устойчивому спокойствию.";
 const SUBTITLE = "Материалы, тесты и специалисты — всё в одном месте, с акцентом на бережную поддержку.";
