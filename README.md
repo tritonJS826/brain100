@@ -28,6 +28,6 @@ pnpm start
 ```
 
 
-- Frontend: http://localhost:5173  
-- Backend API: http://localhost:8000  
+- Frontend: http://localhost:5174  
+- Backend API: http://localhost:8000/general  
 - Grafana: http://localhost:5173/grafana/login  
