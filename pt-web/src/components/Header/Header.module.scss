@@ -6,9 +6,7 @@
   z-index: 50;
   width: 100%;
   height: vars.$header-height;
-  background-color: rgb(255 255 255 / 65%);
-  backdrop-filter: saturate(180%) blur(10px);
-  border-bottom: 1px solid vars.$color-border;
+  background-color: vars.$color-bg;
 }
 
 .nav {
@@ -18,7 +16,7 @@
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  column-gap: vars.$gap-lg;
+  column-gap: 0;
 }
 
 .logo {
@@ -28,130 +26,360 @@
 }
 
 .logoImg {
-  height: 50px;
+  position: relative;
+  bottom: 5px;
+  height: 40px;
   width: auto;
   display: block;
 }
 
-.middle {
+.navCenter {
+  height: 100%;
   display: flex;
+  align-items: center;
   justify-content: center;
 }
 
-.navList {
-  display: flex;
+.navAll {
+  display: inline-flex;
   align-items: center;
-  gap: vars.$gap-lg;
+  justify-content: center;
+  gap: clamp(20px, 3.2vw, 64px);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex-wrap: nowrap;
 }
 
 .navItem {
   position: relative;
+  text-align: center;
 }
 
 .navLink {
-  position: relative;
-  font-size: vars.$font-lg;
-  font-weight: 600;
-  color: vars.$color-primary;
-  padding: vars.$link-padding-y vars.$link-padding-x;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   text-decoration: none;
+  color: vars.$color-primary;
+  font-weight: 600;
+  font-size: vars.$font-md;
+  border-bottom: 2px solid transparent;
+  line-height: 1.2;
+  white-space: nowrap;
+  padding: 10px 0;
   transition: color vars.$transition-fast;
+}
 
-  &::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: -6px;
-    width: 0%;
-    height: 2px;
-    background-color: vars.$color-cta-bg;
-    transition: width vars.$transition-fast;
-  }
-
-  &:hover {
-    color: vars.$color-cta-bg;
-  }
-
-  &:hover::after {
-    width: 100%;
-  }
+.navLink:hover {
+  color: vars.$color-cta-bg;
+  border-bottom-color: vars.$color-cta-bg;
 }
 
 .active {
   color: vars.$color-primary-hover;
-
-  &::after {
-    width: 100%;
-    background-color: vars.$color-primary-hover;
-  }
+  border-bottom-color: vars.$color-primary-hover;
 }
 
-/* CTA */
 .cta {
+  justify-self: end;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: vars.$pad-sm vars.$pad-md;
-  background: linear-gradient(180deg, vars.$color-cta-bg, #53bde3);
-  color: vars.$color-primary;
-  text-decoration: none;
+  padding: 12px 18px;
   font-size: vars.$font-md;
   font-weight: 700;
+  color: vars.$color-primary;
+  background-color: vars.$color-bg;
+  border: 2px solid vars.$color-primary;
   border-radius: vars.$radius-pill;
-  box-shadow: 0 6px 16px rgb(113 202 237 / 35%);
-  transition:
-    transform 0.08s ease,
-    box-shadow vars.$transition-fast,
-    color vars.$transition-fast;
+  text-decoration: none;
+  transition: background-color vars.$transition-fast;
+}
 
-  &:hover {
-    transform: translateY(-1px);
-    color: vars.$color-primary-hover;
-    box-shadow: 0 8px 20px rgb(113 202 237 / 45%);
+.cta:hover {
+  background-color: vars.$color-cta-bg;
+}
+
+.dock {
+  position: fixed;
+  top: vars.$header-height;
+  left: 0;
+  height: calc(100vh - vars.$header-height);
+  width: clamp(280px, 36vw, 520px);
+  background: vars.$color-bg;
+  box-shadow: 0 6px 10px rgb(0 0 0 / 10%);
+  box-shadow: 8px 0 24px rgb(0 0 0 / 12%);
+  transform: translateX(-102%);
+  transition: transform vars.$transition-base;
+  z-index: 45;
+  border-right: 1px solid vars.$color-border;
+}
+
+.dockOpen {
+  transform: translateX(0);
+}
+
+.dockInner {
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding: vars.$pad-md;
+}
+
+.dockCols {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: vars.$gap-lg;
+  overflow: auto;
+  padding-right: vars.$pad-sm;
+}
+
+.dockCol {
+  display: grid;
+  gap: vars.$gap-md;
+  align-content: start;
+}
+
+.dockHeading {
+  display: inline-block;
+  color: vars.$color-primary;
+  font-weight: 800;
+  font-size: vars.$font-xl;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+}
+
+.dockHeading:hover {
+  color: vars.$color-cta-bg;
+}
+
+.dockList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: vars.$gap-sm;
+}
+
+.dockLink {
+  display: block;
+  color: vars.$color-primary;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: vars.$font-md;
+  padding: 8px 4px;
+  border-bottom: 1px dashed transparent;
+  transition: color vars.$transition-fast;
+}
+
+.dockLink:hover {
+  color: vars.$color-cta-bg;
+}
+
+.dockCta {
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
+  padding: 8px 10px;
+  font-size: vars.$font-sm;
+  font-weight: 700;
+  color: vars.$color-primary;
+  background-color: vars.$color-bg;
+  border: 1px solid vars.$color-border;
+  border-radius: vars.$radius-pill;
+  text-decoration: none;
+  transition: background-color vars.$transition-fast;
+}
+
+.dockCta:hover {
+  background-color: vars.$color-cta-bg;
+  color: vars.$color-primary-hover;
+}
+
+.burgerWrap {
+  display: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  z-index: 51;
+  place-self: center end;
+}
+
+.burger {
+  appearance: none;
+  appearance: none;
+  appearance: none;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  box-shadow: none;
+  outline: none;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  line-height: 0;
+}
+
+.burgerInner {
+  width: 24px;
+  height: 18px;
+  display: grid;
+  gap: 6px;
+}
+
+.burgerInner span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: vars.$color-primary;
+  transition:
+    transform vars.$transition-fast,
+    opacity vars.$transition-fast;
+}
+
+.burgerOpen .burgerInner span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.burgerOpen .burgerInner span:nth-child(2) {
+  opacity: 0;
+}
+
+.burgerOpen .burgerInner span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgb(0 0 0 / 45%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity vars.$transition-base;
+  z-index: 49;
+}
+
+.backdropOpen {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.drawer {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: min(86vw, 380px);
+  transform: translateX(-100%);
+  background: vars.$color-bg;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 18%);
+  z-index: 50;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  transition: transform vars.$transition-base;
+}
+
+.drawerOpen {
+  transform: translateX(0);
+}
+
+.drawerHead {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: vars.$gap-md;
+  padding: vars.$pad-md;
+  border-bottom: 1px solid vars.$color-border;
+}
+
+.drawerLogo {
+  height: 36px;
+}
+
+.close {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+  color: vars.$color-primary;
+}
+
+.drawerList {
+  list-style: none;
+  margin: 0;
+  padding: vars.$pad-md;
+  display: grid;
+  gap: vars.$gap-md;
+}
+
+.drawerLink {
+  display: block;
+  color: vars.$color-primary;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: vars.$font-lg;
+  padding: 10px 6px;
+}
+
+.drawerLink:hover {
+  color: vars.$color-primary-hover;
+}
+
+.drawerFoot {
+  padding: vars.$pad-md;
+  border-top: 1px solid vars.$color-border;
+}
+
+@media (width <= 1440px) {
+  .logoImg {
+    height: 38px;
   }
 
-  &:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px rgb(113 202 237 / 35%);
+  .navAll {
+    gap: clamp(18px, 2.6vw, 56px);
   }
 }
 
-/* Адаптив */
-@media (width <= 1200px) {
-  .navList {
-    gap: vars.$gap-md;
-  }
-
-  .navLink {
-    font-size: vars.$font-md;
+@media (width <= 1280px) {
+  .navAll {
+    gap: clamp(14px, 2.2vw, 40px);
   }
 }
 
 @media (width <= 980px) {
-  .nav {
-    grid-template-columns: auto 1fr auto;
-    column-gap: vars.$gap-md;
-  }
-
-  .navList {
-    gap: vars.$gap-sm;
-  }
-
-  .middle {
-    justify-content: flex-start;
-  }
-
-  .navLink {
-    font-size: vars.$font-sm;
-    padding: 6px 8px;
+  .navCenter {
+    display: none;
   }
 
   .cta {
-    font-size: vars.$font-sm;
-    padding: vars.$pad-sm vars.$pad-md;
+    display: none;
   }
 
+  .burgerWrap {
+    display: grid;
+  }
+}
+
+@media (width <= 600px) {
   .logoImg {
     height: 32px;
+  }
+}
+
+@media (width <= 480px) {
+  .logoImg {
+    height: 28px;
+  }
+
+  .burger span {
+    width: 20px;
   }
 }
