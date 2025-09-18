@@ -1,12 +1,18 @@
-import os
-from dotenv import load_dotenv
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from prisma import Prisma
 
-# Load env file (from prisma/.env or root .env)
-load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), "..", "prisma", ".env"))
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # startup
+    await db.connect()
+    yield
+    # shutdown
+    await db.disconnect()
+
+
+app = FastAPI(lifespan=lifespan)
 db = Prisma()
 
 

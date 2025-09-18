@@ -1,4 +1,3 @@
-# br-general-python/app/settings.py
 from typing import Literal
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field, field_validator
@@ -9,8 +8,6 @@ class Settings(BaseSettings):
     env_type: Literal["dev", "prod"] = Field("dev", alias="ENV_TYPE")
     webapp_domain: str = Field("localhost", alias="WEBAPP_DOMAIN")
 
-    # Prisma использует только DATABASE_URL, но оставим и «разложенные» поля,
-    # если они тебе где-то нужны.
     database_url: str = Field(..., alias="DATABASE_URL")
     postgres_user: str = Field(..., alias="POSTGRES_USER")
     postgres_password: str = Field(..., alias="POSTGRES_PASSWORD")
@@ -24,7 +21,7 @@ class Settings(BaseSettings):
 
     @property
     def flag_reload(self) -> bool:
-        """Возвращает True, если включён режим разработки"""
+        """Return true if in development mode, else false."""
         return self.env_type == "dev"
 
     @field_validator("database_url")
