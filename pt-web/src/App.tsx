@@ -1,4 +1,5 @@
 import {Route, Routes} from "react-router-dom";
+import {Footer} from "src/components/Footer/Footer";
 import {Header} from "src/components/Header/Header";
 import {HomePage} from "src/pages/homePage/Homepage";
 import {PATHS} from "src/routes/routes";
@@ -104,6 +105,7 @@ export function App() {
           element={<Contacts />}
         />
       </Routes>
+      <Footer />
     </>
   );
 }
