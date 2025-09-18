@@ -115,7 +115,7 @@ export function Header() {
               Все состояния
             </NavLink>
             <ul className={styles.dockList}>
-              {MENTAL_ITEMS.map((i) => (
+              {MENTAL_ITEMS.map(i => (
                 <li key={i.slug}>
                   <NavLink
                     to={buildPath.mentalHealthDetail(i.slug)}
@@ -141,7 +141,7 @@ export function Header() {
               Все тесты
             </NavLink>
             <ul className={styles.dockList}>
-              {DIAGNOSTIC_TESTS.map((t) => (
+              {DIAGNOSTIC_TESTS.map(t => (
                 <li key={t.slug}>
                   <NavLink
                     to={buildPath.diagnosticsDetail(t.slug)}
@@ -167,7 +167,7 @@ export function Header() {
               Все статьи
             </NavLink>
             <ul className={styles.dockList}>
-              {BIOHACKING_ARTICLES.map((a) => (
+              {BIOHACKING_ARTICLES.map(a => (
                 <li key={a.slug}>
                   <NavLink
                     to={buildPath.biohackingDetail(a.slug)}
@@ -254,7 +254,7 @@ export function Header() {
             aria-label="Main sections"
             onMouseLeave={scheduleClose}
           >
-            {ALL_LINKS.map((item) => (
+            {ALL_LINKS.map(item => (
               <li
                 key={item.key}
                 className={styles.navItem}
@@ -351,7 +351,7 @@ export function Header() {
         </div>
 
         <ul className={styles.drawerList}>
-          {ALL_LINKS.map((item) => (
+          {ALL_LINKS.map(item => (
             <li key={item.key}>
               <NavLink
                 to={
