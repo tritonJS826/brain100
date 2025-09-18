@@ -4,7 +4,8 @@ import {PATHS} from "src/routes/routes";
 import styles from "src/pages/homePage/heroSection/HeroSection.module.scss";
 
 const TITLE = "Начните путь к устойчивому спокойствию.";
-const SUBTITLE = "Материалы, тесты и специалисты — всё в одном месте, с акцентом на бережную поддержку.";
+const SUBTITLE =
+  "Материалы, тесты и специалисты — всё в одном месте, с акцентом на бережную поддержку.";
 const BENEFITS = [
   "Короткая диагностика и персональные рекомендации",
   "Консультации специалистов в удобное время",
@@ -41,73 +42,75 @@ export function Hero() {
       className={styles.hero}
       aria-label="Вступительный блок"
     >
-      <div className={styles.heroContent}>
-        <p className={styles.heroEyebrow}>
-          Онлайн-поддержка психического здоровья
-        </p>
+      <div className={styles.heroInner}>
+        <div className={styles.heroContent}>
+          <p className={styles.heroEyebrow}>
+            Онлайн-поддержка психического здоровья
+          </p>
 
-        <h1 className={styles.heroTitle}>
-          {TITLE}
-        </h1>
+          <h1 className={styles.heroTitle}>
+            {TITLE}
+          </h1>
 
-        <p className={styles.heroSubtitle}>
-          {SUBTITLE}
-        </p>
+          <p className={styles.heroSubtitle}>
+            {SUBTITLE}
+          </p>
 
-        <ul className={styles.heroList}>
-          {BENEFITS.map((text) => (
-            <li
-              key={text}
-              className={styles.heroListItem}
-            >
-              {text}
-            </li>
-          ))}
-        </ul>
-
-        <form
-          className={styles.heroCta}
-          onSubmit={handleSubmit}
-        >
-          <label
-            htmlFor="hero-intent"
-            className={styles.heroLabel}
-          >
-            С чего начнём сегодня?
-          </label>
-
-          <div className={styles.heroControls}>
-            <select
-              id="hero-intent"
-              className={styles.heroSelect}
-              value={intent}
-              onChange={(e) => setIntent(e.target.value)}
-            >
-              <option
-                value=""
-                disabled
+          <ul className={styles.heroList}>
+            {BENEFITS.map((text) => (
+              <li
+                key={text}
+                className={styles.heroListItem}
               >
-                {SELECT_PLACEHOLDER}
-              </option>
-              <option value={OPTION_TEST_VALUE}>
-                {OPTION_TEST_LABEL}
-              </option>
-              <option value={OPTION_STATES_VALUE}>
-                {OPTION_STATES_LABEL}
-              </option>
-              <option value={OPTION_CONTACT_VALUE}>
-                {OPTION_CONTACT_LABEL}
-              </option>
-            </select>
+                {text}
+              </li>
+            ))}
+          </ul>
 
-            <button
-              type="submit"
-              className={styles.heroButton}
+          <form
+            className={styles.heroCta}
+            onSubmit={handleSubmit}
+          >
+            <label
+              htmlFor="hero-intent"
+              className={styles.heroLabel}
             >
-              {CTA_TEXT}
-            </button>
-          </div>
-        </form>
+              С чего начнём сегодня?
+            </label>
+
+            <div className={styles.heroControls}>
+              <select
+                id="hero-intent"
+                className={styles.heroSelect}
+                value={intent}
+                onChange={(e) => setIntent(e.target.value)}
+              >
+                <option
+                  value=""
+                  disabled
+                >
+                  {SELECT_PLACEHOLDER}
+                </option>
+                <option value={OPTION_TEST_VALUE}>
+                  {OPTION_TEST_LABEL}
+                </option>
+                <option value={OPTION_STATES_VALUE}>
+                  {OPTION_STATES_LABEL}
+                </option>
+                <option value={OPTION_CONTACT_VALUE}>
+                  {OPTION_CONTACT_LABEL}
+                </option>
+              </select>
+
+              <button
+                type="submit"
+                className={styles.heroButton}
+              >
+                {CTA_TEXT}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </section>
   );
