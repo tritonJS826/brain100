@@ -2,7 +2,7 @@ import {Route, Routes} from "react-router-dom";
 import {Footer} from "src/components/Footer/Footer";
 import {Header} from "src/components/Header/Header";
 import {HomePage} from "src/pages/homePage/Homepage";
-import {Depression} from "src/pages/tests/Depression";
+import {Test} from "src/pages/tests/Test";
 import {PATHS} from "src/routes/routes";
 
 const About = () => (<div>
@@ -75,7 +75,7 @@ export function App() {
         />
         <Route
           path={PATHS.DIAGNOSTICS.DEPRESSION_TEST}
-          element={<Depression />}
+          element={<Test />}
         />
 
         <Route

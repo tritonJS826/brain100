@@ -1,5 +1,9 @@
 @use "src/styles/variables" as vars;
 
+.testName {
+  text-align: center;
+}
+
 .form {
   max-width: 720px;
   margin: 0 auto;
