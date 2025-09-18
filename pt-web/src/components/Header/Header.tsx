@@ -140,11 +140,12 @@ export function Header() {
             >
               Все тесты
             </NavLink>
+
             <ul className={styles.dockList}>
               {DIAGNOSTIC_TESTS.map(t => (
                 <li key={t.slug}>
                   <NavLink
-                    to={buildPath.diagnosticsDetail(t.slug)}
+                    to={t.slug === "phq-9" ? buildPath.depressionTest() : buildPath.diagnosticsDetail(t.slug)}
                     className={styles.dockLink}
                     onClick={closeDock}
                   >
