@@ -2,6 +2,9 @@
 fastapi==0.116.2
 pydantic==2.11
 
+# Pydantic settings management
+pydantic-settings>=2.5
+
 # ASGI server (to run FastAPI)
 uvicorn[standard]==0.30.6
 
