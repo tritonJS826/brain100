@@ -13,12 +13,11 @@
   height: 100%;
   margin: 0 auto;
   max-width: vars.$container-max;
+  padding: 0 vars.$container-gap;
   width: 100%;
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  column-gap: 0;
-  padding-inline: 0;
 }
 
 .logo {
@@ -46,7 +45,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(20px, 3.2vw, 64px);
+  gap: clamp(18px, 2.6vw, 48px);
   list-style: none;
   margin: 0;
   padding: 0;
@@ -110,9 +109,7 @@
   height: calc(100vh - vars.$header-height);
   width: clamp(280px, 36vw, 520px);
   background: vars.$color-bg;
-  box-shadow:
-    0 6px 10px rgb(0 0 0 / 10%),
-    8px 0 24px rgb(0 0 0 / 12%);
+  box-shadow: 8px 0 24px rgb(0 0 0 / 12%);
   transform: translateX(-102%);
   transition: transform vars.$transition-base;
   z-index: 45;
@@ -339,17 +336,17 @@
   border-top: 1px solid vars.$color-border;
 }
 
+@media (width >= 1800px) {
+  .navAll {
+    gap: clamp(14px, 1.6vw, 28px);
+  }
+}
+
 @media (width <= 1440px) {
   .logoImg {
     height: 38px;
   }
 
-  .navAll {
-    gap: clamp(18px, 2.6vw, 56px);
-  }
-}
-
-@media (width <= 1280px) {
   .navAll {
     gap: clamp(16px, 2.2vw, 40px);
   }
@@ -369,12 +366,6 @@
   }
 }
 
-@media (width <= 980px) {
-  .nav {
-    padding-inline: vars.$gap-md;
-  }
-}
-
 @media (width <= 600px) {
   .logoImg {
     height: 32px;
@@ -382,21 +373,11 @@
 }
 
 @media (width <= 480px) {
-  .nav {
-    padding-inline: vars.$gap-sm;
-  }
-
   .logoImg {
     height: 28px;
   }
 
-  .burgerInner {
-    width: 20px;
-    height: 14px;
-    gap: 5px;
-  }
-
-  .burgerInner span {
+  .burger span {
     width: 20px;
   }
 }
