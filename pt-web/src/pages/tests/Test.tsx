@@ -45,7 +45,7 @@ const tests: Record<string, Test> = {
         question: "Как вы спали прошлой ночью?",
         placeholder: "Например: хорошо / 7 часов",
       }, {
-        id: 3,
+        id: 2,
         type: "checkbox",
         question: "Что помогало сегодня? (можно несколько)",
         options: [
@@ -55,7 +55,7 @@ const tests: Record<string, Test> = {
           "Упражнения",
         ],
       }, {
-        id: 2,
+        id: 3,
         type: "radio",
         question: "Настроение сейчас",
         options: [
