@@ -16,16 +16,6 @@ app = FastAPI(lifespan=lifespan)
 db = Prisma()
 
 
-@app.on_event("startup")
-async def startup():
-    await db.connect()
-
-
-@app.on_event("shutdown")
-async def shutdown():
-    await db.disconnect()
-
-
 @app.get("/")
 async def root():
     # Simple test query
