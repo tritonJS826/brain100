@@ -10,6 +10,7 @@ export const PATHS = {
   DIAGNOSTICS: {
     LIST: "/diagnostics" as const,
     DETAIL: "/diagnostics/:slug" as const,
+    DEPRESSION_TEST: "/diagnostics/phq-9" as const,
   },
 
   BIOHACKING: {
@@ -79,4 +80,6 @@ export const buildPath = {
   adminTestsList: () => PATHS.ADMIN.TESTS.LIST,
   adminTestCreate: () => PATHS.ADMIN.TESTS.CREATE,
   adminTestEdit: (id: string | number) => `/admin/tests/${id}/edit`,
+
+  depressionTest: () => PATHS.DIAGNOSTICS.DEPRESSION_TEST,
 } as const;

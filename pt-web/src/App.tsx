@@ -2,6 +2,7 @@ import {Route, Routes} from "react-router-dom";
 import {Footer} from "src/components/Footer/Footer";
 import {Header} from "src/components/Header/Header";
 import {HomePage} from "src/pages/homePage/Homepage";
+import {Test} from "src/pages/tests/Test";
 import {PATHS} from "src/routes/routes";
 
 const About = () => (<div>
@@ -71,6 +72,10 @@ export function App() {
         <Route
           path={PATHS.DIAGNOSTICS.DETAIL}
           element={<DiagnosticsDetail />}
+        />
+        <Route
+          path={PATHS.DIAGNOSTICS.DEPRESSION_TEST}
+          element={<Test />}
         />
 
         <Route
