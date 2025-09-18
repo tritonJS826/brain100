@@ -48,6 +48,22 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
+  br-general-python:
+    build:
+      context: ./br-general-python
+      dockerfile: Dockerfile
+    container_name: br-general-python
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./br-general-python/prisma/.env
+    volumes:
+      - ./br-general-python:/app
+    networks:
+      - app-network
+    depends_on:
+      - br-postgres-general
+
 volumes:
   br-postgres-general:
 

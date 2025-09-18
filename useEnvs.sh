@@ -5,6 +5,7 @@ services=(
   "pt-web"
   "pt-general"
   "grafana"
+  "br-general-python"
 )
 
 # Define the environment file templates
