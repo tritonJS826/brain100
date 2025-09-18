@@ -1,7 +1,7 @@
 --requirement base.txt
 
 # [code_style]-[BEGIN]
-ruff==0.13.0
+# ruff==0.13.0
 
 # Pre-commit hook.
 # pre-commit==4.2.0
