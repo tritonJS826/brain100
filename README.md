@@ -14,7 +14,7 @@ pnpm install
 
 3. Start databases and nginx in containers:
 ```bash
-docker-compose -f local.docker-compose.yml up
+docker-compose -f local.docker-compose.yml up --build
 ```
 
 4. Run database migrations:
