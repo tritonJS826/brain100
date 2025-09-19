@@ -2,6 +2,8 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from prisma import Prisma
 
+db = Prisma()
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -13,7 +15,6 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
-db = Prisma()
 
 
 @app.get("/")

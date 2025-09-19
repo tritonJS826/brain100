@@ -44,7 +44,7 @@ prisma migrate deploy
 ### 6. Start the development server
 
 ```bash
-uvicorn br-general-python.app.main:app --reload --port 8001
+uvicorn br-general-python.app.main:app --reload --port 8000
 ```
 
 The API will be available at:

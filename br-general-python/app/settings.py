@@ -4,9 +4,9 @@ from pydantic import Field, field_validator
 
 
 class Settings(BaseSettings):
-    server_port: int = Field(8000, alias="SERVER_PORT")
-    env_type: Literal["dev", "prod"] = Field("dev", alias="ENV_TYPE")
-    webapp_domain: str = Field("localhost", alias="WEBAPP_DOMAIN")
+    server_port: int = Field(..., alias="SERVER_PORT")
+    env_type: Literal['dev', 'prod'] = Field(default="dev", alias="ENV_TYPE")
+    webapp_domain: str = Field(..., alias="WEBAPP_DOMAIN")
 
     database_url: str = Field(..., alias="DATABASE_URL")
     postgres_user: str = Field(..., alias="POSTGRES_USER")
@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     postgres_db: str = Field(..., alias="POSTGRES_DB")
 
     model_config = SettingsConfigDict(
-        env_file=("prisma/.env", ".env"),
+        env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=True,
     )
