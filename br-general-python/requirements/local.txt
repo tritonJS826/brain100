@@ -1,0 +1,16 @@
+--requirement base.txt
+
+# [code_style]-[BEGIN]
+# ruff==0.13.0
+
+# Pre-commit hook.
+# pre-commit==4.2.0
+
+# [code_style]-[END]
+
+# [debug]-[BEGIN]
+
+# pytest==8.3.5
+# pytest-asyncio==0.26.0
+
+# [debug]-[END]

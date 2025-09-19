@@ -1,0 +1,23 @@
+# FastAPI and dependencies
+fastapi==0.116.2
+pydantic==2.11
+
+# Pydantic settings management
+pydantic-settings>=2.5
+
+# ASGI server (to run FastAPI)
+uvicorn[standard]==0.30.6
+
+# Async HTTP client
+httpx[http2]==0.28.1
+requests==2.32.3
+
+# Prisma ORM
+prisma==0.15.0
+
+# Environment variables
+python-dotenv==1.0.1
+
+# Testing
+pytest==8.3.3
+pytest-asyncio==0.23.8
