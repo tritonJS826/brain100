@@ -26,7 +26,7 @@ pip install --upgrade pip
 Copy .env.local.example to .env and update values:
 
 ```bash
-cp prisma/.env.local.example prisma/.env
+cp .env.local.example .env
 ```
 
 ### 4. Initialize Prisma
