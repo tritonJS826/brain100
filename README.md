@@ -1,5 +1,12 @@
 # brain100
 
+requirements:
+* node 22.5.1 (we recommend to use "nvm" or "n" package for installation)
+
+* pnpm 8.15.2 (https://pnpm.io)
+* docker 28.1.1
+* docker-compose 2.33.1
+
 ## 🚀 Quick Start
 
 1. Install dependencies:

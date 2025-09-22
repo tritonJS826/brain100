@@ -1,5 +1,6 @@
 # File only for running in docker container
 
+
 import uvicorn
 from app.settings import settings
 

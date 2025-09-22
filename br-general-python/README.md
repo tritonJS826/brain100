@@ -42,6 +42,7 @@ prisma migrate deploy
 ```
 
 ### 6. Start the development server
+
 Run in docker compose: 
 ```bash
 docker-compose -f local.docker-compose.yml up --build
@@ -51,7 +52,7 @@ or
 docker compose -f local.docker-compose.yml up --build
 ```
 
-The API will be available at: http://localhost:8000
+
+The API will be available at: http://localhost:8000/api/health
 
 Interactive Docs: http://localhost:8000/docs
-
