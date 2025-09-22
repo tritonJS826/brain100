@@ -19,5 +19,3 @@ prisma==0.15.0
 python-dotenv==1.0.1
 
 # Testing
-pytest==8.3.3
-pytest-asyncio==0.23.8
