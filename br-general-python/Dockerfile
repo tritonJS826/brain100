@@ -30,12 +30,6 @@ RUN pip install --upgrade pip && \
 # Copy project
 COPY --chown=${USER} . .
 
-# Create Prisma cache dir with correct permissions
-# RUN mkdir -p /app/.prisma && chown -R ${USER}:${USER} /app/.prisma
-
-# Switch to non-root user BEFORE prisma generate
-# USER ${USER}
-
 # Generate Prisma client (runs as appuser now)
 RUN prisma generate
 
