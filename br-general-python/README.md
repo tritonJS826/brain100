@@ -42,13 +42,16 @@ prisma migrate deploy
 ```
 
 ### 6. Start the development server
-
+Run in docker compose: 
 ```bash
-uvicorn br-general-python.app.main:app --reload --port 8000
+docker-compose -f local.docker-compose.yml up --build
+```
+or
+```bash
+docker compose -f local.docker-compose.yml up --build
 ```
 
-The API will be available at:
-http://localhost:8000
+The API will be available at: http://localhost:8000
 
 Interactive Docs: http://localhost:8000/docs
 
