@@ -1,7 +1,8 @@
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {DictionaryKey} from "src/dictionary/dictionaryLoader";
+import {DictionaryKey, Language} from "src/dictionary/dictionaryLoader";
 import {useDictionary} from "src/dictionary/useDictionary";
+import {localStorageWorker} from "src/globalStorages/localStorageWorker";
 import {PATHS} from "src/routes/routes";
 import styles from "src/pages/homePage/heroSection/HeroSection.module.scss";
 
@@ -29,7 +30,7 @@ export function Hero() {
     }
   };
 
-  const dictionary = useDictionary(DictionaryKey.HOME, "ru");
+  const dictionary = useDictionary(DictionaryKey.HOME, localStorageWorker.getExistentItemByKey<Language>("language"));
 
   if (!dictionary) {
     return (
