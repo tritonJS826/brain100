@@ -1,4 +1,3 @@
-
 # File only for running in docker container
 
 import uvicorn
