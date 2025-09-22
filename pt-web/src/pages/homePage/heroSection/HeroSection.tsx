@@ -1,17 +1,9 @@
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
+import {DictionaryKey} from "src/dictionary/dictionaryLoader";
+import {useDictionary} from "src/dictionary/useDictionary";
 import {PATHS} from "src/routes/routes";
 import styles from "src/pages/homePage/heroSection/HeroSection.module.scss";
-
-const TITLE = "Начните путь к устойчивому спокойствию.";
-const SUBTITLE =
-  "Материалы, тесты и специалисты — всё в одном месте, с акцентом на бережную поддержку.";
-const BENEFITS = [
-  "Короткая диагностика и персональные рекомендации",
-  "Консультации специалистов в удобное время",
-  "Понятные статьи о состояниях и самопомощи",
-  "Практики для восстановления энергии",
-] as const;
 
 const CTA_TEXT = "Начать";
 const SELECT_PLACEHOLDER = "Я бы хотел(а)…";
@@ -37,6 +29,16 @@ export function Hero() {
     }
   };
 
+  const dictionary = useDictionary(DictionaryKey.HOME, "ru");
+
+  if (!dictionary) {
+    return (
+      <div>
+        Loading...
+      </div>
+    );
+  }
+
   return (
     <section
       className={styles.hero}
@@ -49,15 +51,15 @@ export function Hero() {
           </p>
 
           <h1 className={styles.heroTitle}>
-            {TITLE}
+            {dictionary.hero.title}
           </h1>
 
           <p className={styles.heroSubtitle}>
-            {SUBTITLE}
+            {dictionary.hero.subtitle}
           </p>
 
           <ul className={styles.heroList}>
-            {BENEFITS.map((text) => (
+            {dictionary.hero.benefits.map((text) => (
               <li
                 key={text}
                 className={styles.heroListItem}
