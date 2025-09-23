@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from app.schemas.user import UserCreate, UserResponse
 from app.services.user_service import UserService
 
-router = APIRouter(prefix="/users", tags=["users"])
+router = APIRouter()
 
 
 @router.post("/", response_model=UserResponse)
