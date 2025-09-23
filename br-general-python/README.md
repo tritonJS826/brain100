@@ -60,7 +60,7 @@ prisma migrate deploy
 
 ```bash
 cd br-general-python
-python -m app.runlocaly
+python -m app.runlocally
 ```
 
 or
