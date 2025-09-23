@@ -60,7 +60,7 @@ prisma migrate deploy
 
 ```bash
 cd br-general-python
-python -m app.runlocally
+python -m app.run
 ```
 
 or
@@ -69,6 +69,6 @@ setup PyCharm run configuration to run 'app.locally' directly
 
 ### Endpoints
 
-Health Check → http://localhost:8000/api/health
+Health Check → http://localhost:8000/api/general
 
 Interactive API Docs → http://localhost:8000/docs
