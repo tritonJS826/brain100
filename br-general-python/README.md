@@ -64,11 +64,11 @@ python -m app.runlocally
 ```
 
 or
-setup PyCharm run configuration to run 'app.runlocaly' directly
-![img.png](img.png)
+setup PyCharm run configuration to run 'app.locally' directly
+![README_pycharm_setup.png](README_pycharm_setup.png)
 
 ### Endpoints
 
-Health Check → http://localhost:8000/api/health
+Health Check → http://localhost:8000/api
 
 Interactive API Docs → http://localhost:8000/docs
