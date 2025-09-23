@@ -64,7 +64,7 @@ python -m app.run
 ```
 
 or
-setup PyCharm run configuration to run 'app.locally' directly
+setup PyCharm run configuration to run 'app.run' directly
 ![README_pycharm_setup.png](README_pycharm_setup.png)
 
 ### Endpoints
