@@ -1,6 +1,7 @@
 import {Route, Routes} from "react-router-dom";
 import {Footer} from "src/components/Footer/Footer";
 import {Header} from "src/components/Header/Header";
+import {DiagnosticsList} from "src/pages/diagnosticsListPage/DiagnosticsListPage";
 import {HomePage} from "src/pages/homePage/Homepage";
 import {Test} from "src/pages/tests/Test";
 import {PATHS} from "src/routes/routes";
@@ -13,12 +14,6 @@ const MentalList = () => (<div>
 </div>);
 const MentalDetail = () => (<div>
   Статья о состоянии
-</div>);
-const DiagnosticsList = () => (<div>
-  Каталог тестов
-</div>);
-const DiagnosticsDetail = () => (<div>
-  Тест
 </div>);
 const BioList = () => (<div>
   Биохакинг
@@ -71,13 +66,8 @@ export function App() {
         />
         <Route
           path={PATHS.DIAGNOSTICS.DETAIL}
-          element={<DiagnosticsDetail />}
-        />
-        <Route
-          path={PATHS.DIAGNOSTICS.DEPRESSION_TEST}
           element={<Test />}
         />
-
         <Route
           path={PATHS.BIOHACKING.LIST}
           element={<BioList />}
@@ -88,11 +78,11 @@ export function App() {
         />
 
         <Route
-          path={PATHS.SUPPORT.LIST}
+          path={PATHS.SOS.LIST}
           element={<SupportList />}
         />
         <Route
-          path={PATHS.SUPPORT.DETAIL}
+          path={PATHS.SOS.DETAIL}
           element={<SupportDetail />}
         />
 

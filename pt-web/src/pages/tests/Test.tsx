@@ -1,81 +1,8 @@
 import {useEffect, useState} from "react";
+import {useParams} from "react-router-dom";
+import {loadTestById as loadTest} from "src/pages/tests/tests.api";
+import type {Test} from "src/pages/tests/tests.types";
 import styles from "src/pages/tests/Test.module.scss";
-
-interface TextQuestion {
-  id: number;
-  type: "text";
-  question: string;
-  placeholder: string;
-}
-
-interface RadioQuestion {
-  id: number;
-  type: "radio";
-  question: string;
-  options: string[];
-}
-
-interface CheckboxQuestion {
-  id: number;
-  type: "checkbox";
-  question: string;
-  options: string[];
-};
-
-type Question = TextQuestion | RadioQuestion | CheckboxQuestion
-
-interface Test {
-  id: string;
-  name: string;
-  questions: Question[];
-}
-
-/*
-  / @Key - test id,
-  / @value - test details
- */
-const tests: Record<string, Test> = {
-  "1": {
-    id: "1",
-    name: "Тест о депрессии",
-    questions: [
-      {
-        id: 1,
-        type: "text",
-        question: "Как вы спали прошлой ночью?",
-        placeholder: "Например: хорошо / 7 часов",
-      }, {
-        id: 2,
-        type: "checkbox",
-        question: "Что помогало сегодня? (можно несколько)",
-        options: [
-          "Сон",
-          "Прогулка",
-          "Разговор с близким",
-          "Упражнения",
-        ],
-      }, {
-        id: 3,
-        type: "radio",
-        question: "Настроение сейчас",
-        options: [
-          "Спокойное",
-          "Напряжённое",
-          "Радостное",
-        ],
-      },
-    ],
-  },
-};
-
-async function loadTest(testId: string): Promise<Test> {
-  return Promise.resolve(tests[testId]);
-}
-
-/**
- * Remove this variable later and use params or id from back
- */
-const TEMPORAL_TEST_ID = "1";
 
 async function loadData<T extends object>(
   callback: () => Promise<T>,
@@ -126,19 +53,23 @@ export function Test() {
     setTest(testFromBack);
   };
 
+  const {id} = useParams<{ id: string }>();
   useEffect(() => {
+    if (!id) {
+      return;
+    }
     loadData(
-      () => loadTest(TEMPORAL_TEST_ID),
+      () => loadTest(id),
       setupStates,
     );
-  }, []);
+  }, [id]);
 
   const handleSubmit = () => {
 
     /**
      * TODO: finish form handling
      */
-    // alert("Отправлено!");
+    alert("Отправлено!");
     // eslint-disable-next-line no-console
     console.log(userAnswers);
   };
@@ -176,7 +107,9 @@ export function Test() {
   };
 
   const isCheckboxAnswered = (answerIndex: number, option: string) => {
-    return userAnswers[answerIndex].includes(option);
+    const answer = userAnswers[answerIndex];
+
+    return Array.isArray(answer) && answer.includes(option);
   };
 
   if (test === undefined) {
@@ -193,80 +126,83 @@ export function Test() {
         {test.name}
       </h2>
       <form className={styles.form}>
-        {/* Add empty state handling - spinner or etc */}
-        {test.questions.map((question, questionIndex) => (
-          <div
-            key={question.id}
-            className={styles.block}
-          >
-            <label className={styles.label}>
-              <span className={styles.num}>
-                {/* render ordered list */}
-                {questionIndex + INCREMENT}
-                .
-              </span>
-              {question.question}
-            </label>
+        {test.questions.length === 0
+          ? (
+            <div className={styles.spinner} />
+          )
+          : (
+            test.questions.map((question, questionIndex) => (
+              <div
+                key={question.id}
+                className={styles.block}
+              >
+                <label className={styles.label}>
+                  <span className={styles.num}>
+                    {questionIndex + INCREMENT}
+                    .
+                  </span>
+                  {question.question}
+                </label>
 
-            {question.type === "text" && (
-              <input
-                className={styles.textInput}
-                type="text"
-                name={String(question.id)}
-                placeholder={question.placeholder}
-                value={userAnswers[questionIndex]}
-                onChange={(e) => handelInputChange(e, questionIndex)}
-              />
-            )}
+                {question.type === "text" && (
+                  <input
+                    className={styles.textInput}
+                    type="text"
+                    name={String(question.id)}
+                    placeholder={question.placeholder}
+                    value={userAnswers[questionIndex]}
+                    onChange={(e) => handelInputChange(e, questionIndex)}
+                  />
+                )}
 
-            {question.type === "radio" && (
-              <div className={styles.options}>
-                {question.options.map(option => (
-                  <label
-                    key={option}
-                    className={styles.option}
-                  >
-                    <input
-                      className={styles.radio}
-                      type="radio"
-                      name={String(question.id)}
-                      value={option}
-                      checked={isRadioAnswered(questionIndex, option)}
-                      onChange={(e) => handelInputChange(e, questionIndex)}
-                    />
-                    <span className={styles.optionText}>
-                      {option}
-                    </span>
-                  </label>
-                ))}
+                {question.type === "radio" && (
+                  <div className={styles.options}>
+                    {question.options.map(option => (
+                      <label
+                        key={option}
+                        className={styles.option}
+                      >
+                        <input
+                          className={styles.radio}
+                          type="radio"
+                          name={String(question.id)}
+                          value={option}
+                          checked={isRadioAnswered(questionIndex, option)}
+                          onChange={(e) => handelInputChange(e, questionIndex)}
+                        />
+                        <span className={styles.optionText}>
+                          {option}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+
+                {question.type === "checkbox" && (
+                  <div className={styles.options}>
+                    {question.options.map(option => (
+                      <label
+                        key={option}
+                        className={styles.option}
+                      >
+                        <input
+                          className={styles.checkbox}
+                          type="checkbox"
+                          name={String(question.id)}
+                          value={option}
+                          checked={isCheckboxAnswered(questionIndex, option)}
+                          onChange={(e) => handelInputChange(e, questionIndex)}
+                        />
+                        <span className={styles.optionText}>
+                          {option}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                )}
               </div>
-            )}
-
-            {question.type === "checkbox" && (
-              <div className={styles.options}>
-                {question.options.map(option => (
-                  <label
-                    key={option}
-                    className={styles.option}
-                  >
-                    <input
-                      className={styles.checkbox}
-                      type="checkbox"
-                      name={String(question.id)}
-                      value={option}
-                      checked={isCheckboxAnswered(questionIndex, option)}
-                      onChange={(e) => handelInputChange(e, questionIndex)}
-                    />
-                    <span className={styles.optionText}>
-                      {option}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
-
+            ))
+          )}
         <button
           type="button"
           className={styles.submit}

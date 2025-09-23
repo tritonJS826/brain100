@@ -15,10 +15,10 @@ const SOCIALS = [
 const COL_1 = {
   title: "Разделы",
   links: [
-    {label: "Состояния и эмоции", to: PATHS.MENTAL_HEALTH.LIST},
-    {label: "Диагностика", to: PATHS.DIAGNOSTICS.LIST},
-    {label: "Здоровье и энергия", to: PATHS.BIOHACKING.LIST},
-    {label: "Поддержка", to: PATHS.SUPPORT.LIST},
+    {label: "О нас", to: PATHS.ABOUT},
+    {label: "Состояния", to: PATHS.MENTAL_HEALTH.LIST},
+    {label: "Тесты", to: PATHS.DIAGNOSTICS.LIST},
+    {label: "Поддержка", to: PATHS.SOS.LIST},
   ],
 } as const;
 
@@ -35,10 +35,10 @@ const COL_2 = {
 const COL_3 = {
   title: "Ресурсы",
   links: [
-    {label: "Каталог статей", to: PATHS.MENTAL_HEALTH.LIST},
+    {label: "Каталог статей о состояних", to: PATHS.MENTAL_HEALTH.LIST},
     {label: "Каталог тестов", to: PATHS.DIAGNOSTICS.LIST},
-    {label: "Биохакинг: статьи", to: PATHS.BIOHACKING.LIST},
-    {label: "Поддержка и SOS", to: PATHS.SUPPORT.LIST},
+    {label: "Каталог статей на тему биохакинга", to: PATHS.BIOHACKING.LIST},
+    {label: "Поддержка и SOS", to: PATHS.SOS.LIST},
   ],
 } as const;
 
