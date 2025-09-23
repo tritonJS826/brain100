@@ -2,6 +2,7 @@
 from app.db import db
 from app.schemas.user import UserCreate
 
+
 class UserRepository:
     @staticmethod
     async def create(user: UserCreate):
