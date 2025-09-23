@@ -2,6 +2,10 @@ from typing import Literal
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field, field_validator
 
+import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))  # br-general-python/
+ENV_PATH = os.path.join(BASE_DIR, ".env")
 
 class Settings(BaseSettings):
     server_port: int = Field(..., alias="SERVER_PORT")
@@ -14,7 +18,7 @@ class Settings(BaseSettings):
     postgres_db: str = Field(..., alias="POSTGRES_DB")
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=ENV_PATH,
         env_file_encoding="utf-8",
         case_sensitive=True,
     )
