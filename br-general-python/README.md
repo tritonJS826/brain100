@@ -36,7 +36,7 @@ cp .env.local.example .env
 prisma generate
 ```
 
-### 5. Start dockerized posgresql, graphana, etc.
+### 5. Start dockerized postgresql and grafana
 
 ```bash
 cd ..
@@ -56,7 +56,7 @@ docker-compose -f local.docker-compose.yml up --build
 prisma migrate deploy
 ```
 
-### 7. Start locally the FastAPI server with connection to the dockerized posgresql
+### 7. Start locally the FastAPI server with connection to the dockerized postgresql and grafana
 
 ```bash
 cd br-general-python
