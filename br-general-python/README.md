@@ -69,6 +69,6 @@ setup PyCharm run configuration to run 'app.locally' directly
 
 ### Endpoints
 
-Health Check → http://localhost:8000/api
+Health Check → http://localhost:8000/api/health
 
 Interactive API Docs → http://localhost:8000/docs
