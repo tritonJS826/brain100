@@ -23,6 +23,7 @@ pip install --upgrade pip
 ```
 
 ### 3. Set up environment variables
+
 Copy .env.local.example to .env and update values:
 
 ```bash
@@ -35,24 +36,39 @@ cp .env.local.example .env
 prisma generate
 ```
 
-### 5. Run database migrations (if needed)
+### 5. Start dockerized postgresql and grafana
+
+```bash
+cd ..
+docker compose -f local.docker-compose.yml up --build
+```
+
+or (if your system uses the old CLI):
+
+```bash
+cd ..
+docker-compose -f local.docker-compose.yml up --build
+```
+
+### 6. (If needed) Run database migrations
 
 ```bash
 prisma migrate deploy
 ```
 
-### 6. Start the development server
+### 7. Start locally the FastAPI server with connection to the dockerized postgresql and grafana
 
-Run in docker compose: 
 ```bash
-docker-compose -f local.docker-compose.yml up --build
+cd br-general-python
+python -m app.runlocally
 ```
+
 or
-```bash
-docker compose -f local.docker-compose.yml up --build
-```
+setup PyCharm run configuration to run 'app.locally' directly
+![README_pycharm_setup.png](README_pycharm_setup.png)
 
+### Endpoints
 
-The API will be available at: http://localhost:8000/api/health
+Health Check → http://localhost:8000/api/health
 
-Interactive Docs: http://localhost:8000/docs
+Interactive API Docs → http://localhost:8000/docs

@@ -1,9 +1,10 @@
 from fastapi import APIRouter
-from app.db import db
+from app.schemas.user import UserCreate, UserResponse
+from app.services.user_service import UserService
 
-router = APIRouter()
+router = APIRouter(prefix="/users", tags=["users"])
 
-@router.get("/")
-async def list_users():
-    users = await db.user.find_many()
-    return {"users": users}
+
+@router.post("/", response_model=UserResponse)
+async def create_user(user: UserCreate):
+    return await UserService.create_user(user)
