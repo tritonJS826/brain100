@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useState} from "react";
+import {useState} from "react";
 import {Link} from "react-router-dom";
 import {buildPath} from "src/routes/routes";
 import styles from "src/pages/diagnosticsListPage/DiagnosticsListPage.module.scss";
@@ -12,19 +12,10 @@ const mockTests = [
 
 export function DiagnosticsList() {
   const [query, setQuery] = useState("");
-  const [tests, setTests] = useState(mockTests);
+  const tests = mockTests; // Нет смысла хранить в state/эффектах
 
-  useEffect(() => {
-    setTests(mockTests);
-  }, []);
-
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-
-    return q
-      ? tests.filter(t => t.name.toLowerCase().includes(q))
-      : tests;
-  }, [tests, query]);
+  const q = query.trim().toLowerCase();
+  const filtered = q ? tests.filter(t => t.name.toLowerCase().includes(q)) : tests;
 
   return (
     <section
@@ -56,7 +47,6 @@ export function DiagnosticsList() {
             aria-live="polite"
           >
             Найдено:
-            {" "}
             {filtered.length}
           </span>
         </div>
@@ -81,7 +71,6 @@ export function DiagnosticsList() {
                 Короткое описание теста — что измеряет и когда полезен.
               </p>
             </div>
-
             <div className={styles.cardFoot}>
               <Link
                 to={buildPath.diagnosticsDetail(test.id)}

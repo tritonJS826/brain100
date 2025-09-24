@@ -1,4 +1,4 @@
-import type {Test} from "src/pages/tests/tests.types";
+import type {Test} from "src/services/tests.api";
 
 /*
   / @Key - test id,

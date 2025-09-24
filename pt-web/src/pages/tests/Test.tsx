@@ -1,7 +1,6 @@
 import {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
-import {loadTestById as loadTest} from "src/pages/tests/tests.api";
-import type {Test} from "src/pages/tests/tests.types";
+import {loadTestById as loadTest, type Test} from "src/services/tests.api";
 import styles from "src/pages/tests/Test.module.scss";
 
 async function loadData<T extends object>(

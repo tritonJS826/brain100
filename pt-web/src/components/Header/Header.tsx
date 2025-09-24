@@ -1,5 +1,6 @@
-import React, {useEffect, useMemo, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Link, NavLink} from "react-router-dom";
+import {UserRound} from "lucide-react";
 import logo from "src/assets/BRAIN100.webp";
 import {
   BIOHACKING_ARTICLES,
@@ -127,9 +128,13 @@ export function Header() {
     setDrawerActive(prev => (prev === key ? null : key));
   };
 
-  const dockContent = useMemo(() => {
-    return {
-      mental: (
+  const renderDockContent = (key: MenuKey | null) => {
+    if (!key || !DROPDOWN_KEYS.includes(key)) {
+      return null;
+    }
+
+    if (key === "mental") {
+      return (
         <div className={styles.dockCols}>
           <div className={styles.dockCol}>
             <NavLink
@@ -165,8 +170,11 @@ export function Header() {
             </NavLink>
           </div>
         </div>
-      ),
-      diagnostics: (
+      );
+    }
+
+    if (key === "diagnostics") {
+      return (
         <div className={styles.dockCols}>
           <div className={styles.dockCol}>
             <NavLink
@@ -202,53 +210,54 @@ export function Header() {
             </NavLink>
           </div>
         </div>
-      ),
-      biohacking: (
-        <div className={styles.dockCols}>
-          <div className={styles.dockCol}>
-            <NavLink
-              to={PATHS.BIOHACKING.LIST}
-              className={styles.dockHeading}
-              onClick={closeDock}
-            >
-              Все статьи
-            </NavLink>
-            <ul className={styles.dockList}>
-              <li>
-                <ul className={styles.dockListRow}>
-                  {BIOHACKING_ARTICLES.map(a => (
-                    <li key={a.id}>
-                      <NavLink
-                        to={buildPath.biohackingDetail(a.id)}
-                        className={styles.dockLink}
-                        onClick={closeDock}
-                      >
-                        {a.label}
-                      </NavLink>
-                    </li>
-                  ))}
-                </ul>
-              </li>
-            </ul>
-            <NavLink
-              to={PATHS.DIAGNOSTICS.LIST}
-              className={styles.dockCta}
-              onClick={closeDock}
-            >
-              Пройти тест
-            </NavLink>
-          </div>
-        </div>
-      ),
-    } as Record<MenuKey, React.ReactNode>;
-  }, []);
+      );
+    }
 
-  const ORDER: MenuKey[] = ["about", "mental", "diagnostics", "biohacking", "profile"];
-  const MAP = [...LEFT_LINKS, ...RIGHT_LINKS].reduce<Record<string, {key: MenuKey; label: string}>>(
+    return (
+      <div className={styles.dockCols}>
+        <div className={styles.dockCol}>
+          <NavLink
+            to={PATHS.BIOHACKING.LIST}
+            className={styles.dockHeading}
+            onClick={closeDock}
+          >
+            Все статьи
+          </NavLink>
+          <ul className={styles.dockList}>
+            <li>
+              <ul className={styles.dockListRow}>
+                {BIOHACKING_ARTICLES.map(a => (
+                  <li key={a.id}>
+                    <NavLink
+                      to={buildPath.biohackingDetail(a.id)}
+                      className={styles.dockLink}
+                      onClick={closeDock}
+                    >
+                      {a.label}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          </ul>
+          <NavLink
+            to={PATHS.DIAGNOSTICS.LIST}
+            className={styles.dockCta}
+            onClick={closeDock}
+          >
+            Пройти тест
+          </NavLink>
+        </div>
+      </div>
+    );
+  };
+
+  const ORDER: MenuKey[] = ["about", "mental", "diagnostics", "biohacking"];
+  const MAP = [...LEFT_LINKS, ...RIGHT_LINKS].reduce<Record<string, { key: MenuKey; label: string }>>(
     (acc, item) => ({...acc, [item.key]: item}),
     {},
   );
-  const ALL_LINKS = ORDER.map(k => MAP[k]).filter((v): v is {key: MenuKey; label: string} => Boolean(v));
+  const ALL_LINKS = ORDER.map(k => MAP[k]).filter((v): v is { key: MenuKey; label: string } => Boolean(v));
 
   return (
     <header
@@ -294,9 +303,7 @@ export function Header() {
                         ? PATHS.MENTAL_HEALTH.LIST
                         : item.key === "diagnostics"
                           ? PATHS.DIAGNOSTICS.LIST
-                          : item.key === "biohacking"
-                            ? PATHS.BIOHACKING.LIST
-                            : PATHS.PROFILE.PAGE
+                          : PATHS.BIOHACKING.LIST
                   }
                   className={({isActive}) => `${styles.navLink} ${isActive ? styles.active : ""}`}
                 >
@@ -308,6 +315,14 @@ export function Header() {
         </div>
 
         <div className={styles.actions}>
+          <NavLink
+            to={PATHS.PROFILE.PAGE}
+            className={styles.iconBtn}
+            aria-label="Личный кабинет"
+          >
+            <UserRound className={styles.icon} />
+          </NavLink>
+
           <div className={styles.langWrap}>
             <button
               ref={langBtnRef}
@@ -384,7 +399,7 @@ export function Header() {
         aria-hidden={!dockOpen}
       >
         <div className={styles.dockInner}>
-          {activeKey && DROPDOWN_KEYS.includes(activeKey) ? dockContent[activeKey] : null}
+          {renderDockContent(activeKey)}
         </div>
       </aside>
 
@@ -461,6 +476,7 @@ export function Header() {
                             </NavLink>
                           </li>
                         ))}
+
                         {item.key === "diagnostics" && DIAGNOSTIC_TESTS.map(t => (
                           <li key={t.id}>
                             <NavLink
@@ -472,6 +488,7 @@ export function Header() {
                             </NavLink>
                           </li>
                         ))}
+
                         {item.key === "biohacking" && BIOHACKING_ARTICLES.map(a => (
                           <li key={a.id}>
                             <NavLink
@@ -488,7 +505,7 @@ export function Header() {
                   )
                   : (
                     <NavLink
-                      to={item.key === "about" ? PATHS.ABOUT : PATHS.PROFILE.PAGE}
+                      to={item.key === "about" ? PATHS.ABOUT : PATHS.HOME}
                       className={styles.drawerLink}
                       onClick={() => setDrawerOpen(false)}
                     >
@@ -541,6 +558,14 @@ export function Header() {
               </button>
             </div>
           </div>
+
+          <NavLink
+            to={PATHS.PROFILE.PAGE}
+            className={styles.langBtn}
+            onClick={() => setDrawerOpen(false)}
+          >
+            <UserRound className={styles.icon} />
+          </NavLink>
 
           <NavLink
             to={PATHS.SOS.LIST}
