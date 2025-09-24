@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 import {DictionaryKey} from "src/dictionary/dictionaryLoader";
 import {useDictionary} from "src/dictionary/useDictionary";
 import {buildPath} from "src/routes/routes";
-import styles from "src/pages/testsListPage/testsListPage.module.scss";
+import styles from "src/pages/testsListPage/TestsListPage.module.scss";
 
 export function TestsList() {
   const dict = useDictionary(DictionaryKey.TESTS);
