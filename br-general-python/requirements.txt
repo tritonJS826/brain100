@@ -1,1 +1,2 @@
 --requirement requirements/production.txt
+itsdangerous>=2.1
