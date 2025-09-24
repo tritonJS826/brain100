@@ -24,6 +24,16 @@ class Settings(BaseSettings):
         case_sensitive=True,
     )
 
+    GOOGLE_CLIENT_ID: str
+    GOOGLE_CLIENT_SECRET: str
+    GOOGLE_REDIRECT_URI: str = "http://localhost:8000/auth/google/callback"
+    SECRET_KEY: str
+    OAUTH_GOOGLE_SCOPE: str = "openid email profile"
+
+    class Config:
+        env_file = ".env"
+        env_file_encoding = "utf-8"
+
     @property
     def flag_reload(self) -> bool:
         """Return true if in development mode, else false."""
