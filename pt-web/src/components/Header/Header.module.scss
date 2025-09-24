@@ -122,8 +122,9 @@
   color: vars.$color-primary;
   width: 40px;
   height: 40px;
-  display: grid;
-  place-items: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border-radius: vars.$radius-pill;
   padding: 0;
   cursor: pointer;
@@ -158,9 +159,11 @@
   font-weight: 700;
   font-size: vars.$font-sm;
   border-radius: vars.$radius-pill;
-  padding: 12px 10px;
+  height: 40px;
+  width: 40px;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   cursor: pointer;
   transition:
     background-color vars.$transition-fast,
@@ -645,8 +648,8 @@
   }
 
   .langBtn {
-    margin: 35px;
-    padding: 10px 14px;
+    height: 40px;
+    padding: 0 12px;
   }
 
   .iconBtn {
@@ -685,7 +688,8 @@
   }
 
   .langBtn {
-    padding: 6px 10px;
+    height: 34px;
+    padding: 0 10px;
   }
 
   .iconBtn {

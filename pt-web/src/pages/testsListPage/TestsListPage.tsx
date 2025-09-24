@@ -1,21 +1,24 @@
 import {useState} from "react";
 import {Link} from "react-router-dom";
+import {DictionaryKey} from "src/dictionary/dictionaryLoader";
+import {useDictionary} from "src/dictionary/useDictionary";
 import {buildPath} from "src/routes/routes";
-import styles from "src/pages/diagnosticsListPage/DiagnosticsListPage.module.scss";
+import styles from "src/pages/testsListPage/TestsListPage.module.scss";
 
-const mockTests = [
-  {id: "1", name: "Тест на наличие депрессии"},
-  {id: "2", name: "Тест о настроении"},
-  {id: "3", name: "Тест на уровень тревожности"},
-  {id: "4", name: "Стресс-профиль"},
-];
-
-export function DiagnosticsList() {
+export function TestsList() {
+  const dict = useDictionary(DictionaryKey.TESTS);
   const [query, setQuery] = useState("");
-  const tests = mockTests; // Нет смысла хранить в state/эффектах
+
+  if (!dict) {
+    return (
+      <div>
+        Loading...
+      </div>
+    );
+  }
 
   const q = query.trim().toLowerCase();
-  const filtered = q ? tests.filter(t => t.name.toLowerCase().includes(q)) : tests;
+  const filtered = q ? dict.items.filter(t => t.name.toLowerCase().includes(q)) : dict.items;
 
   return (
     <section
@@ -27,26 +30,29 @@ export function DiagnosticsList() {
           id="diag-title"
           className={styles.title}
         >
-          Каталог тестов
+          {dict.title}
         </h1>
+
         <p className={styles.subtitle}>
-          Подборка валидированных опросников для самопроверки. Результаты не являются диагнозом.
+          {dict.subtitle}
         </p>
 
         <div className={styles.toolbar}>
           <input
             type="search"
             value={query}
-            placeholder="Поиск теста…"
+            placeholder={dict.searchPlaceholder}
             onChange={(e) => setQuery(e.target.value)}
             className={styles.search}
-            aria-label="Поиск по названию теста"
+            aria-label={dict.ariaSearchLabel}
           />
+
           <span
             className={styles.count}
             aria-live="polite"
           >
-            Найдено:
+            {dict.foundPrefix}
+            {" "}
             {filtered.length}
           </span>
         </div>
@@ -68,15 +74,16 @@ export function DiagnosticsList() {
                 </Link>
               </h2>
               <p className={styles.cardText}>
-                Короткое описание теста — что измеряет и когда полезен.
+                {/* можно тоже хранить в словаре как descriptionById, если нужно */}
               </p>
             </div>
+
             <div className={styles.cardFoot}>
               <Link
                 to={buildPath.diagnosticsDetail(test.id)}
                 className={styles.cardBtn}
               >
-                Пройти тест
+                {dict.cta}
               </Link>
             </div>
           </li>
@@ -86,7 +93,7 @@ export function DiagnosticsList() {
       {filtered.length === 0 && (
         <div className={styles.empty}>
           <p>
-            Ничего не найдено. Попробуйте другой запрос.
+            {dict.empty}
           </p>
         </div>
       )}

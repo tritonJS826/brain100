@@ -1,4 +1,3 @@
-// Src/hooks/useDictionary.ts
 import {useEffect, useState} from "react";
 import {useAtomValue} from "jotai";
 import {languageAtomWithPersistence} from "src/dictionary/dictionaryAtom";

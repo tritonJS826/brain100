@@ -1,13 +1,16 @@
 import {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
+import {useAtomValue} from "jotai";
+import {languageAtomWithPersistence} from "src/dictionary/dictionaryAtom";
+import {DictionaryKey} from "src/dictionary/dictionaryLoader";
+import {useDictionary} from "src/dictionary/useDictionary";
 import {loadTestById as loadTest, type Test} from "src/services/tests.api";
-import styles from "src/pages/tests/Test.module.scss";
+import styles from "src/pages/testsListPage/tests/Test.module.scss";
 
 async function loadData<T extends object>(
   callback: () => Promise<T>,
   callbackHandler: (param: T) => void) {
   const response = await callback();
-
   callbackHandler(response);
 }
 
@@ -20,7 +23,6 @@ type Answer = string | string[]
 // TODO: move to utils
 function toggleStringInArray(arr: string[], string: string) {
   const index = arr.indexOf(string); // Check if the string exists in the array
-
   const NOT_EXISTENT_INDEX = -1;
   if (index === NOT_EXISTENT_INDEX) {
     // If the string is not found, add it to the array
@@ -34,6 +36,10 @@ function toggleStringInArray(arr: string[], string: string) {
 export function Test() {
   const [userAnswers, setUserAnswers] = useState<Answer[]>([]);
   const [test, setTest] = useState<Test>();
+  const dictionary = useDictionary(DictionaryKey.COMMON);
+
+  const lang = useAtomValue(languageAtomWithPersistence);
+  const {id} = useParams<{ id: string }>();
 
   const setupStates = (testFromBack: Test) => {
     const emptyAnswers: Answer[] = testFromBack.questions.map(question => {
@@ -45,23 +51,33 @@ export function Test() {
         case "text":
           return "";
       }
-
     });
 
     setUserAnswers(emptyAnswers);
     setTest(testFromBack);
   };
 
-  const {id} = useParams<{ id: string }>();
   useEffect(() => {
     if (!id) {
       return;
     }
+
+    setTest(undefined);
+    setUserAnswers([]);
+
     loadData(
-      () => loadTest(id),
+      () => loadTest(id, lang),
       setupStates,
     );
-  }, [id]);
+  }, [id, lang]);
+
+  if (!dictionary) {
+    return (
+      <div>
+        Loading...
+      </div>
+    );
+  }
 
   const handleSubmit = () => {
 
@@ -88,7 +104,6 @@ export function Test() {
         if (!Array.isArray(answer)) {
           throw new Error("Wrong type! Should be array");
         }
-
         const newAnswerArray = toggleStringInArray(Array.from(answer), newAnswer);
 
         return newAnswerArray;
@@ -207,7 +222,7 @@ export function Test() {
           className={styles.submit}
           onClick={handleSubmit}
         >
-          Отправить
+          {dictionary.buttons.submitTest}
         </button>
       </form>
     </>

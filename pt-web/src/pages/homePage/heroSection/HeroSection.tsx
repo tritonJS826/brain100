@@ -5,18 +5,22 @@ import {useDictionary} from "src/dictionary/useDictionary";
 import {PATHS} from "src/routes/routes";
 import styles from "src/pages/homePage/heroSection/HeroSection.module.scss";
 
-const CTA_TEXT = "Начать";
-const SELECT_PLACEHOLDER = "Я бы хотел(а)…";
 const OPTION_TEST_VALUE = "test";
 const OPTION_STATES_VALUE = "states";
 const OPTION_CONTACT_VALUE = "contact";
-const OPTION_TEST_LABEL = "Пройти тест";
-const OPTION_STATES_LABEL = "Узнать о состояниях";
-const OPTION_CONTACT_LABEL = "Связаться со специалистом";
 
 export function Hero() {
   const [intent, setIntent] = useState<string>("");
   const navigate = useNavigate();
+  const dictionary = useDictionary(DictionaryKey.HOME);
+
+  if (!dictionary) {
+    return (
+      <div>
+        Loading...
+      </div>
+    );
+  }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
@@ -29,16 +33,6 @@ export function Hero() {
     }
   };
 
-  const dictionary = useDictionary(DictionaryKey.HOME);
-
-  if (!dictionary) {
-    return (
-      <div>
-        Loading...
-      </div>
-    );
-  }
-
   return (
     <section
       className={styles.hero}
@@ -47,7 +41,7 @@ export function Hero() {
       <div className={styles.heroInner}>
         <div className={styles.heroContent}>
           <p className={styles.heroEyebrow}>
-            Онлайн-поддержка психического здоровья
+            {dictionary.hero.eyebrow}
           </p>
 
           <h1 className={styles.heroTitle}>
@@ -77,7 +71,7 @@ export function Hero() {
               htmlFor="hero-intent"
               className={styles.heroLabel}
             >
-              С чего начнём сегодня?
+              {dictionary.hero.form.label}
             </label>
 
             <div className={styles.heroControls}>
@@ -91,16 +85,16 @@ export function Hero() {
                   value=""
                   disabled
                 >
-                  {SELECT_PLACEHOLDER}
+                  {dictionary.hero.form.placeholder}
                 </option>
                 <option value={OPTION_TEST_VALUE}>
-                  {OPTION_TEST_LABEL}
+                  {dictionary.hero.form.options.test}
                 </option>
                 <option value={OPTION_STATES_VALUE}>
-                  {OPTION_STATES_LABEL}
+                  {dictionary.hero.form.options.states}
                 </option>
                 <option value={OPTION_CONTACT_VALUE}>
-                  {OPTION_CONTACT_LABEL}
+                  {dictionary.hero.form.options.contact}
                 </option>
               </select>
 
@@ -108,7 +102,7 @@ export function Hero() {
                 type="submit"
                 className={styles.heroButton}
               >
-                {CTA_TEXT}
+                {dictionary.hero.form.cta}
               </button>
             </div>
           </form>
