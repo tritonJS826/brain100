@@ -12,7 +12,8 @@
     "lint-fix": "eslint . --fix",
     "prisma:migrate": "prisma migrate dev",
     "prisma:generate": "prisma generate",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "swag": "echo 'Skipping swagger generation'"
   },
   "keywords": [],
   "author": "",
