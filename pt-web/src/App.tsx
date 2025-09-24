@@ -1,9 +1,9 @@
 import {Route, Routes} from "react-router-dom";
 import {Footer} from "src/components/Footer/Footer";
 import {Header} from "src/components/Header/Header";
-import {DiagnosticsList} from "src/pages/diagnosticsListPage/DiagnosticsListPage";
 import {HomePage} from "src/pages/homePage/Homepage";
-import {Test} from "src/pages/tests/Test";
+import {Test} from "src/pages/testsListPage/tests/Test";
+import {TestsList} from "src/pages/testsListPage/TestsListPage";
 import {PATHS} from "src/routes/routes";
 
 const About = () => (<div>
@@ -62,7 +62,7 @@ export function App() {
 
         <Route
           path={PATHS.DIAGNOSTICS.LIST}
-          element={<DiagnosticsList />}
+          element={<TestsList />}
         />
         <Route
           path={PATHS.DIAGNOSTICS.DETAIL}

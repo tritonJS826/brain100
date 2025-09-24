@@ -1,16 +1,16 @@
 import React, {useEffect, useRef, useState} from "react";
 import {Link, NavLink} from "react-router-dom";
+import {useAtom} from "jotai";
 import {UserRound} from "lucide-react";
 import logo from "src/assets/BRAIN100.webp";
 import {
-  BIOHACKING_ARTICLES,
-  DIAGNOSTIC_TESTS,
-  LEFT_LINKS,
-  MENTAL_ITEMS,
+  LEFT_LINK_KEYS,
   MenuKey,
-  RIGHT_LINKS,
   TIMEOUT_MENU_MS,
 } from "src/components/Header/header.config";
+import {languageAtomWithPersistence} from "src/dictionary/dictionaryAtom";
+import {DictionaryKey} from "src/dictionary/dictionaryLoader";
+import {useDictionary} from "src/dictionary/useDictionary";
 import {buildPath, PATHS} from "src/routes/routes";
 import styles from "src/components/Header/Header.module.scss";
 
@@ -18,17 +18,21 @@ const HALF = 2;
 const DROPDOWN_KEYS: MenuKey[] = ["mental", "diagnostics", "biohacking"];
 
 export function Header() {
+  const dictionary = useDictionary(DictionaryKey.COMMON);
+  const [lang, setLang] = useAtom(languageAtomWithPersistence);
+
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [dockOpen, setDockOpen] = useState(false);
   const [activeKey, setActiveKey] = useState<MenuKey | null>(null);
   const [drawerActive, setDrawerActive] = useState<MenuKey | null>(null);
-
-  const [lang, setLang] = useState<"ru" | "en">("ru");
-  const [langOpen, setLangOpen] = useState(false);
+  const [langOpenTop, setLangOpenTop] = useState(false);
+  const [langOpenDrawer, setLangOpenDrawer] = useState(false);
 
   const navRef = useRef<HTMLElement | null>(null);
-  const langBtnRef = useRef<HTMLButtonElement | null>(null);
-  const langMenuRef = useRef<HTMLDivElement | null>(null);
+  const langBtnTopRef = useRef<HTMLButtonElement | null>(null);
+  const langMenuTopRef = useRef<HTMLDivElement | null>(null);
+  const langBtnDrawerRef = useRef<HTMLButtonElement | null>(null);
+  const langMenuDrawerRef = useRef<HTMLDivElement | null>(null);
   const closeTimerRef = useRef<number | null>(null);
 
   const closeDock = () => {
@@ -78,7 +82,8 @@ export function Header() {
       if (e.key === "Escape") {
         setDrawerOpen(false);
         closeDock();
-        setLangOpen(false);
+        setLangOpenTop(false);
+        setLangOpenDrawer(false);
       }
     };
     document.addEventListener("keydown", onKey);
@@ -107,26 +112,72 @@ export function Header() {
   }, [dockOpen]);
 
   useEffect(() => {
-    if (!langOpen) {
+    if (!langOpenTop) {
       return;
     }
     const onDown = (e: MouseEvent) => {
       const t = e.target as Node;
       if (
-        langMenuRef.current && !langMenuRef.current.contains(t) &&
-        langBtnRef.current && !langBtnRef.current.contains(t)
+        langMenuTopRef.current && !langMenuTopRef.current.contains(t) &&
+        langBtnTopRef.current && !langBtnTopRef.current.contains(t)
       ) {
-        setLangOpen(false);
+        setLangOpenTop(false);
       }
     };
     document.addEventListener("mousedown", onDown);
 
     return () => document.removeEventListener("mousedown", onDown);
-  }, [langOpen]);
+  }, [langOpenTop]);
+
+  useEffect(() => {
+    if (!langOpenDrawer) {
+      return;
+    }
+    const onDown = (e: MouseEvent) => {
+      const t = e.target as Node;
+      if (
+        langMenuDrawerRef.current && !langMenuDrawerRef.current.contains(t) &&
+        langBtnDrawerRef.current && !langBtnDrawerRef.current.contains(t)
+      ) {
+        setLangOpenDrawer(false);
+      }
+    };
+    document.addEventListener("mousedown", onDown);
+
+    return () => document.removeEventListener("mousedown", onDown);
+  }, [langOpenDrawer]);
 
   const toggleDrawerSection = (key: MenuKey) => {
     setDrawerActive(prev => (prev === key ? null : key));
   };
+
+  if (!dictionary) {
+    return (
+      <div>
+        Loading...
+      </div>
+    );
+  }
+
+  const labelByKey = (key: MenuKey) => {
+    switch (key) {
+      case "about": return dictionary.nav.about;
+      case "mental": return dictionary.nav.mental;
+      case "diagnostics": return dictionary.nav.diagnostics;
+      case "biohacking": return dictionary.nav.biohacking;
+      default: return "";
+    }
+  };
+
+  const mentalItems = Object.entries(dictionary.nav.menus.mental).map(
+    ([id, label]) => ({id, label}),
+  );
+  const diagnosticItems = Object.entries(dictionary.nav.menus.diagnostics).map(
+    ([id, label]) => ({id, label}),
+  );
+  const biohackingItems = Object.entries(dictionary.nav.menus.biohacking).map(
+    ([id, label]) => ({id, label}),
+  );
 
   const renderDockContent = (key: MenuKey | null) => {
     if (!key || !DROPDOWN_KEYS.includes(key)) {
@@ -142,12 +193,12 @@ export function Header() {
               className={styles.dockHeading}
               onClick={closeDock}
             >
-              Все состояния
+              {dictionary.dock.allStates}
             </NavLink>
             <ul className={styles.dockList}>
               <li>
                 <ul className={styles.dockListRow}>
-                  {MENTAL_ITEMS.map(i => (
+                  {mentalItems.map(i => (
                     <li key={i.id}>
                       <NavLink
                         to={buildPath.mentalHealthDetail(i.id)}
@@ -166,7 +217,7 @@ export function Header() {
               className={styles.dockCta}
               onClick={closeDock}
             >
-              Пройти тест
+              {dictionary.dock.takeTest}
             </NavLink>
           </div>
         </div>
@@ -182,12 +233,12 @@ export function Header() {
               className={styles.dockHeading}
               onClick={closeDock}
             >
-              Все тесты
+              {dictionary.dock.allTests}
             </NavLink>
             <ul className={styles.dockList}>
               <li>
                 <ul className={styles.dockListRow}>
-                  {DIAGNOSTIC_TESTS.map(test => (
+                  {diagnosticItems.map(test => (
                     <li key={test.id}>
                       <NavLink
                         to={buildPath.diagnosticsDetail(test.id)}
@@ -206,7 +257,7 @@ export function Header() {
               className={styles.dockCta}
               onClick={closeDock}
             >
-              Пройти тест
+              {dictionary.dock.takeTest}
             </NavLink>
           </div>
         </div>
@@ -221,12 +272,12 @@ export function Header() {
             className={styles.dockHeading}
             onClick={closeDock}
           >
-            Все статьи
+            {dictionary.dock.allArticles}
           </NavLink>
           <ul className={styles.dockList}>
             <li>
               <ul className={styles.dockListRow}>
-                {BIOHACKING_ARTICLES.map(a => (
+                {biohackingItems.map(a => (
                   <li key={a.id}>
                     <NavLink
                       to={buildPath.biohackingDetail(a.id)}
@@ -245,19 +296,12 @@ export function Header() {
             className={styles.dockCta}
             onClick={closeDock}
           >
-            Пройти тест
+            {dictionary.dock.takeTest}
           </NavLink>
         </div>
       </div>
     );
   };
-
-  const ORDER: MenuKey[] = ["about", "mental", "diagnostics", "biohacking"];
-  const MAP = [...LEFT_LINKS, ...RIGHT_LINKS].reduce<Record<string, { key: MenuKey; label: string }>>(
-    (acc, item) => ({...acc, [item.key]: item}),
-    {},
-  );
-  const ALL_LINKS = ORDER.map(k => MAP[k]).filter((v): v is { key: MenuKey; label: string } => Boolean(v));
 
   return (
     <header
@@ -267,12 +311,12 @@ export function Header() {
       <nav
         ref={navRef}
         className={styles.nav}
-        aria-label="Primary navigation"
+        aria-label={dictionary.nav.ariaPrimary}
       >
         <Link
           to={PATHS.HOME}
           className={styles.logo}
-          aria-label="Home"
+          aria-label={dictionary.nav.ariaHome}
         >
           <img
             src={logo}
@@ -287,27 +331,27 @@ export function Header() {
             aria-label="Main sections"
             onMouseLeave={scheduleClose}
           >
-            {ALL_LINKS.map(item => (
+            {LEFT_LINK_KEYS.map(key => (
               <li
-                key={item.key}
+                key={key}
                 className={styles.navItem}
-                onMouseEnter={(e) => onEnterNav(item.key, e.currentTarget as HTMLElement)}
-                aria-haspopup={DROPDOWN_KEYS.includes(item.key)}
-                aria-expanded={dockOpen && activeKey === item.key}
+                onMouseEnter={(e) => onEnterNav(key, e.currentTarget as HTMLElement)}
+                aria-haspopup={DROPDOWN_KEYS.includes(key)}
+                aria-expanded={dockOpen && activeKey === key}
               >
                 <NavLink
                   to={
-                    item.key === "about"
+                    key === "about"
                       ? PATHS.ABOUT
-                      : item.key === "mental"
+                      : key === "mental"
                         ? PATHS.MENTAL_HEALTH.LIST
-                        : item.key === "diagnostics"
+                        : key === "diagnostics"
                           ? PATHS.DIAGNOSTICS.LIST
                           : PATHS.BIOHACKING.LIST
                   }
                   className={({isActive}) => `${styles.navLink} ${isActive ? styles.active : ""}`}
                 >
-                  {item.label}
+                  {labelByKey(key)}
                 </NavLink>
               </li>
             ))}
@@ -318,27 +362,27 @@ export function Header() {
           <NavLink
             to={PATHS.PROFILE.PAGE}
             className={styles.iconBtn}
-            aria-label="Личный кабинет"
+            aria-label={dictionary.nav.profile}
           >
             <UserRound className={styles.icon} />
           </NavLink>
 
           <div className={styles.langWrap}>
             <button
-              ref={langBtnRef}
+              ref={langBtnTopRef}
               type="button"
               className={styles.langBtn}
-              onClick={() => setLangOpen(v => !v)}
+              onClick={() => setLangOpenTop(v => !v)}
               aria-haspopup="true"
-              aria-expanded={langOpen}
-              aria-controls="lang-menu"
+              aria-expanded={langOpenTop}
+              aria-controls="lang-menu-top"
             >
-              {lang.toUpperCase()}
+              {(lang === "ru" ? dictionary.lang.ru : dictionary.lang.en)}
             </button>
             <div
-              id="lang-menu"
-              ref={langMenuRef}
-              className={`${styles.langMenu} ${langOpen ? styles.langMenuOpen : ""}`}
+              id="lang-menu-top"
+              ref={langMenuTopRef}
+              className={`${styles.langMenu} ${langOpenTop ? styles.langMenuOpen : ""}`}
               role="menu"
             >
               <button
@@ -347,10 +391,10 @@ export function Header() {
                 role="menuitem"
                 aria-current={lang === "ru"}
                 onClick={() => {
-                  setLang("ru"); setLangOpen(false);
+                  setLang("ru"); setLangOpenTop(false);
                 }}
               >
-                RU
+                {dictionary.lang.ru}
               </button>
               <button
                 type="button"
@@ -358,10 +402,10 @@ export function Header() {
                 role="menuitem"
                 aria-current={lang === "en"}
                 onClick={() => {
-                  setLang("en"); setLangOpen(false);
+                  setLang("en"); setLangOpenTop(false);
                 }}
               >
-                EN
+                {dictionary.lang.en}
               </button>
             </div>
           </div>
@@ -370,7 +414,7 @@ export function Header() {
             <button
               type="button"
               className={`${styles.burger} ${drawerOpen ? styles.burgerOpen : ""}`}
-              aria-label="Open menu"
+              aria-label={dictionary.nav.ariaOpenMenu}
               aria-expanded={drawerOpen}
               aria-controls="mobile-drawer"
               onClick={() => setDrawerOpen(v => !v)}
@@ -387,7 +431,7 @@ export function Header() {
             to={PATHS.SOS.LIST}
             className={styles.cta}
           >
-            SOS
+            {dictionary.nav.sos}
           </NavLink>
         </div>
       </nav>
@@ -414,13 +458,13 @@ export function Header() {
         className={`${styles.drawer} ${drawerOpen ? styles.drawerOpen : ""}`}
         role="dialog"
         aria-modal="true"
-        aria-label="Menu"
+        aria-label={dictionary.nav.ariaMenu}
       >
         <div className={styles.drawerHead}>
           <Link
             to={PATHS.HOME}
             className={styles.logo}
-            aria-label="Home"
+            aria-label={dictionary.nav.ariaHome}
             onClick={() => setDrawerOpen(false)}
           >
             <img
@@ -432,7 +476,7 @@ export function Header() {
           <button
             type="button"
             className={styles.close}
-            aria-label="Close menu"
+            aria-label={dictionary.nav.ariaCloseMenu}
             onClick={() => setDrawerOpen(false)}
           >
             ×
@@ -441,31 +485,31 @@ export function Header() {
 
         <div className={styles.drawerScroll}>
           <ul className={styles.drawerList}>
-            {ALL_LINKS.map(item => (
-              <li key={item.key}>
-                {DROPDOWN_KEYS.includes(item.key)
+            {LEFT_LINK_KEYS.map(key => (
+              <li key={key}>
+                {DROPDOWN_KEYS.includes(key)
                   ? (
                     <>
                       <button
                         type="button"
-                        className={`${styles.drawerLink} ${styles.drawerLinkBtn} ${drawerActive === item.key
+                        className={`${styles.drawerLink} ${styles.drawerLinkBtn} ${drawerActive === key
                           ? styles.drawerLinkOpen
                           : ""}`}
-                        onClick={() => toggleDrawerSection(item.key)}
-                        aria-expanded={drawerActive === item.key}
+                        onClick={() => toggleDrawerSection(key)}
+                        aria-expanded={drawerActive === key}
                       >
-                        {item.label}
+                        {labelByKey(key)}
                         <span
-                          className={`${styles.chevron} ${drawerActive === item.key ? styles.chevronDown : styles.chevronRight}`}
+                          className={`${styles.chevron} ${drawerActive === key ? styles.chevronDown : styles.chevronRight}`}
                           aria-hidden
                         />
                       </button>
 
                       <ul
-                        className={`${styles.submenu} ${drawerActive === item.key ? styles.submenuOpen : ""}`}
-                        style={{maxHeight: drawerActive === item.key ? "520px" : "0px"}}
+                        className={`${styles.submenu} ${drawerActive === key ? styles.submenuOpen : ""}`}
+                        style={{maxHeight: drawerActive === key ? "520px" : "0px"}}
                       >
-                        {item.key === "mental" && MENTAL_ITEMS.map(i => (
+                        {key === "mental" && mentalItems.map(i => (
                           <li key={i.id}>
                             <NavLink
                               to={buildPath.mentalHealthDetail(i.id)}
@@ -477,7 +521,7 @@ export function Header() {
                           </li>
                         ))}
 
-                        {item.key === "diagnostics" && DIAGNOSTIC_TESTS.map(t => (
+                        {key === "diagnostics" && diagnosticItems.map(t => (
                           <li key={t.id}>
                             <NavLink
                               to={buildPath.diagnosticsDetail(t.id)}
@@ -489,7 +533,7 @@ export function Header() {
                           </li>
                         ))}
 
-                        {item.key === "biohacking" && BIOHACKING_ARTICLES.map(a => (
+                        {key === "biohacking" && biohackingItems.map(a => (
                           <li key={a.id}>
                             <NavLink
                               to={buildPath.biohackingDetail(a.id)}
@@ -505,11 +549,11 @@ export function Header() {
                   )
                   : (
                     <NavLink
-                      to={item.key === "about" ? PATHS.ABOUT : PATHS.HOME}
+                      to={key === "about" ? PATHS.ABOUT : PATHS.HOME}
                       className={styles.drawerLink}
                       onClick={() => setDrawerOpen(false)}
                     >
-                      {item.label}
+                      {labelByKey(key)}
                     </NavLink>
                   )}
               </li>
@@ -520,18 +564,20 @@ export function Header() {
         <div className={styles.drawerFoot}>
           <div className={styles.langWrap}>
             <button
+              ref={langBtnDrawerRef}
               type="button"
               className={styles.langBtn}
-              onClick={() => setLangOpen(v => !v)}
+              onClick={() => setLangOpenDrawer(v => !v)}
               aria-haspopup="true"
-              aria-expanded={langOpen}
+              aria-expanded={langOpenDrawer}
               aria-controls="lang-menu-drawer"
             >
-              {lang.toUpperCase()}
+              {(lang === "ru" ? dictionary.lang.ru : dictionary.lang.en)}
             </button>
             <div
               id="lang-menu-drawer"
-              className={`${styles.langMenu} ${styles.langMenuSide} ${langOpen ? styles.langMenuOpen : ""}`}
+              ref={langMenuDrawerRef}
+              className={`${styles.langMenu} ${styles.langMenuSide} ${langOpenDrawer ? styles.langMenuOpen : ""}`}
               role="menu"
             >
               <button
@@ -540,10 +586,10 @@ export function Header() {
                 role="menuitem"
                 aria-current={lang === "ru"}
                 onClick={() => {
-                  setLang("ru"); setLangOpen(false);
+                  setLang("ru"); setLangOpenDrawer(false);
                 }}
               >
-                RU
+                {dictionary.lang.ru}
               </button>
               <button
                 type="button"
@@ -551,10 +597,10 @@ export function Header() {
                 role="menuitem"
                 aria-current={lang === "en"}
                 onClick={() => {
-                  setLang("en"); setLangOpen(false);
+                  setLang("en"); setLangOpenDrawer(false);
                 }}
               >
-                EN
+                {dictionary.lang.en}
               </button>
             </div>
           </div>
@@ -563,6 +609,7 @@ export function Header() {
             to={PATHS.PROFILE.PAGE}
             className={styles.langBtn}
             onClick={() => setDrawerOpen(false)}
+            aria-label={dictionary.nav.profile}
           >
             <UserRound className={styles.icon} />
           </NavLink>
@@ -572,7 +619,7 @@ export function Header() {
             className={styles.cta}
             onClick={() => setDrawerOpen(false)}
           >
-            SOS
+            {dictionary.nav.sos}
           </NavLink>
         </div>
       </aside>
