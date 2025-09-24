@@ -3,7 +3,6 @@ import {Link, NavLink} from "react-router-dom";
 import logo from "src/assets/BRAIN100.webp";
 import {
   BIOHACKING_ARTICLES,
-  CTA_TEXT,
   DIAGNOSTIC_TESTS,
   LEFT_LINKS,
   MENTAL_ITEMS,
@@ -14,10 +13,21 @@ import {
 import {buildPath, PATHS} from "src/routes/routes";
 import styles from "src/components/Header/Header.module.scss";
 
+const HALF = 2;
+const DROPDOWN_KEYS: MenuKey[] = ["mental", "diagnostics", "biohacking"];
+
 export function Header() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [dockOpen, setDockOpen] = useState(false);
   const [activeKey, setActiveKey] = useState<MenuKey | null>(null);
+  const [drawerActive, setDrawerActive] = useState<MenuKey | null>(null);
+
+  const [lang, setLang] = useState<"ru" | "en">("ru");
+  const [langOpen, setLangOpen] = useState(false);
+
+  const navRef = useRef<HTMLElement | null>(null);
+  const langBtnRef = useRef<HTMLButtonElement | null>(null);
+  const langMenuRef = useRef<HTMLDivElement | null>(null);
   const closeTimerRef = useRef<number | null>(null);
 
   const closeDock = () => {
@@ -43,10 +53,22 @@ export function Header() {
     }, TIMEOUT_MENU_MS) as unknown as number;
   };
 
-  const onEnterNav = (key: MenuKey) => {
+  const onEnterNav = (key: MenuKey, el: HTMLElement | null) => {
+    if (!DROPDOWN_KEYS.includes(key)) {
+      closeDock();
+
+      return;
+    }
     cancelClose();
     setActiveKey(key);
     setDockOpen(true);
+
+    if (el && navRef.current) {
+      const navBox = navRef.current.getBoundingClientRect();
+      const elBox = el.getBoundingClientRect();
+      const centerX = (elBox.left - navBox.left) + (elBox.width / HALF);
+      navRef.current.style.setProperty("--dock-x", `${centerX}px`);
+    }
     scheduleClose();
   };
 
@@ -55,6 +77,7 @@ export function Header() {
       if (e.key === "Escape") {
         setDrawerOpen(false);
         closeDock();
+        setLangOpen(false);
       }
     };
     document.addEventListener("keydown", onKey);
@@ -82,28 +105,30 @@ export function Header() {
     };
   }, [dockOpen]);
 
+  useEffect(() => {
+    if (!langOpen) {
+      return;
+    }
+    const onDown = (e: MouseEvent) => {
+      const t = e.target as Node;
+      if (
+        langMenuRef.current && !langMenuRef.current.contains(t) &&
+        langBtnRef.current && !langBtnRef.current.contains(t)
+      ) {
+        setLangOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", onDown);
+
+    return () => document.removeEventListener("mousedown", onDown);
+  }, [langOpen]);
+
+  const toggleDrawerSection = (key: MenuKey) => {
+    setDrawerActive(prev => (prev === key ? null : key));
+  };
+
   const dockContent = useMemo(() => {
     return {
-      about: (
-        <div className={styles.dockCols}>
-          <div className={styles.dockCol}>
-            <NavLink
-              to={PATHS.ABOUT}
-              className={styles.dockHeading}
-              onClick={closeDock}
-            >
-              О проекте
-            </NavLink>
-            <NavLink
-              to={PATHS.SUPPORT.LIST}
-              className={styles.dockCta}
-              onClick={closeDock}
-            >
-              {CTA_TEXT}
-            </NavLink>
-          </div>
-        </div>
-      ),
       mental: (
         <div className={styles.dockCols}>
           <div className={styles.dockCol}>
@@ -115,18 +140,29 @@ export function Header() {
               Все состояния
             </NavLink>
             <ul className={styles.dockList}>
-              {MENTAL_ITEMS.map(i => (
-                <li key={i.slug}>
-                  <NavLink
-                    to={buildPath.mentalHealthDetail(i.slug)}
-                    className={styles.dockLink}
-                    onClick={closeDock}
-                  >
-                    {i.label}
-                  </NavLink>
-                </li>
-              ))}
+              <li>
+                <ul className={styles.dockListRow}>
+                  {MENTAL_ITEMS.map(i => (
+                    <li key={i.id}>
+                      <NavLink
+                        to={buildPath.mentalHealthDetail(i.id)}
+                        className={styles.dockLink}
+                        onClick={closeDock}
+                      >
+                        {i.label}
+                      </NavLink>
+                    </li>
+                  ))}
+                </ul>
+              </li>
             </ul>
+            <NavLink
+              to={PATHS.DIAGNOSTICS.LIST}
+              className={styles.dockCta}
+              onClick={closeDock}
+            >
+              Пройти тест
+            </NavLink>
           </div>
         </div>
       ),
@@ -140,20 +176,30 @@ export function Header() {
             >
               Все тесты
             </NavLink>
-
             <ul className={styles.dockList}>
-              {DIAGNOSTIC_TESTS.map(t => (
-                <li key={t.slug}>
-                  <NavLink
-                    to={t.slug === "phq-9" ? buildPath.depressionTest() : buildPath.diagnosticsDetail(t.slug)}
-                    className={styles.dockLink}
-                    onClick={closeDock}
-                  >
-                    {t.label}
-                  </NavLink>
-                </li>
-              ))}
+              <li>
+                <ul className={styles.dockListRow}>
+                  {DIAGNOSTIC_TESTS.map(test => (
+                    <li key={test.id}>
+                      <NavLink
+                        to={buildPath.diagnosticsDetail(test.id)}
+                        className={styles.dockLink}
+                        onClick={closeDock}
+                      >
+                        {test.label}
+                      </NavLink>
+                    </li>
+                  ))}
+                </ul>
+              </li>
             </ul>
+            <NavLink
+              to={PATHS.DIAGNOSTICS.LIST}
+              className={styles.dockCta}
+              onClick={closeDock}
+            >
+              Пройти тест
+            </NavLink>
           </div>
         </div>
       ),
@@ -168,57 +214,28 @@ export function Header() {
               Все статьи
             </NavLink>
             <ul className={styles.dockList}>
-              {BIOHACKING_ARTICLES.map(a => (
-                <li key={a.slug}>
-                  <NavLink
-                    to={buildPath.biohackingDetail(a.slug)}
-                    className={styles.dockLink}
-                    onClick={closeDock}
-                  >
-                    {a.label}
-                  </NavLink>
-                </li>
-              ))}
+              <li>
+                <ul className={styles.dockListRow}>
+                  {BIOHACKING_ARTICLES.map(a => (
+                    <li key={a.id}>
+                      <NavLink
+                        to={buildPath.biohackingDetail(a.id)}
+                        className={styles.dockLink}
+                        onClick={closeDock}
+                      >
+                        {a.label}
+                      </NavLink>
+                    </li>
+                  ))}
+                </ul>
+              </li>
             </ul>
-          </div>
-        </div>
-      ),
-      specialists: (
-        <div className={styles.dockCols}>
-          <div className={styles.dockCol}>
             <NavLink
-              to={PATHS.SPECIALISTS.LIST}
-              className={styles.dockHeading}
-              onClick={closeDock}
-            >
-              Список специалистов
-            </NavLink>
-            <NavLink
-              to={PATHS.SUPPORT.LIST}
+              to={PATHS.DIAGNOSTICS.LIST}
               className={styles.dockCta}
               onClick={closeDock}
             >
-              {CTA_TEXT}
-            </NavLink>
-          </div>
-        </div>
-      ),
-      contacts: (
-        <div className={styles.dockCols}>
-          <div className={styles.dockCol}>
-            <NavLink
-              to={PATHS.CONTACTS}
-              className={styles.dockHeading}
-              onClick={closeDock}
-            >
-              Контакты
-            </NavLink>
-            <NavLink
-              to={PATHS.SUPPORT.LIST}
-              className={styles.dockCta}
-              onClick={closeDock}
-            >
-              {CTA_TEXT}
+              Пройти тест
             </NavLink>
           </div>
         </div>
@@ -226,7 +243,12 @@ export function Header() {
     } as Record<MenuKey, React.ReactNode>;
   }, []);
 
-  const ALL_LINKS = [...LEFT_LINKS, ...RIGHT_LINKS];
+  const ORDER: MenuKey[] = ["about", "mental", "diagnostics", "biohacking", "profile"];
+  const MAP = [...LEFT_LINKS, ...RIGHT_LINKS].reduce<Record<string, {key: MenuKey; label: string}>>(
+    (acc, item) => ({...acc, [item.key]: item}),
+    {},
+  );
+  const ALL_LINKS = ORDER.map(k => MAP[k]).filter((v): v is {key: MenuKey; label: string} => Boolean(v));
 
   return (
     <header
@@ -234,6 +256,7 @@ export function Header() {
       role="banner"
     >
       <nav
+        ref={navRef}
         className={styles.nav}
         aria-label="Primary navigation"
       >
@@ -259,8 +282,8 @@ export function Header() {
               <li
                 key={item.key}
                 className={styles.navItem}
-                onMouseEnter={() => onEnterNav(item.key)}
-                aria-haspopup="true"
+                onMouseEnter={(e) => onEnterNav(item.key, e.currentTarget as HTMLElement)}
+                aria-haspopup={DROPDOWN_KEYS.includes(item.key)}
                 aria-expanded={dockOpen && activeKey === item.key}
               >
                 <NavLink
@@ -273,9 +296,7 @@ export function Header() {
                           ? PATHS.DIAGNOSTICS.LIST
                           : item.key === "biohacking"
                             ? PATHS.BIOHACKING.LIST
-                            : item.key === "specialists"
-                              ? PATHS.SPECIALISTS.LIST
-                              : PATHS.CONTACTS
+                            : PATHS.PROFILE.PAGE
                   }
                   className={({isActive}) => `${styles.navLink} ${isActive ? styles.active : ""}`}
                 >
@@ -286,29 +307,74 @@ export function Header() {
           </ul>
         </div>
 
-        <NavLink
-          to={PATHS.SUPPORT.LIST}
-          className={styles.cta}
-        >
-          {CTA_TEXT}
-        </NavLink>
+        <div className={styles.actions}>
+          <div className={styles.langWrap}>
+            <button
+              ref={langBtnRef}
+              type="button"
+              className={styles.langBtn}
+              onClick={() => setLangOpen(v => !v)}
+              aria-haspopup="true"
+              aria-expanded={langOpen}
+              aria-controls="lang-menu"
+            >
+              {lang.toUpperCase()}
+            </button>
+            <div
+              id="lang-menu"
+              ref={langMenuRef}
+              className={`${styles.langMenu} ${langOpen ? styles.langMenuOpen : ""}`}
+              role="menu"
+            >
+              <button
+                type="button"
+                className={styles.langOption}
+                role="menuitem"
+                aria-current={lang === "ru"}
+                onClick={() => {
+                  setLang("ru"); setLangOpen(false);
+                }}
+              >
+                RU
+              </button>
+              <button
+                type="button"
+                className={styles.langOption}
+                role="menuitem"
+                aria-current={lang === "en"}
+                onClick={() => {
+                  setLang("en"); setLangOpen(false);
+                }}
+              >
+                EN
+              </button>
+            </div>
+          </div>
 
-        <li className={styles.burgerWrap}>
-          <button
-            type="button"
-            className={`${styles.burger} ${drawerOpen ? styles.burgerOpen : ""}`}
-            aria-label="Open menu"
-            aria-expanded={drawerOpen}
-            aria-controls="mobile-drawer"
-            onClick={() => setDrawerOpen(v => !v)}
+          <li className={styles.burgerWrap}>
+            <button
+              type="button"
+              className={`${styles.burger} ${drawerOpen ? styles.burgerOpen : ""}`}
+              aria-label="Open menu"
+              aria-expanded={drawerOpen}
+              aria-controls="mobile-drawer"
+              onClick={() => setDrawerOpen(v => !v)}
+            >
+              <span className={styles.burgerInner}>
+                <span />
+                <span />
+                <span />
+              </span>
+            </button>
+          </li>
+
+          <NavLink
+            to={PATHS.SOS.LIST}
+            className={styles.cta}
           >
-            <span className={styles.burgerInner}>
-              <span />
-              <span />
-              <span />
-            </span>
-          </button>
-        </li>
+            SOS
+          </NavLink>
+        </div>
       </nav>
 
       <aside
@@ -318,7 +384,7 @@ export function Header() {
         aria-hidden={!dockOpen}
       >
         <div className={styles.dockInner}>
-          {activeKey ? dockContent[activeKey] : null}
+          {activeKey && DROPDOWN_KEYS.includes(activeKey) ? dockContent[activeKey] : null}
         </div>
       </aside>
 
@@ -336,11 +402,18 @@ export function Header() {
         aria-label="Menu"
       >
         <div className={styles.drawerHead}>
-          <img
-            src={logo}
-            alt="BRAIN100"
-            className={styles.drawerLogo}
-          />
+          <Link
+            to={PATHS.HOME}
+            className={styles.logo}
+            aria-label="Home"
+            onClick={() => setDrawerOpen(false)}
+          >
+            <img
+              src={logo}
+              alt="BRAIN100"
+              className={styles.drawerLogo}
+            />
+          </Link>
           <button
             type="button"
             className={styles.close}
@@ -351,39 +424,130 @@ export function Header() {
           </button>
         </div>
 
-        <ul className={styles.drawerList}>
-          {ALL_LINKS.map(item => (
-            <li key={item.key}>
-              <NavLink
-                to={
-                  item.key === "about"
-                    ? PATHS.ABOUT
-                    : item.key === "mental"
-                      ? PATHS.MENTAL_HEALTH.LIST
-                      : item.key === "diagnostics"
-                        ? PATHS.DIAGNOSTICS.LIST
-                        : item.key === "biohacking"
-                          ? PATHS.BIOHACKING.LIST
-                          : item.key === "specialists"
-                            ? PATHS.SPECIALISTS.LIST
-                            : PATHS.CONTACTS
-                }
-                className={styles.drawerLink}
-                onClick={() => setDrawerOpen(false)}
-              >
-                {item.label}
-              </NavLink>
-            </li>
-          ))}
-        </ul>
+        <div className={styles.drawerScroll}>
+          <ul className={styles.drawerList}>
+            {ALL_LINKS.map(item => (
+              <li key={item.key}>
+                {DROPDOWN_KEYS.includes(item.key)
+                  ? (
+                    <>
+                      <button
+                        type="button"
+                        className={`${styles.drawerLink} ${styles.drawerLinkBtn} ${drawerActive === item.key
+                          ? styles.drawerLinkOpen
+                          : ""}`}
+                        onClick={() => toggleDrawerSection(item.key)}
+                        aria-expanded={drawerActive === item.key}
+                      >
+                        {item.label}
+                        <span
+                          className={`${styles.chevron} ${drawerActive === item.key ? styles.chevronDown : styles.chevronRight}`}
+                          aria-hidden
+                        />
+                      </button>
+
+                      <ul
+                        className={`${styles.submenu} ${drawerActive === item.key ? styles.submenuOpen : ""}`}
+                        style={{maxHeight: drawerActive === item.key ? "520px" : "0px"}}
+                      >
+                        {item.key === "mental" && MENTAL_ITEMS.map(i => (
+                          <li key={i.id}>
+                            <NavLink
+                              to={buildPath.mentalHealthDetail(i.id)}
+                              className={styles.submenuLink}
+                              onClick={() => setDrawerOpen(false)}
+                            >
+                              {i.label}
+                            </NavLink>
+                          </li>
+                        ))}
+                        {item.key === "diagnostics" && DIAGNOSTIC_TESTS.map(t => (
+                          <li key={t.id}>
+                            <NavLink
+                              to={buildPath.diagnosticsDetail(t.id)}
+                              className={styles.submenuLink}
+                              onClick={() => setDrawerOpen(false)}
+                            >
+                              {t.label}
+                            </NavLink>
+                          </li>
+                        ))}
+                        {item.key === "biohacking" && BIOHACKING_ARTICLES.map(a => (
+                          <li key={a.id}>
+                            <NavLink
+                              to={buildPath.biohackingDetail(a.id)}
+                              className={styles.submenuLink}
+                              onClick={() => setDrawerOpen(false)}
+                            >
+                              {a.label}
+                            </NavLink>
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  )
+                  : (
+                    <NavLink
+                      to={item.key === "about" ? PATHS.ABOUT : PATHS.PROFILE.PAGE}
+                      className={styles.drawerLink}
+                      onClick={() => setDrawerOpen(false)}
+                    >
+                      {item.label}
+                    </NavLink>
+                  )}
+              </li>
+            ))}
+          </ul>
+        </div>
 
         <div className={styles.drawerFoot}>
+          <div className={styles.langWrap}>
+            <button
+              type="button"
+              className={styles.langBtn}
+              onClick={() => setLangOpen(v => !v)}
+              aria-haspopup="true"
+              aria-expanded={langOpen}
+              aria-controls="lang-menu-drawer"
+            >
+              {lang.toUpperCase()}
+            </button>
+            <div
+              id="lang-menu-drawer"
+              className={`${styles.langMenu} ${styles.langMenuSide} ${langOpen ? styles.langMenuOpen : ""}`}
+              role="menu"
+            >
+              <button
+                type="button"
+                className={styles.langOption}
+                role="menuitem"
+                aria-current={lang === "ru"}
+                onClick={() => {
+                  setLang("ru"); setLangOpen(false);
+                }}
+              >
+                RU
+              </button>
+              <button
+                type="button"
+                className={styles.langOption}
+                role="menuitem"
+                aria-current={lang === "en"}
+                onClick={() => {
+                  setLang("en"); setLangOpen(false);
+                }}
+              >
+                EN
+              </button>
+            </div>
+          </div>
+
           <NavLink
-            to={PATHS.SUPPORT.LIST}
+            to={PATHS.SOS.LIST}
             className={styles.cta}
             onClick={() => setDrawerOpen(false)}
           >
-            {CTA_TEXT}
+            SOS
           </NavLink>
         </div>
       </aside>
