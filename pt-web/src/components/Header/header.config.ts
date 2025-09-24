@@ -2,8 +2,7 @@ export type MenuKey =
   | "about"
   | "mental"
   | "diagnostics"
-  | "biohacking"
-  | "profile";
+  | "biohacking";
 
 export const TIMEOUT_MENU_MS = 10000;
 export const CTA_TEXT = "SOS";
@@ -15,7 +14,7 @@ export const LEFT_LINKS: ReadonlyArray<{ key: MenuKey; label: string }> = [
   {key: "biohacking", label: "Биохакинг"},
 ];
 
-export const RIGHT_LINKS: ReadonlyArray<{ key: MenuKey; label: string }> = [{key: "profile", label: "Личный кабинет"}];
+export const RIGHT_LINKS: ReadonlyArray<{ key: never; label: never }> = [];
 
 export const MENTAL_ITEMS: ReadonlyArray<{ id: string; label: string }> = [
   {id: "panic-attack", label: "Паническая атака"},
