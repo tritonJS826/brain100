@@ -1,4 +1,5 @@
-// Src/dictionary/dictionaryLoader.ts
+import type {AboutDictEn} from "src/dictionary/dictionaries/about/about.en";
+import type {AboutDictRu} from "src/dictionary/dictionaries/about/about.ru";
 import type {CommonDictEn} from "src/dictionary/dictionaries/common/common.en";
 import type {CommonDictRu} from "src/dictionary/dictionaries/common/common.ru";
 import type {HomeDictEn} from "src/dictionary/dictionaries/home/home.en";
@@ -13,6 +14,7 @@ export enum DictionaryKey {
   COMMON = "common",
   TESTS = "tests",
   MENTAL = "mental",
+  ABOUT = "about",
 }
 
 export type Language = "en" | "ru";
@@ -22,6 +24,7 @@ export type DictionaryMap = {
   [DictionaryKey.COMMON]: CommonDictEn | CommonDictRu;
   [DictionaryKey.TESTS]: TestsDictEn | TestsDictRu;
   [DictionaryKey.MENTAL]: MentalDictEn | MentalDictRu;
+  [DictionaryKey.ABOUT]: AboutDictEn | AboutDictRu;
 };
 
 const loaders: {
@@ -44,6 +47,10 @@ const loaders: {
   [DictionaryKey.MENTAL]: {
     en: async () => (await import("./dictionaries/mental/mental.en")).mentalDict,
     ru: async () => (await import("./dictionaries/mental/mental.ru")).mentalDict,
+  },
+  [DictionaryKey.ABOUT]: {
+    en: async () => (await import("./dictionaries/about/about.en")).aboutDict,
+    ru: async () => (await import("./dictionaries/about/about.ru")).aboutDict,
   },
 };
 
