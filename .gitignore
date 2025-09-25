@@ -50,3 +50,9 @@ build/
 
 # Sass cache (if any)
 .sass-cache/
+
+# Ignore Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
