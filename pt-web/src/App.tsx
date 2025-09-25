@@ -1,6 +1,9 @@
 import {Route, Routes} from "react-router-dom";
 import {Footer} from "src/components/Footer/Footer";
 import {Header} from "src/components/Header/Header";
+import {ScrollToTop} from "src/components/ScrollToTop/ScrollToTop";
+import {ArticleDetailPage} from "src/pages/articlesListPage/articles/ArticleDetailPage";
+import {ArticlesListPage} from "src/pages/articlesListPage/ArticlesListPage";
 import {HomePage} from "src/pages/homePage/Homepage";
 import {Test} from "src/pages/testsListPage/tests/Test";
 import {TestsList} from "src/pages/testsListPage/TestsListPage";
@@ -8,12 +11,6 @@ import {PATHS} from "src/routes/routes";
 
 const About = () => (<div>
   О проекте
-</div>);
-const MentalList = () => (<div>
-  Каталог состояний
-</div>);
-const MentalDetail = () => (<div>
-  Статья о состоянии
 </div>);
 const BioList = () => (<div>
   Биохакинг
@@ -40,6 +37,7 @@ const Contacts = () => (<div>
 export function App() {
   return (
     <>
+      <ScrollToTop />
       <Header />
       <Routes>
         <Route
@@ -53,11 +51,11 @@ export function App() {
 
         <Route
           path={PATHS.MENTAL_HEALTH.LIST}
-          element={<MentalList />}
+          element={<ArticlesListPage />}
         />
         <Route
           path={PATHS.MENTAL_HEALTH.DETAIL}
-          element={<MentalDetail />}
+          element={<ArticleDetailPage />}
         />
 
         <Route
@@ -68,6 +66,7 @@ export function App() {
           path={PATHS.DIAGNOSTICS.DETAIL}
           element={<Test />}
         />
+
         <Route
           path={PATHS.BIOHACKING.LIST}
           element={<BioList />}
