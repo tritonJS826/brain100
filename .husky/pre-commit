@@ -78,8 +78,8 @@ runPythonIfChanged () {
 # generateSwaggerDocs
 # generateDbSchemas
 
-preventUncommitedChanges
 runPythonIfChanged
+preventUncommitedChanges
 
 # integration and module tests
 runWebappIfChanged
