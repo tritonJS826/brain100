@@ -1,7 +1,7 @@
 import uvicorn
 from app.settings import settings
 
-from app.main import app
+from app.main import app  # noqa: F401
 
 if __name__ == "__main__":
     port = settings.server_port

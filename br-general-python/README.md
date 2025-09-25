@@ -22,6 +22,12 @@ pip install -r requirements.txt
 pip install --upgrade pip
 ```
 
+### 2.1 Install dependencies for development environment:
+
+```bash
+pip install -r requirements/local.txt
+```
+
 ### 3. Set up environment variables
 
 Copy .env.local.example to .env and update values:
@@ -63,17 +69,40 @@ cd br-general-python
 python -m app.run
 ```
 
+### 8. (Optional) Run linters and formatters (ruff)
+
+#### 8.1 Only check
+
+```bash
+pnpm py:lint
+```
+
+#### 8.2 Auto-fix issues
+
+```bash
+pnpm py:lint:fix
+```
+
+#### 8.3 Apply formatting
+
+```bash
+pnpm py:format
+```
+
 ## API Endpoints
 
 By default the server runs on port defined in `.env` (`SERVER_PORT`, e.g. 8010).
 
 ### Health Check
+
 http://localhost:8010/br-general/health
 or
 http://localhost:8010/br-general/health/general
 
 ### Users CRUD
+
 http://localhost:8010/br-general/users
 
 ### Interactive API Docs
+
 http://localhost:8010/docs

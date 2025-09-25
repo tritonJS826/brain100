@@ -3,6 +3,7 @@
 
 WEBAPP="pt-web/"
 GENERAL="pt-general/"
+PYTHON_BACKEND="br-general-python/"
 
 # generateSwaggerDocs () {
 #   pnpm swag
@@ -47,9 +48,25 @@ runGeneralIfChanged () {
   fi
 }
 
+runPythonIfChanged () {
+  if git diff --name-only --cached | grep "$PYTHON_BACKEND"
+  then
+    echo "Python backend changed. Running Ruff auto-fix..."
+    # ruff check --fix → automatically fixes lint issues.
+    ruff check --fix $PYTHON_BACKEND
+    # ruff format → ensures code formatting.
+    ruff format $PYTHON_BACKEND
+    # re-add files after fixing
+    # git add $PYTHON_BACKEND → re-stages files after Ruff fixes them (so you commit the corrected code).
+    git add $PYTHON_BACKEND
+  fi
+}
+
+
 # generateSwaggerDocs
 # generateDbSchemas
 
+runPythonIfChanged
 preventUncommitedChanges
 
 # integration and module tests
