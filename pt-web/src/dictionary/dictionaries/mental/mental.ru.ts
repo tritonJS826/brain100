@@ -1,4 +1,3 @@
-// Src/dictionary/dictionaries/mental/mental.ru.ts
 export const mentalDict = {
   title: "Статьи",
   subtitle: "Короткие и понятные материалы о психическом здоровье",

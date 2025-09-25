@@ -2,37 +2,15 @@ import {Route, Routes} from "react-router-dom";
 import {Footer} from "src/components/Footer/Footer";
 import {Header} from "src/components/Header/Header";
 import {ScrollToTop} from "src/components/ScrollToTop/ScrollToTop";
+import {AboutPage} from "src/pages/aboutUsPage/AboutUsPage";
 import {ArticleDetailPage} from "src/pages/articlesListPage/articles/ArticleDetailPage";
 import {ArticlesListPage} from "src/pages/articlesListPage/ArticlesListPage";
+import {BiohackingDetailPage} from "src/pages/biohackingListPage/articles/BiohackingDetailPage";
+import {BiohackingListPage} from "src/pages/biohackingListPage/BiohackingListPage";
 import {HomePage} from "src/pages/homePage/Homepage";
 import {Test} from "src/pages/testsListPage/tests/Test";
 import {TestsList} from "src/pages/testsListPage/TestsListPage";
 import {PATHS} from "src/routes/routes";
-
-const About = () => (<div>
-  О проекте
-</div>);
-const BioList = () => (<div>
-  Биохакинг
-</div>);
-const BioDetail = () => (<div>
-  Статья по биохакингу
-</div>);
-const SupportList = () => (<div>
-  Поддержка
-</div>);
-const SupportDetail = () => (<div>
-  Поддержка — состояние
-</div>);
-const SpecialistsList = () => (<div>
-  Специалисты
-</div>);
-const Specialist = () => (<div>
-  Профиль специалиста
-</div>);
-const Contacts = () => (<div>
-  Контакты
-</div>);
 
 export function App() {
   return (
@@ -46,7 +24,7 @@ export function App() {
         />
         <Route
           path={PATHS.ABOUT}
-          element={<About />}
+          element={<AboutPage />}
         />
 
         <Route
@@ -69,34 +47,44 @@ export function App() {
 
         <Route
           path={PATHS.BIOHACKING.LIST}
-          element={<BioList />}
+          element={<BiohackingListPage />}
         />
         <Route
           path={PATHS.BIOHACKING.DETAIL}
-          element={<BioDetail />}
+          element={<BiohackingDetailPage />}
         />
 
         <Route
           path={PATHS.SOS.LIST}
-          element={<SupportList />}
+          element={<div>
+            Поддержка
+          </div>}
         />
         <Route
           path={PATHS.SOS.DETAIL}
-          element={<SupportDetail />}
+          element={<div>
+            Поддержка — состояние
+          </div>}
         />
 
         <Route
           path={PATHS.SPECIALISTS.LIST}
-          element={<SpecialistsList />}
+          element={<div>
+            Специалисты
+          </div>}
         />
         <Route
           path={PATHS.SPECIALISTS.DETAIL}
-          element={<Specialist />}
+          element={<div>
+            Профиль специалиста
+          </div>}
         />
 
         <Route
           path={PATHS.CONTACTS}
-          element={<Contacts />}
+          element={<div>
+            Контакты
+          </div>}
         />
       </Routes>
       <Footer />
