@@ -10,7 +10,7 @@ if __name__ == "__main__":
     print(f"Starting server on port {port} (reload={settings.flag_reload})...")
 
     uvicorn.run(
-        app="app.main:app",
+        "app.main:app",
         host="0.0.0.0",
         port=port,
         reload=settings.flag_reload,
