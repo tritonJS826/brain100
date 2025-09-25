@@ -25,7 +25,10 @@
     "start": "pnpm  --stream --recursive --workspace-concurrency 100 start",
     "build": "pnpm  --stream --recursive --workspace-concurrency 100 build",
     "serve": "pnpm --stream --recursive --workspace-concurrency 100 serve",
-    "install:all": "pnpm --stream --recursive --workspace-concurrency 100 installAll"
+    "install:all": "pnpm --stream --recursive --workspace-concurrency 100 installAll",
+    "py:lint": "ruff check br-general-python",
+    "py:lint:fix": "ruff check --fix br-general-python",
+    "py:format": "ruff format br-general-python --diff"
   },
   "keywords": [],
   "author": "",

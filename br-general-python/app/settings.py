@@ -7,9 +7,10 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))  # br-general-python/
 ENV_PATH = os.path.join(BASE_DIR, ".env")
 
+
 class Settings(BaseSettings):
     server_port: int = Field(..., alias="SERVER_PORT")
-    env_type: Literal['dev', 'prod'] = Field(default="dev", alias="ENV_TYPE")
+    env_type: Literal["dev", "prod"] = Field(default="dev", alias="ENV_TYPE")
     webapp_domain: str = Field(..., alias="WEBAPP_DOMAIN")
 
     database_url: str = Field(..., alias="DATABASE_URL")

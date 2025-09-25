@@ -69,6 +69,26 @@ cd br-general-python
 python -m app.run
 ```
 
+### 8. (Optional) Run linters and formatters (ruff)
+
+#### 8.1 Only check
+
+```bash
+pnpm py:lint
+```
+
+#### 8.2 Auto-fix issues
+
+```bash
+pnpm py:lint:fix
+```
+
+#### 8.3 Apply formatting
+
+```bash
+pnpm py:format
+```
+
 ## API Endpoints
 
 By default the server runs on port defined in `.env` (`SERVER_PORT`, e.g. 8010).
