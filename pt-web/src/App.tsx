@@ -1,50 +1,21 @@
 import {Route, Routes} from "react-router-dom";
 import {Footer} from "src/components/Footer/Footer";
 import {Header} from "src/components/Header/Header";
+import {ScrollToTop} from "src/components/ScrollToTop/ScrollToTop";
+import {AboutPage} from "src/pages/aboutUsPage/AboutUsPage";
+import {ArticleDetailPage} from "src/pages/articlesListPage/articles/ArticleDetailPage";
+import {ArticlesListPage} from "src/pages/articlesListPage/ArticlesListPage";
+import {BiohackingDetailPage} from "src/pages/biohackingListPage/articles/BiohackingDetailPage";
+import {BiohackingListPage} from "src/pages/biohackingListPage/BiohackingListPage";
 import {HomePage} from "src/pages/homePage/Homepage";
-import {Test} from "src/pages/tests/Test";
+import {Test} from "src/pages/testsListPage/tests/Test";
+import {TestsList} from "src/pages/testsListPage/TestsListPage";
 import {PATHS} from "src/routes/routes";
-
-const About = () => (<div>
-  О проекте
-</div>);
-const MentalList = () => (<div>
-  Каталог состояний
-</div>);
-const MentalDetail = () => (<div>
-  Статья о состоянии
-</div>);
-const DiagnosticsList = () => (<div>
-  Каталог тестов
-</div>);
-const DiagnosticsDetail = () => (<div>
-  Тест
-</div>);
-const BioList = () => (<div>
-  Биохакинг
-</div>);
-const BioDetail = () => (<div>
-  Статья по биохакингу
-</div>);
-const SupportList = () => (<div>
-  Поддержка
-</div>);
-const SupportDetail = () => (<div>
-  Поддержка — состояние
-</div>);
-const SpecialistsList = () => (<div>
-  Специалисты
-</div>);
-const Specialist = () => (<div>
-  Профиль специалиста
-</div>);
-const Contacts = () => (<div>
-  Контакты
-</div>);
 
 export function App() {
   return (
     <>
+      <ScrollToTop />
       <Header />
       <Routes>
         <Route
@@ -53,61 +24,67 @@ export function App() {
         />
         <Route
           path={PATHS.ABOUT}
-          element={<About />}
+          element={<AboutPage />}
         />
 
         <Route
           path={PATHS.MENTAL_HEALTH.LIST}
-          element={<MentalList />}
+          element={<ArticlesListPage />}
         />
         <Route
           path={PATHS.MENTAL_HEALTH.DETAIL}
-          element={<MentalDetail />}
+          element={<ArticleDetailPage />}
         />
 
         <Route
           path={PATHS.DIAGNOSTICS.LIST}
-          element={<DiagnosticsList />}
+          element={<TestsList />}
         />
         <Route
           path={PATHS.DIAGNOSTICS.DETAIL}
-          element={<DiagnosticsDetail />}
-        />
-        <Route
-          path={PATHS.DIAGNOSTICS.DEPRESSION_TEST}
           element={<Test />}
         />
 
         <Route
           path={PATHS.BIOHACKING.LIST}
-          element={<BioList />}
+          element={<BiohackingListPage />}
         />
         <Route
           path={PATHS.BIOHACKING.DETAIL}
-          element={<BioDetail />}
+          element={<BiohackingDetailPage />}
         />
 
         <Route
-          path={PATHS.SUPPORT.LIST}
-          element={<SupportList />}
+          path={PATHS.SOS.LIST}
+          element={<div>
+            Поддержка
+          </div>}
         />
         <Route
-          path={PATHS.SUPPORT.DETAIL}
-          element={<SupportDetail />}
+          path={PATHS.SOS.DETAIL}
+          element={<div>
+            Поддержка — состояние
+          </div>}
         />
 
         <Route
           path={PATHS.SPECIALISTS.LIST}
-          element={<SpecialistsList />}
+          element={<div>
+            Специалисты
+          </div>}
         />
         <Route
           path={PATHS.SPECIALISTS.DETAIL}
-          element={<Specialist />}
+          element={<div>
+            Профиль специалиста
+          </div>}
         />
 
         <Route
           path={PATHS.CONTACTS}
-          element={<Contacts />}
+          element={<div>
+            Контакты
+          </div>}
         />
       </Routes>
       <Footer />

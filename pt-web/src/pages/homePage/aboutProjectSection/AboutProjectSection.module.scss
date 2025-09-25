@@ -24,7 +24,7 @@
 }
 
 .eyebrow {
-  margin: 0;
+  margin: 100px 0 0;
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -119,7 +119,15 @@
     transform 0.6s ease;
 }
 
-.section.visible {
+.services {
+  opacity: 0;
+  transform: translateY(40px);
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s ease;
+}
+
+.visible {
   opacity: 1;
   transform: translateY(0);
 }

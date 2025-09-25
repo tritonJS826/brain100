@@ -1,0 +1,139 @@
+@use "src/styles/variables" as vars;
+
+.wrap {
+  max-width: vars.$container-max;
+  margin-inline: auto;
+  padding: vars.$section-py vars.$container-gap;
+  display: grid;
+  gap: vars.$section-py;
+  background: #fff;
+}
+
+.head {
+  display: grid;
+  gap: 10px;
+}
+
+.title {
+  margin: 0;
+  color: vars.$color-primary;
+  font-weight: 800;
+  font-size: vars.$title-size;
+  line-height: 1.08;
+}
+
+.subtitle {
+  margin: 0;
+  color: vars.$color-text;
+  font-size: vars.$subtitle-size;
+  line-height: 1.5;
+}
+
+.toolbar {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.search {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid vars.$color-border;
+  border-radius: vars.$radius-md;
+  font-size: 16px;
+  color: vars.$color-primary;
+}
+
+.grid {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: clamp(16px, 2.4vw, 24px);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.card {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  border: 1px solid vars.$color-border;
+  border-radius: vars.$radius;
+  overflow: hidden;
+  background: #fff;
+}
+
+.coverLink {
+  display: block;
+}
+
+.cover {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.cardBody {
+  display: grid;
+  gap: 8px;
+  padding: 14px 14px 0;
+}
+
+.cardTitle {
+  margin: 0;
+  font-weight: 800;
+  font-size: vars.$card-title-size;
+  color: vars.$color-primary;
+}
+
+.cardLink {
+  color: inherit;
+  text-decoration: none;
+}
+
+.cardSubtitle {
+  margin: 0;
+  color: vars.$color-text;
+  font-size: 14px;
+}
+
+.cardText {
+  margin: 0;
+  color: vars.$color-text;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.cardFoot {
+  padding: 14px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn {
+  display: inline-grid;
+  place-items: center;
+  min-height: 40px;
+  padding: 10px 16px;
+  border-radius: vars.$radius-pill;
+  background: vars.$color-cta-bg;
+  color: vars.$color-primary;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.empty {
+  padding: 24px;
+  text-align: center;
+  color: vars.$color-text;
+  border: 1px dashed vars.$color-border;
+  border-radius: vars.$radius;
+}
+
+@media (width <= 820px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

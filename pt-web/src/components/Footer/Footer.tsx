@@ -1,9 +1,9 @@
 import {Link} from "react-router-dom";
 import {Facebook, Instagram, Linkedin, Twitter} from "lucide-react";
+import {DictionaryKey} from "src/dictionary/dictionaryLoader";
+import {useDictionary} from "src/dictionary/useDictionary";
 import {PATHS} from "src/routes/routes";
 import styles from "src/components/Footer/Footer.module.scss";
-
-const COPYRIGHT = "© 2025 BRAIN100. Бережная поддержка психического здоровья.";
 
 const SOCIALS = [
   {href: "https://twitter.com", Icon: Twitter, label: "Twitter"},
@@ -12,41 +12,46 @@ const SOCIALS = [
   {href: "https://linkedin.com", Icon: Linkedin, label: "LinkedIn"},
 ] as const;
 
-const COL_1 = {
-  title: "Разделы",
-  links: [
-    {label: "Состояния и эмоции", to: PATHS.MENTAL_HEALTH.LIST},
-    {label: "Диагностика", to: PATHS.DIAGNOSTICS.LIST},
-    {label: "Здоровье и энергия", to: PATHS.BIOHACKING.LIST},
-    {label: "Поддержка", to: PATHS.SUPPORT.LIST},
-  ],
-} as const;
-
-const COL_2 = {
-  title: "О проекте",
-  links: [
-    {label: "Описание проекта", to: PATHS.ABOUT},
-    {label: "Специалисты", to: PATHS.SPECIALISTS.LIST},
-    {label: "Контакты", to: PATHS.CONTACTS},
-    {label: "Личный кабинет", to: PATHS.PROFILE.PAGE},
-  ],
-} as const;
-
-const COL_3 = {
-  title: "Ресурсы",
-  links: [
-    {label: "Каталог статей", to: PATHS.MENTAL_HEALTH.LIST},
-    {label: "Каталог тестов", to: PATHS.DIAGNOSTICS.LIST},
-    {label: "Биохакинг: статьи", to: PATHS.BIOHACKING.LIST},
-    {label: "Поддержка и SOS", to: PATHS.SUPPORT.LIST},
-  ],
-} as const;
-
 export function Footer() {
+  const dict = useDictionary(DictionaryKey.COMMON);
+  if (!dict) {
+    return null;
+  }
+
+  const COL_1 = {
+    title: dict.footer.sectionsTitle,
+    links: [
+      {label: dict.footer.links.about, to: PATHS.ABOUT},
+      {label: dict.footer.links.states, to: PATHS.MENTAL_HEALTH.LIST},
+      {label: dict.footer.links.tests, to: PATHS.DIAGNOSTICS.LIST},
+      {label: dict.footer.links.support, to: PATHS.SOS.LIST},
+    ],
+  } as const;
+
+  const COL_2 = {
+    title: dict.footer.aboutTitle,
+    links: [
+      {label: dict.footer.links.projectInfo, to: PATHS.ABOUT},
+      {label: dict.footer.links.specialists, to: PATHS.SPECIALISTS.LIST},
+      {label: dict.footer.links.contacts, to: PATHS.CONTACTS},
+      {label: dict.footer.links.profile, to: PATHS.PROFILE.PAGE},
+    ],
+  } as const;
+
+  const COL_3 = {
+    title: dict.footer.resourcesTitle,
+    links: [
+      {label: dict.footer.links.statesCatalog, to: PATHS.MENTAL_HEALTH.LIST},
+      {label: dict.footer.links.testsCatalog, to: PATHS.DIAGNOSTICS.LIST},
+      {label: dict.footer.links.biohackingCatalog, to: PATHS.BIOHACKING.LIST},
+      {label: dict.footer.links.supportAndSos, to: PATHS.SOS.LIST},
+    ],
+  } as const;
+
   return (
     <footer
       className={styles.footer}
-      aria-label="Подвал сайта"
+      aria-label={dict.footer.ariaFooter}
     >
       <div className={styles.grid}>
         {[COL_1, COL_2, COL_3].map((col) => (
@@ -82,7 +87,7 @@ export function Footer() {
       <div className={styles.bottom}>
         <ul
           className={styles.socials}
-          aria-label="Социальные сети"
+          aria-label={dict.footer.socialsAria}
         >
           {SOCIALS.map((s) => (
             <li
@@ -103,7 +108,7 @@ export function Footer() {
         </ul>
 
         <p className={styles.copy}>
-          {COPYRIGHT}
+          {dict.footer.copyright}
         </p>
       </div>
     </footer>

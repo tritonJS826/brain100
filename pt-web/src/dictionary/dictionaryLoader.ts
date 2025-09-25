@@ -1,15 +1,34 @@
+import {AboutDictEn} from "src/dictionary/dictionaries/about/about.en";
+import {AboutDictRu} from "src/dictionary/dictionaries/about/about.ru";
+import type {BiohackingDictEn} from "src/dictionary/dictionaries/biohacking/biohacking.en";
+import type {BiohackingDictRu} from "src/dictionary/dictionaries/biohacking/biohacking.ru";
+import type {CommonDictEn} from "src/dictionary/dictionaries/common/common.en";
+import type {CommonDictRu} from "src/dictionary/dictionaries/common/common.ru";
 import type {HomeDictEn} from "src/dictionary/dictionaries/home/home.en";
 import type {HomeDictRu} from "src/dictionary/dictionaries/home/home.ru";
+import type {MentalDictEn} from "src/dictionary/dictionaries/mental/mental.en";
+import type {MentalDictRu} from "src/dictionary/dictionaries/mental/mental.ru";
+import type {TestsDictEn} from "src/dictionary/dictionaries/tests/tests.en";
+import type {TestsDictRu} from "src/dictionary/dictionaries/tests/tests.ru";
 
 export enum DictionaryKey {
   HOME = "home",
+  COMMON = "common",
+  TESTS = "tests",
+  MENTAL = "mental",
+  BIOHACKING = "biohacking",
+  ABOUT = "about",
 }
 
 export type Language = "en" | "ru";
 
 export type DictionaryMap = {
   [DictionaryKey.HOME]: HomeDictEn | HomeDictRu;
-  // Add more dict types here
+  [DictionaryKey.COMMON]: CommonDictEn | CommonDictRu;
+  [DictionaryKey.TESTS]: TestsDictEn | TestsDictRu;
+  [DictionaryKey.MENTAL]: MentalDictEn | MentalDictRu;
+  [DictionaryKey.BIOHACKING]: BiohackingDictEn | BiohackingDictRu;
+  [DictionaryKey.ABOUT]: AboutDictEn | AboutDictRu;
 };
 
 const loaders: {
@@ -20,6 +39,26 @@ const loaders: {
   [DictionaryKey.HOME]: {
     en: async () => (await import("./dictionaries/home/home.en")).home,
     ru: async () => (await import("./dictionaries/home/home.ru")).home,
+  },
+  [DictionaryKey.COMMON]: {
+    en: async () => (await import("./dictionaries/common/common.en")).common,
+    ru: async () => (await import("./dictionaries/common/common.ru")).common,
+  },
+  [DictionaryKey.TESTS]: {
+    en: async () => (await import("./dictionaries/tests/tests.en")).testsDict,
+    ru: async () => (await import("./dictionaries/tests/tests.ru")).testsDict,
+  },
+  [DictionaryKey.MENTAL]: {
+    en: async () => (await import("./dictionaries/mental/mental.en")).mentalDict,
+    ru: async () => (await import("./dictionaries/mental/mental.ru")).mentalDict,
+  },
+  [DictionaryKey.BIOHACKING]: {
+    en: async () => (await import("./dictionaries/biohacking/biohacking.en")).biohackingDict,
+    ru: async () => (await import("./dictionaries/biohacking/biohacking.ru")).biohackingDict,
+  },
+  [DictionaryKey.ABOUT]: {
+    en: async () => (await import("./dictionaries/about/about.en")).aboutDict,
+    ru: async () => (await import("./dictionaries/about/about.ru")).aboutDict,
   },
 };
 
