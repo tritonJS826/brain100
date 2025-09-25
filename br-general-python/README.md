@@ -22,6 +22,12 @@ pip install -r requirements.txt
 pip install --upgrade pip
 ```
 
+### 2.1 Install dependencies for development environment:
+
+```bash
+pip install -r requirements/local.txt
+```
+
 ### 3. Set up environment variables
 
 Copy .env.local.example to .env and update values:
@@ -68,12 +74,15 @@ python -m app.run
 By default the server runs on port defined in `.env` (`SERVER_PORT`, e.g. 8010).
 
 ### Health Check
+
 http://localhost:8010/br-general/health
 or
 http://localhost:8010/br-general/health/general
 
 ### Users CRUD
+
 http://localhost:8010/br-general/users
 
 ### Interactive API Docs
+
 http://localhost:8010/docs
