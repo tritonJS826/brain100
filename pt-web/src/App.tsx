@@ -5,6 +5,8 @@ import {ScrollToTop} from "src/components/ScrollToTop/ScrollToTop";
 import {AboutPage} from "src/pages/aboutUsPage/AboutUsPage";
 import {ArticleDetailPage} from "src/pages/articlesListPage/articles/ArticleDetailPage";
 import {ArticlesListPage} from "src/pages/articlesListPage/ArticlesListPage";
+import {BiohackingDetailPage} from "src/pages/biohackingListPage/articles/BiohackingDetailPage";
+import {BiohackingListPage} from "src/pages/biohackingListPage/BiohackingListPage";
 import {HomePage} from "src/pages/homePage/Homepage";
 import {Test} from "src/pages/testsListPage/tests/Test";
 import {TestsList} from "src/pages/testsListPage/TestsListPage";
@@ -45,15 +47,11 @@ export function App() {
 
         <Route
           path={PATHS.BIOHACKING.LIST}
-          element={<div>
-            Биохакинг
-          </div>}
+          element={<BiohackingListPage />}
         />
         <Route
           path={PATHS.BIOHACKING.DETAIL}
-          element={<div>
-            Статья по биохакингу
-          </div>}
+          element={<BiohackingDetailPage />}
         />
 
         <Route

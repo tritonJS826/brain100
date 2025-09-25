@@ -1,11 +1,11 @@
 @use "src/styles/variables" as vars;
 
 .wrap {
-  max-width: 1220px;
+  max-width: vars.$container-max;
   margin-inline: auto;
-  padding: clamp(20px, 4vw, 40px) vars.$container-gap;
+  padding: vars.$section-py vars.$container-gap;
   display: grid;
-  gap: clamp(20px, 4vw, 40px);
+  gap: vars.$section-py;
   background: #fff;
 }
 
@@ -30,14 +30,14 @@
   margin: 0;
   color: vars.$color-primary;
   font-weight: 800;
-  font-size: clamp(28px, 4.6vw, 48px);
+  font-size: vars.$title-size;
   line-height: 1.08;
 }
 
 .subtitle {
   margin: 0;
   color: vars.$color-text;
-  font-size: clamp(15px, 1.8vw, 18px);
+  font-size: vars.$subtitle-size;
   line-height: 1.55;
 }
 
@@ -45,7 +45,7 @@
   margin: 0 0 8px;
   color: vars.$color-primary;
   font-weight: 800;
-  font-size: clamp(20px, 2.6vw, 28px);
+  font-size: vars.$section-title-size;
 }
 
 .projectGrid {
@@ -58,7 +58,7 @@
 }
 
 .projectItem {
-  border: 1px solid rgb(0 0 0 / 10%);
+  border: 1px solid vars.$color-border;
   border-radius: vars.$radius;
   padding: clamp(14px, 2vw, 18px);
   background: linear-gradient(180deg, #fff 0%, #f7fbff 100%);
@@ -92,7 +92,7 @@
   grid-template-columns: 72px 1fr;
   gap: 12px;
   padding: clamp(14px, 2vw, 18px);
-  border: 1px solid rgb(0 0 0 / 10%);
+  border: 1px solid vars.$color-border;
   border-radius: vars.$radius;
   background: #fff;
 }

@@ -3,11 +3,11 @@ import {Link} from "react-router-dom";
 import {DictionaryKey} from "src/dictionary/dictionaryLoader";
 import {useDictionary} from "src/dictionary/useDictionary";
 import {buildPath} from "src/routes/routes";
-import styles from "src/pages/testsListPage/testsListPage.module.scss";
+import styles from "src/pages/biohackingListPage/BiohackingListPage.module.scss";
 
-export function TestsList() {
-  const dict = useDictionary(DictionaryKey.TESTS);
-  const [query, setQuery] = useState("");
+export function BiohackingListPage() {
+  const dict = useDictionary(DictionaryKey.BIOHACKING);
+  const [q, setQ] = useState("");
 
   if (!dict) {
     return (
@@ -17,32 +17,37 @@ export function TestsList() {
     );
   }
 
-  const q = query.trim().toLowerCase();
-  const filtered = q ? dict.items.filter(t => t.name.toLowerCase().includes(q)) : dict.items;
+  const query = q.trim().toLowerCase();
+  const filtered = query
+    ? dict.items.filter(item =>
+      [item.title, item.subtitle ?? "", item.excerpt ?? ""]
+        .join(" ")
+        .toLowerCase()
+        .includes(query),
+    )
+    : dict.items;
 
   return (
     <section
       className={styles.wrap}
-      aria-labelledby="diag-title"
+      aria-labelledby="bio-title"
     >
       <header className={styles.head}>
         <h1
-          id="diag-title"
+          id="bio-title"
           className={styles.title}
         >
           {dict.title}
         </h1>
-
         <p className={styles.subtitle}>
           {dict.subtitle}
         </p>
-
         <div className={styles.toolbar}>
           <input
             type="search"
-            value={query}
+            value={q}
             placeholder={dict.searchPlaceholder}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => setQ(e.target.value)}
             className={styles.search}
             aria-label={dict.ariaSearchLabel}
           />
@@ -50,27 +55,44 @@ export function TestsList() {
       </header>
 
       <ul className={styles.grid}>
-        {filtered.map(test => (
+        {filtered.map(item => (
           <li
-            key={test.id}
+            key={item.id}
             className={styles.card}
           >
+            {item.img && (
+              <Link
+                to={buildPath.biohackingDetail(item.id)}
+                className={styles.coverLink}
+              >
+                <img
+                  src={item.img}
+                  alt={item.title}
+                  className={styles.cover}
+                  loading="lazy"
+                />
+              </Link>
+            )}
             <div className={styles.cardBody}>
               <h2 className={styles.cardTitle}>
                 <Link
-                  to={buildPath.diagnosticsDetail(test.id)}
+                  to={buildPath.biohackingDetail(item.id)}
                   className={styles.cardLink}
                 >
-                  {test.name}
+                  {item.title}
                 </Link>
               </h2>
-              <p className={styles.cardText} />
+              {item.subtitle && <p className={styles.cardSubtitle}>
+                {item.subtitle}
+              </p>}
+              {item.excerpt && <p className={styles.cardText}>
+                {item.excerpt}
+              </p>}
             </div>
-
             <div className={styles.cardFoot}>
               <Link
-                to={buildPath.diagnosticsDetail(test.id)}
-                className={styles.cardBtn}
+                to={buildPath.biohackingDetail(item.id)}
+                className={styles.btn}
               >
                 {dict.cta}
               </Link>
