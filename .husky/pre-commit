@@ -62,9 +62,11 @@ runPythonIfChanged () {
   fi
 }
 
+
 # generateSwaggerDocs
 # generateDbSchemas
 
+runPythonIfChanged
 preventUncommitedChanges
 
 # integration and module tests
