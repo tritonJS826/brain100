@@ -60,15 +60,20 @@ prisma migrate deploy
 
 ```bash
 cd br-general-python
-python -m app.runlocally
+python -m app.run
 ```
 
+## API Endpoints
+
+By default the server runs on port defined in `.env` (`SERVER_PORT`, e.g. 8010).
+
+### Health Check
+http://localhost:8010/br-general/health
 or
-setup PyCharm run configuration to run 'app.locally' directly
-![README_pycharm_setup.png](README_pycharm_setup.png)
+http://localhost:8010/br-general/health/general
 
-### Endpoints
+### Users CRUD
+http://localhost:8010/br-general/users
 
-Health Check → http://localhost:8000/api/health
-
-Interactive API Docs → http://localhost:8000/docs
+### Interactive API Docs
+http://localhost:8010/docs

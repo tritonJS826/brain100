@@ -1,8 +1,7 @@
-# File only for running in docker container
-
-
 import uvicorn
 from app.settings import settings
+
+from app.main import app
 
 if __name__ == "__main__":
     port = settings.server_port
