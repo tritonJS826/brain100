@@ -34,7 +34,7 @@ class Settings(BaseSettings):
 
     SECRET_KEY: str
     FRONTEND_APP_URL: str = "http://localhost:5173"
-    ACCESS_TOKEN_MINUTES: int = 30
+    ACCESS_TOKEN_MINUTES: int = 1440
 
     model_config = SettingsConfigDict(
         env_file=ENV_PATH,
