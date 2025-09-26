@@ -50,7 +50,7 @@ class EmailService:
             msg.set_content(text)
             msg.add_alternative(html, subtype="html")
         elif html:
-            msg.add_alternative(html, subtype="html")
+            msg.set_content(html, subtype="html")
         else:
             msg.set_content(text or "")
 
