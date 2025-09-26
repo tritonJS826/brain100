@@ -20,15 +20,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements
-COPY --chown=${USER} requirements.txt requirements.txt
-COPY --chown=${USER} requirements/ requirements/
+COPY --chown=${USER} br-general-python/requirements.txt requirements.txt
+COPY --chown=${USER} br-general-python/requirements/ requirements/
 
 # Setup Python environment
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements/production.txt
 
 # Copy project
-COPY --chown=${USER} . .
+COPY --chown=${USER} br-general-python .
 
 # Generate Prisma client (runs as appuser now)
 RUN prisma generate

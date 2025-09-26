@@ -6,6 +6,7 @@ requirements:
 * pnpm 8.15.2 (https://pnpm.io)
 * docker 28.1.1
 * docker-compose 2.33.1
+* ruf 0.13.2
 
 ## 🚀 Quick Start
 
@@ -34,7 +35,20 @@ pnpm run general:prisma:migrate
 pnpm start
 ```
 
+### Main modules:
+- Frontend: localhost:5173 (5174 internal - don't use it for development)
+- Backend API: localhost:5173/general  (8000 internal - don't use it for development)
+- Grafana: localhost:5173/grafana/login  
 
-- Frontend: http://localhost:5174  
-- Backend API: http://localhost:8000/general  
-- Grafana: http://localhost:5173/grafana/login  
+
+## Quick start in docker
+1. Set up environment variables:
+```bash
+./useEnvs.sh docker
+```
+
+2. Start the application:
+```bash
+docker-compose -f local.docker.docker-compose.yml up --build
+```
+
