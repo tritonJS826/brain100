@@ -18,8 +18,8 @@ source .venv/bin/activate
 
 ```bash
 cd br-general-python
-pip install -r requirements.txt
 pip install --upgrade pip
+pip install -r requirements.txt
 ```
 
 ### 2.1 Install dependencies for development environment:
@@ -56,34 +56,43 @@ cd ..
 docker-compose -f local.docker-compose.yml up --build
 ```
 
-### 6. (If needed) Run database migrations
+### 6. (First time only) Run database initial migration
+
+```bash
+prisma migrate dev --name init
+```
+
+### 7. (For deploying existing migrations)
 
 ```bash
 prisma migrate deploy
 ```
 
-### 7. Start locally the FastAPI server with connection to the dockerized postgresql and grafana
+### 8. Start locally the FastAPI server with connection to the dockerized postgresql and grafana
 
 ```bash
 cd br-general-python
 python -m app.run
 ```
 
-### 8. (Optional) Run linters and formatters (ruff)
+### 9. (Optional) Run linters and formatters with Ruff
 
-#### 8.1 Only check
+These commands use pnpm scripts defined in package.json.
+Make sure pnpm is installed globally:
+
+#### 9.1 Check only
 
 ```bash
 pnpm py:lint
 ```
 
-#### 8.2 Auto-fix issues
+#### 9.2 Auto-fix issues
 
 ```bash
 pnpm py:lint:fix
 ```
 
-#### 8.3 Apply formatting
+#### 9.3 Apply formatting
 
 ```bash
 pnpm py:format
@@ -92,6 +101,10 @@ pnpm py:format
 ## API Endpoints
 
 By default the server runs on port defined in `.env` (`SERVER_PORT`, e.g. 8010).
+
+### Interactive API Docs
+
+http://localhost:8010/docs
 
 ### Health Check
 
@@ -102,7 +115,3 @@ http://localhost:8010/br-general/health/general
 ### Users CRUD
 
 http://localhost:8010/br-general/users
-
-### Interactive API Docs
-
-http://localhost:8010/docs
