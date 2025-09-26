@@ -78,8 +78,8 @@ class EmailService:
                 message,
                 hostname=self.host,
                 port=self.port,
-                username=self.user or None,
-                password=self.password or None,
+                username=self.user,
+                password=self.password,
                 use_tls=True,
                 timeout=30,
             )
