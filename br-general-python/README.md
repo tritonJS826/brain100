@@ -148,7 +148,7 @@ curl -X POST http://localhost:8010/br-general/email/send \
     "subject": "Welcome to Brain100!",
     "template": "email/welcome.html",
     "params": {
-      "username": "DemoUser"
+      "name": "DemoUser"
     }
   }'
 ```
@@ -161,7 +161,7 @@ curl -X POST http://localhost:8010/br-general/email/send \
   "subject": "Welcome to Brain100!",
   "template": "email/welcome.html",
   "params": {
-    "username": "DemoUser"
+    "name": "DemoUser"
   }
 }
 ```
