@@ -6,10 +6,12 @@ from app.settings import settings
 
 router = APIRouter(prefix="/auth/google", tags=["auth"])
 
+
 @router.get("/login", name="google_login")
 async def google_login(request: Request):
     redirect_uri = str(request.url_for("google_callback"))
     return await oauth.google.authorize_redirect(request, redirect_uri)
+
 
 @router.get("/callback", name="google_callback")
 async def google_callback(request: Request):
@@ -43,12 +45,14 @@ async def google_callback(request: Request):
     request.session["user"] = profile
     return JSONResponse({"profile": profile})
 
+
 @router.get("/me")
 async def get_me(request: Request):
     user = request.session.get("user")
     if not user:
         raise HTTPException(status_code=401, detail="Not authenticated")
     return JSONResponse({"user": user})
+
 
 @router.get("/logout")
 async def logout(request: Request):

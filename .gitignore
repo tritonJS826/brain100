@@ -56,3 +56,6 @@ __pycache__/
 *.pyc
 *.pyd
 *.pyo
+
+# compiled JS in src
+pt-general/src/**/*.js
