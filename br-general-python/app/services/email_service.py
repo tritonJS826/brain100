@@ -6,7 +6,7 @@ from typing import Optional, Dict, Any
 import aiosmtplib
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-from app.settings import settings  # noqa F401
+from app.settings import settings
 
 _TEMPLATES_DIR = Path(__file__).resolve().parent.parent / "templates"
 _env = Environment(
