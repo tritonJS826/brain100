@@ -115,3 +115,53 @@ http://localhost:8010/br-general/health/general
 ### Users CRUD
 
 http://localhost:8010/br-general/users
+
+## MailHog (Local Email Testing)
+
+We use [MailHog](https://github.com/mailhog/MailHog) to test emails locally.
+
+### Start the service:
+
+```bash
+cd br-general-python
+docker compose -f local.mailhog.yml up --build -d
+```
+
+### Stop the service:
+
+```bash
+docker compose -f local.mailhog.yml down
+```
+
+http://localhost:8010/br-general/email/send
+
+### Check the MailHog web interface:
+http://localhost:8025
+
+### To test sending an email, you can use the following `curl` command:
+
+```bash
+curl -X POST http://localhost:8010/br-general/email/send \
+  -H "Content-Type: application/json" \
+  -d '{
+    "to": "user@example.com",
+    "subject": "Welcome to Brain100!",
+    "template": "email/welcome.html",
+    "params": {
+      "username": "DemoUser"
+    }
+  }'
+```
+
+### Demo for Swagger UI:
+
+```bash
+{
+  "to": "user@example.com",
+  "subject": "Welcome to Brain100!",
+  "template": "email/welcome.html",
+  "params": {
+    "username": "DemoUser"
+  }
+}
+```
