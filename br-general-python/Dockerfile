@@ -32,6 +32,7 @@ COPY --chown=${USER} br-general-python .
 
 # Generate Prisma client (runs as appuser now)
 RUN prisma generate
+RUN prisma migrate
 
 # Logs in the volume
 VOLUME /app/logs
