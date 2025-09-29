@@ -12,9 +12,9 @@ export const mentalDict = {
   back: "Back to list",
   listDefaultLabel: "List",
 
-  items: [
+  articles: [
     {
-      id: "depression",
+      id: "1",
       title: "Depression: How to Recognize It and What to Do",
       subtitle: "Understanding, Symptoms, and Support",
       excerpt:
@@ -28,7 +28,7 @@ export const mentalDict = {
         {
           type: "list",
           title: "Common Symptoms",
-          items: [
+          articles: [
             "Loss of interest in usual activities",
             "Sleep and appetite changes",
             "Decreased concentration and motivation",
@@ -44,7 +44,7 @@ export const mentalDict = {
         {
           type: "list",
           title: "What Helps",
-          items: [
+          articles: [
             "Consulting a psychologist or psychiatrist",
             "Cognitive behavioral therapy",
             "Regular physical activity",

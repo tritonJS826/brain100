@@ -34,6 +34,14 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
+  # for test sending emails
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    container_name: br-mailhog
+    ports:
+      - "1025:1025" # SMTP
+      - "8025:8025" # Web UI
+
 volumes:
   br-postgres-general:
 

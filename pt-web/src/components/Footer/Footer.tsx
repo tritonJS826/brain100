@@ -24,27 +24,15 @@ export function Footer() {
       {label: dict.footer.links.about, to: PATHS.ABOUT},
       {label: dict.footer.links.states, to: PATHS.MENTAL_HEALTH.LIST},
       {label: dict.footer.links.tests, to: PATHS.DIAGNOSTICS.LIST},
-      {label: dict.footer.links.support, to: PATHS.SOS.LIST},
     ],
   } as const;
 
   const COL_2 = {
-    title: dict.footer.aboutTitle,
-    links: [
-      {label: dict.footer.links.projectInfo, to: PATHS.ABOUT},
-      {label: dict.footer.links.specialists, to: PATHS.SPECIALISTS.LIST},
-      {label: dict.footer.links.contacts, to: PATHS.CONTACTS},
-      {label: dict.footer.links.profile, to: PATHS.PROFILE.PAGE},
-    ],
-  } as const;
-
-  const COL_3 = {
     title: dict.footer.resourcesTitle,
     links: [
       {label: dict.footer.links.statesCatalog, to: PATHS.MENTAL_HEALTH.LIST},
       {label: dict.footer.links.testsCatalog, to: PATHS.DIAGNOSTICS.LIST},
       {label: dict.footer.links.biohackingCatalog, to: PATHS.BIOHACKING.LIST},
-      {label: dict.footer.links.supportAndSos, to: PATHS.SOS.LIST},
     ],
   } as const;
 
@@ -54,7 +42,7 @@ export function Footer() {
       aria-label={dict.footer.ariaFooter}
     >
       <div className={styles.grid}>
-        {[COL_1, COL_2, COL_3].map((col) => (
+        {[COL_1, COL_2].map((col) => (
           <nav
             key={col.title}
             className={styles.col}

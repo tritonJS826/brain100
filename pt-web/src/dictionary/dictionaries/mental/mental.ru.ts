@@ -12,9 +12,9 @@ export const mentalDict = {
   back: "К списку",
   listDefaultLabel: "Список",
 
-  items: [
+  articles: [
     {
-      id: "depression",
+      id: "1",
       title: "Депрессия: как распознать и что делать",
       subtitle: "Понимание, симптомы и поддержка",
       excerpt:
@@ -28,7 +28,7 @@ export const mentalDict = {
         {
           type: "list",
           title: "Частые симптомы",
-          items: [
+          articles: [
             "Потеря интереса к привычным занятиям",
             "Нарушение сна и аппетита",
             "Снижение концентрации и мотивации",
@@ -44,7 +44,7 @@ export const mentalDict = {
         {
           type: "list",
           title: "Что помогает",
-          items: [
+          articles: [
             "Обращение к психологу или психиатру",
             "Когнитивно-поведенческая терапия",
             "Регулярная физическая активность",

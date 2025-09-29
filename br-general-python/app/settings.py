@@ -1,6 +1,6 @@
-from typing import Literal
+from typing import Literal, Optional
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import Field, field_validator
+from pydantic import Field, field_validator, EmailStr
 
 import os
 
@@ -17,6 +17,16 @@ class Settings(BaseSettings):
     postgres_user: str = Field(..., alias="POSTGRES_USER")
     postgres_password: str = Field(..., alias="POSTGRES_PASSWORD")
     postgres_db: str = Field(..., alias="POSTGRES_DB")
+
+    # --- email config ---
+    smtp_host: str = Field(..., alias="SMTP_HOST")
+    smtp_port: int = Field(..., alias="SMTP_PORT")
+    smtp_user: Optional[str] = Field(..., alias="SMTP_USER")
+    smtp_password: Optional[str] = Field(..., alias="SMTP_PASSWORD")
+    smtp_starttls: bool = Field(..., alias="SMTP_STARTTLS")
+    smtp_ssl: bool = Field(..., alias="SMTP_SSL")
+    smtp_sender_email: EmailStr = Field(..., alias="SMTP_SENDER_EMAIL")
+    smtp_sender_name: str = Field(..., alias="SMTP_SENDER_NAME")
 
     model_config = SettingsConfigDict(
         env_file=ENV_PATH,
@@ -36,6 +46,15 @@ class Settings(BaseSettings):
             raise ValueError(
                 "DATABASE_URL must start with postgresql:// or postgres://"
             )
+        return v
+
+    @field_validator("smtp_ssl")
+    @classmethod
+    def _validate_tls_ssl(cls, v: bool, info):
+        # avoid SSL and STARTTLS both true
+        starttls = info.data.get("smtp_starttls", True)
+        if v and starttls:
+            raise ValueError("Only one of SMTP_SSL or SMTP_STARTTLS can be true.")
         return v
 
 

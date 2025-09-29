@@ -6,16 +6,16 @@ export type ArticleBlock =
 export type Article = {
   id: string;
   title: string;
-  subtitle?: string;
+  subtitle: string;
   excerpt: string;
-  cover?: string;
+  cover: string;
   content: ArticleBlock[];
-  updatedAt?: string;
+  updatedAt: string;
 };
 
 export const articles: Record<string, Article> = {
-  depression: {
-    id: "depression",
+  articles: {
+    id: "1",
     title: "Депрессия: как распознать и что делать",
     subtitle: "Понимание, симптомы и поддержка",
     excerpt: "Депрессия — это состояние, которое влияет на настроение, мысли и тело. Она поддаётся лечению," +
