@@ -91,18 +91,18 @@ pnpm py:format
 
 ## API Endpoints
 
-By default the server runs on port defined in `.env` (`SERVER_PORT`, e.g. 8010).
+By default the server runs on port defined in `.env` (`SERVER_PORT`, e.g. 8000).
 
 ### Health Check
 
-http://localhost:8010/br-general/health
+http://localhost:8000/br-general/health
 or
-http://localhost:8010/br-general/health/general
+http://localhost:8000/br-general/health/general
 
 ### Users CRUD
 
-http://localhost:8010/br-general/users
+http://localhost:8000/br-general/users
 
 ### Interactive API Docs
 
-http://localhost:8010/docs
+http://localhost:8000/docs
