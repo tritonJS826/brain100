@@ -29,7 +29,7 @@ export function Hero() {
     } else if (intent === OPTION_STATES_VALUE) {
       navigate(PATHS.MENTAL_HEALTH.LIST);
     } else if (intent === OPTION_CONTACT_VALUE) {
-      navigate(PATHS.SPECIALISTS.LIST);
+      navigate(PATHS.ABOUT);
     }
   };
 

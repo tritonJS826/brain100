@@ -1,15 +1,37 @@
 import {useState} from "react";
 import {Link} from "react-router-dom";
+import {Button} from "src/components/Button/Button";
+import {EmptyState} from "src/components/EmptyState/EmptyState";
+import {PageHeader} from "src/components/PageHeader/PageHeader";
 import {DictionaryKey} from "src/dictionary/dictionaryLoader";
 import {useDictionary} from "src/dictionary/useDictionary";
 import {buildPath} from "src/routes/routes";
+import {filterBySearch} from "src/utils/filterBySearch";
 import styles from "src/pages/biohackingListPage/BiohackingListPage.module.scss";
 
-export function BiohackingListPage() {
-  const dict = useDictionary(DictionaryKey.BIOHACKING);
-  const [q, setQ] = useState("");
+type BioItem = {
+  id: string;
+  title: string;
+  subtitle?: string;
+  excerpt?: string;
+  img?: string;
+};
 
-  if (!dict) {
+type BioDictionary = {
+  title: string;
+  subtitle: string;
+  searchPlaceholder: string;
+  ariaSearchLabel: string;
+  cta: string;
+  empty: string;
+  articlesItems: BioItem[];
+};
+
+export function BiohackingListPage() {
+  const dictionary = useDictionary(DictionaryKey.BIOHACKING) as BioDictionary | null;
+  const [searchQuery, setSearchQuery] = useState("");
+
+  if (!dictionary) {
     return (
       <div>
         Loading...
@@ -17,45 +39,28 @@ export function BiohackingListPage() {
     );
   }
 
-  const query = q.trim().toLowerCase();
-  const filtered = query
-    ? dict.items.filter(item =>
-      [item.title, item.subtitle ?? "", item.excerpt ?? ""]
-        .join(" ")
-        .toLowerCase()
-        .includes(query),
-    )
-    : dict.items;
+  const filteredItems = filterBySearch<BioItem>(
+    dictionary.articlesItems,
+    searchQuery,
+    (item) => [item.title, item.subtitle ?? "", item.excerpt ?? ""].join(" "),
+  );
 
   return (
     <section
       className={styles.wrap}
       aria-labelledby="bio-title"
     >
-      <header className={styles.head}>
-        <h1
-          id="bio-title"
-          className={styles.title}
-        >
-          {dict.title}
-        </h1>
-        <p className={styles.subtitle}>
-          {dict.subtitle}
-        </p>
-        <div className={styles.toolbar}>
-          <input
-            type="search"
-            value={q}
-            placeholder={dict.searchPlaceholder}
-            onChange={(e) => setQ(e.target.value)}
-            className={styles.search}
-            aria-label={dict.ariaSearchLabel}
-          />
-        </div>
-      </header>
+      <PageHeader
+        title={dictionary.title}
+        subtitle={dictionary.subtitle}
+        searchValue={searchQuery}
+        searchPlaceholder={dictionary.searchPlaceholder}
+        ariaSearchLabel={dictionary.ariaSearchLabel}
+        onSearchChange={setSearchQuery}
+      />
 
       <ul className={styles.grid}>
-        {filtered.map(item => (
+        {filteredItems.map((item) => (
           <li
             key={item.id}
             className={styles.card}
@@ -73,6 +78,7 @@ export function BiohackingListPage() {
                 />
               </Link>
             )}
+
             <div className={styles.cardBody}>
               <h2 className={styles.cardTitle}>
                 <Link
@@ -82,6 +88,7 @@ export function BiohackingListPage() {
                   {item.title}
                 </Link>
               </h2>
+
               {item.subtitle && <p className={styles.cardSubtitle}>
                 {item.subtitle}
               </p>}
@@ -89,25 +96,17 @@ export function BiohackingListPage() {
                 {item.excerpt}
               </p>}
             </div>
+
             <div className={styles.cardFoot}>
-              <Link
-                to={buildPath.biohackingDetail(item.id)}
-                className={styles.btn}
-              >
-                {dict.cta}
-              </Link>
+              <Button to={buildPath.biohackingDetail(item.id)}>
+                {dictionary.cta}
+              </Button>
             </div>
           </li>
         ))}
       </ul>
 
-      {filtered.length === 0 && (
-        <div className={styles.empty}>
-          <p>
-            {dict.empty}
-          </p>
-        </div>
-      )}
+      {filteredItems.length === 0 && <EmptyState message={dictionary.empty} />}
     </section>
   );
 }

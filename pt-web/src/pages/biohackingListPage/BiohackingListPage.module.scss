@@ -6,45 +6,7 @@
   padding: vars.$section-py vars.$container-gap;
   display: grid;
   gap: vars.$section-py;
-  background: #fff;
-}
-
-.head {
-  display: grid;
-  gap: 10px;
-}
-
-.title {
-  margin: 0;
-  color: vars.$color-primary;
-  font-weight: 800;
-  font-size: vars.$title-size;
-  line-height: 1.08;
-}
-
-.subtitle {
-  margin: 0;
-  color: vars.$color-text;
-  font-size: vars.$subtitle-size;
-  line-height: 1.5;
-}
-
-.toolbar {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: 12px;
-  margin-top: 8px;
-}
-
-.search {
-  width: 100%;
-  min-height: 44px;
-  padding: 10px 12px;
-  border: 1px solid vars.$color-border;
-  border-radius: vars.$radius-md;
-  font-size: 16px;
-  color: vars.$color-primary;
+  background: vars.$color-bg;
 }
 
 .grid {
@@ -58,11 +20,19 @@
 
 .card {
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: 1fr auto;
+  gap: 12px;
+  padding: clamp(14px, 2vw, 18px);
   border: 1px solid vars.$color-border;
   border-radius: vars.$radius;
-  overflow: hidden;
-  background: #fff;
+  transition:
+    transform vars.$transition-fast,
+    box-shadow vars.$transition-fast;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgb(2 6 23 / 10%);
 }
 
 .coverLink {
@@ -83,14 +53,18 @@
 
 .cardTitle {
   margin: 0;
-  font-weight: 800;
-  font-size: vars.$card-title-size;
+  font-size: clamp(vars.$font-lg, 1.8vw, vars.$font-xl);
   color: vars.$color-primary;
 }
 
 .cardLink {
   color: inherit;
   text-decoration: none;
+  border-bottom: 2px solid transparent;
+}
+
+.cardLink:hover {
+  color: vars.$color-cta-bg;
 }
 
 .cardSubtitle {
@@ -102,34 +76,15 @@
 .cardText {
   margin: 0;
   color: vars.$color-text;
-  font-size: 15px;
-  line-height: 1.55;
+  font-size: clamp(14px, 1.6vw, 16px);
+  line-height: 1.6;
 }
 
 .cardFoot {
-  padding: 14px;
+  padding: clamp(10px, 1.6vw, 14px);
+  border-top: 1px dashed vars.$color-border;
   display: flex;
   justify-content: flex-end;
-}
-
-.btn {
-  display: inline-grid;
-  place-items: center;
-  min-height: 40px;
-  padding: 10px 16px;
-  border-radius: vars.$radius-pill;
-  background: vars.$color-cta-bg;
-  color: vars.$color-primary;
-  font-weight: 800;
-  text-decoration: none;
-}
-
-.empty {
-  padding: 24px;
-  text-align: center;
-  color: vars.$color-text;
-  border: 1px dashed vars.$color-border;
-  border-radius: vars.$radius;
 }
 
 @media (width <= 820px) {

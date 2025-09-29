@@ -13,6 +13,7 @@ import {Test} from "src/pages/testsListPage/tests/Test";
 import {TestsList} from "src/pages/testsListPage/TestsListPage";
 import {PATHS} from "src/routes/routes";
 import {DevApi} from "src/services/health";
+import "src/styles/_globals.scss";
 
 export function App() {
   // TODO: remove this temporal check server integration
@@ -21,80 +22,82 @@ export function App() {
   }, [ ]);
 
   return (
-    <>
+    <div className="page">
       <ScrollToTop />
       <Header />
-      <Routes>
-        <Route
-          path={PATHS.HOME}
-          element={<HomePage />}
-        />
-        <Route
-          path={PATHS.ABOUT}
-          element={<AboutPage />}
-        />
+      <main className="main">
+        <Routes>
+          <Route
+            path={PATHS.HOME}
+            element={<HomePage />}
+          />
+          <Route
+            path={PATHS.ABOUT}
+            element={<AboutPage />}
+          />
 
-        <Route
-          path={PATHS.MENTAL_HEALTH.LIST}
-          element={<ArticlesListPage />}
-        />
-        <Route
-          path={PATHS.MENTAL_HEALTH.DETAIL}
-          element={<ArticleDetailPage />}
-        />
+          <Route
+            path={PATHS.MENTAL_HEALTH.LIST}
+            element={<ArticlesListPage />}
+          />
+          <Route
+            path={PATHS.MENTAL_HEALTH.DETAIL}
+            element={<ArticleDetailPage />}
+          />
 
-        <Route
-          path={PATHS.DIAGNOSTICS.LIST}
-          element={<TestsList />}
-        />
-        <Route
-          path={PATHS.DIAGNOSTICS.DETAIL}
-          element={<Test />}
-        />
+          <Route
+            path={PATHS.DIAGNOSTICS.LIST}
+            element={<TestsList />}
+          />
+          <Route
+            path={PATHS.DIAGNOSTICS.DETAIL}
+            element={<Test />}
+          />
 
-        <Route
-          path={PATHS.BIOHACKING.LIST}
-          element={<BiohackingListPage />}
-        />
-        <Route
-          path={PATHS.BIOHACKING.DETAIL}
-          element={<BiohackingDetailPage />}
-        />
+          <Route
+            path={PATHS.BIOHACKING.LIST}
+            element={<BiohackingListPage />}
+          />
+          <Route
+            path={PATHS.BIOHACKING.DETAIL}
+            element={<BiohackingDetailPage />}
+          />
 
-        <Route
-          path={PATHS.SOS.LIST}
-          element={<div>
-            Поддержка
-          </div>}
-        />
-        <Route
-          path={PATHS.SOS.DETAIL}
-          element={<div>
-            Поддержка — состояние
-          </div>}
-        />
+          <Route
+            path={PATHS.SOS.LIST}
+            element={<div>
+              Поддержка
+            </div>}
+          />
+          <Route
+            path={PATHS.SOS.DETAIL}
+            element={<div>
+              Поддержка — состояние
+            </div>}
+          />
 
-        <Route
-          path={PATHS.SPECIALISTS.LIST}
-          element={<div>
-            Специалисты
-          </div>}
-        />
-        <Route
-          path={PATHS.SPECIALISTS.DETAIL}
-          element={<div>
-            Профиль специалиста
-          </div>}
-        />
+          <Route
+            path={PATHS.SPECIALISTS.LIST}
+            element={<div>
+              Специалисты
+            </div>}
+          />
+          <Route
+            path={PATHS.SPECIALISTS.DETAIL}
+            element={<div>
+              Профиль специалиста
+            </div>}
+          />
 
-        <Route
-          path={PATHS.CONTACTS}
-          element={<div>
-            Контакты
-          </div>}
-        />
-      </Routes>
+          <Route
+            path={PATHS.CONTACTS}
+            element={<div>
+              Контакты
+            </div>}
+          />
+        </Routes>
+      </main>
       <Footer />
-    </>
+    </div>
   );
 }

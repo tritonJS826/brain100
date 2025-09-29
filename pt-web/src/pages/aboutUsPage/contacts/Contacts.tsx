@@ -12,7 +12,7 @@ export type ContactsData = {
 };
 
 export function ContactsSection(props: { title: string; data: ContactsData }) {
-  const c = props.data;
+  const contact = props.data;
 
   return (
     <section
@@ -25,45 +25,45 @@ export function ContactsSection(props: { title: string; data: ContactsData }) {
       <ul className={styles.contactList}>
         <li className={styles.contactItem}>
           <span className={styles.contactLabel}>
-            {c.emailLabel}
+            {contact.emailLabel}
           </span>
           <a
             className={styles.contactLink}
-            href={`mailto:${c.email}`}
+            href={`mailto:${contact.email}`}
           >
-            {c.email}
+            {contact.email}
           </a>
         </li>
         <li className={styles.contactItem}>
           <span className={styles.contactLabel}>
-            {c.phoneLabel}
+            {contact.phoneLabel}
           </span>
           <a
             className={styles.contactLink}
-            href={`tel:${c.phone}`}
+            href={`tel:${contact.phone}`}
           >
-            {c.phone}
+            {contact.phone}
           </a>
         </li>
         <li className={styles.contactItem}>
           <span className={styles.contactLabel}>
-            {c.telegramLabel}
+            {contact.telegramLabel}
           </span>
           <a
             className={styles.contactLink}
-            href={`https://t.me/${c.telegram.replace("@", "")}`}
+            href={`https://t.me/${contact.telegram.replace("@", "")}`}
             target="_blank"
             rel="noreferrer"
           >
-            {c.telegram}
+            {contact.telegram}
           </a>
         </li>
         <li className={styles.contactItem}>
           <span className={styles.contactLabel}>
-            {c.hoursLabel}
+            {contact.hoursLabel}
           </span>
           <span className={styles.contactText}>
-            {c.hours}
+            {contact.hours}
           </span>
         </li>
       </ul>

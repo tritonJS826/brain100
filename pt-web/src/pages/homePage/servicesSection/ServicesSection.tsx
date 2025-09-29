@@ -32,7 +32,7 @@ export function ServicesSection() {
           </p>
 
           <ul className={styles.list}>
-            {services.items.map(({title, text}, i) => (
+            {services.servicesItems.map(({title, text}, i) => (
               <li
                 key={`${title}-${i}`}
                 className={styles.item}

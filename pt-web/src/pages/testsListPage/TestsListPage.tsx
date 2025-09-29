@@ -1,15 +1,34 @@
 import {useState} from "react";
 import {Link} from "react-router-dom";
+import {Button} from "src/components/Button/Button";
+import {EmptyState} from "src/components/EmptyState/EmptyState";
+import {PageHeader} from "src/components/PageHeader/PageHeader";
 import {DictionaryKey} from "src/dictionary/dictionaryLoader";
 import {useDictionary} from "src/dictionary/useDictionary";
 import {buildPath} from "src/routes/routes";
+import {filterBySearch} from "src/utils/filterBySearch";
 import styles from "src/pages/testsListPage/TestsListPage.module.scss";
 
-export function TestsList() {
-  const dict = useDictionary(DictionaryKey.TESTS);
-  const [query, setQuery] = useState("");
+type TestItem = {
+  id: string;
+  name: string;
+};
 
-  if (!dict) {
+type TestsDictionary = {
+  title: string;
+  subtitle: string;
+  searchPlaceholder: string;
+  ariaSearchLabel: string;
+  cta: string;
+  empty: string;
+  tests: TestItem[];
+};
+
+export function TestsList() {
+  const dictionary = useDictionary(DictionaryKey.TESTS) as TestsDictionary | null;
+  const [searchQuery, setSearchQuery] = useState("");
+
+  if (!dictionary) {
     return (
       <div>
         Loading...
@@ -17,40 +36,28 @@ export function TestsList() {
     );
   }
 
-  const q = query.trim().toLowerCase();
-  const filtered = q ? dict.items.filter(t => t.name.toLowerCase().includes(q)) : dict.items;
+  const filteredTests = filterBySearch<TestItem>(
+    dictionary.tests,
+    searchQuery,
+    test => test.name,
+  );
 
   return (
     <section
       className={styles.wrap}
       aria-labelledby="diag-title"
     >
-      <header className={styles.head}>
-        <h1
-          id="diag-title"
-          className={styles.title}
-        >
-          {dict.title}
-        </h1>
-
-        <p className={styles.subtitle}>
-          {dict.subtitle}
-        </p>
-
-        <div className={styles.toolbar}>
-          <input
-            type="search"
-            value={query}
-            placeholder={dict.searchPlaceholder}
-            onChange={(e) => setQuery(e.target.value)}
-            className={styles.search}
-            aria-label={dict.ariaSearchLabel}
-          />
-        </div>
-      </header>
+      <PageHeader
+        title={dictionary.title}
+        subtitle={dictionary.subtitle}
+        searchValue={searchQuery}
+        searchPlaceholder={dictionary.searchPlaceholder}
+        ariaSearchLabel={dictionary.ariaSearchLabel}
+        onSearchChange={setSearchQuery}
+      />
 
       <ul className={styles.grid}>
-        {filtered.map(test => (
+        {filteredTests.map(test => (
           <li
             key={test.id}
             className={styles.card}
@@ -66,26 +73,16 @@ export function TestsList() {
               </h2>
               <p className={styles.cardText} />
             </div>
-
             <div className={styles.cardFoot}>
-              <Link
-                to={buildPath.diagnosticsDetail(test.id)}
-                className={styles.cardBtn}
-              >
-                {dict.cta}
-              </Link>
+              <Button to={buildPath.diagnosticsDetail(test.id)}>
+                {dictionary.cta}
+              </Button>
             </div>
           </li>
         ))}
       </ul>
 
-      {filtered.length === 0 && (
-        <div className={styles.empty}>
-          <p>
-            {dict.empty}
-          </p>
-        </div>
-      )}
+      {filteredTests.length === 0 && <EmptyState message={dictionary.empty} />}
     </section>
   );
 }
