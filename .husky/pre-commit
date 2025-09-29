@@ -53,11 +53,15 @@ runPythonIfChanged () {
   then
     echo "Python backend changed. Running Ruff checks..."
 
-    # Run Ruff checks and auto-fix issues
-    ruff check --fix --exit-non-zero-on-fix $PYTHON_BACKEND || {
-      echo "Ruff fixed issues. Please review changes and re-commit."
+    # Run Ruff check with auto-fix
+    ruff check --fix --exit-non-zero-on-fix "$PYTHON_BACKEND"
+    CHECK_EXIT=$?
+
+    if [ $CHECK_EXIT -ne 0 ]; then
+      echo "Ruff fixed issues or found errors. Please review changes and re-commit."
+      git add "$PYTHON_BACKEND"
       exit 1
-    }
+    fi
 
     # Format code with Ruff
     ruff format $PYTHON_BACKEND || {

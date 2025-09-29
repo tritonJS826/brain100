@@ -1,43 +1,60 @@
-FROM python:3.13-slim
+# -------- Stage 1: Builder --------
+FROM python:3.13-slim AS builder
 
-ENV PYTHONUNBUFFERED=1
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV TZ=Europe/Berlin
-ENV PRISMA_CACHE_DIR=/app/.prisma
-ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PYTHONPATH=/app \
+    PRISMA_CACHE_DIR=/app/.prisma
 
-# Working directory
 WORKDIR /app
 
-# Add non-root user
-ARG USER=appuser
-RUN useradd --system ${USER}
-
-# Setup timezone and Prisma deps
 RUN apt-get update && apt-get install -y --no-install-recommends \
     tzdata \
+    ca-certificates \
     curl \
+    nodejs npm \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements
-COPY --chown=${USER} br-general-python/requirements.txt requirements.txt
-COPY --chown=${USER} br-general-python/requirements/ requirements/
+COPY br-general-python/requirements.txt requirements.txt
+COPY br-general-python/requirements/ requirements/
 
-# Setup Python environment
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements/production.txt
 
-# Copy project
-COPY --chown=${USER} br-general-python .
+COPY br-general-python .
 
-# Generate Prisma client (runs as appuser now)
-RUN prisma generate
+# Generate Prisma client(s)
+RUN npx prisma generate --schema=prisma/schema.prisma
+RUN prisma py fetch
 
-# Logs in the volume
+
+# -------- Stage 2: Runtime --------
+FROM python:3.13-slim AS runtime
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    TZ=Europe/Berlin \
+    PYTHONPATH=/app \
+    PRISMA_CACHE_DIR=/app/.prisma
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    tzdata \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy python deps + binaries
+COPY --from=builder /usr/local/lib/python3.13 /usr/local/lib/python3.13
+COPY --from=builder /usr/local/bin /usr/local/bin
+
+# Copy app code
+COPY --from=builder /app /app
+
+# Copy Prisma Python binaries (needed at runtime!)
+COPY --from=builder /root/.cache/prisma-python /root/.cache/prisma-python
+
 VOLUME /app/logs
-
-# Expose port
 EXPOSE 8000
-
-# Run FastAPI with run.py
 CMD ["python", "app/run.py"]
