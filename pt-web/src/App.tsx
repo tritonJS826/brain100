@@ -1,3 +1,4 @@
+import {useEffect} from "react";
 import {Route, Routes} from "react-router-dom";
 import {Footer} from "src/components/Footer/Footer";
 import {Header} from "src/components/Header/Header";
@@ -11,8 +12,14 @@ import {HomePage} from "src/pages/homePage/Homepage";
 import {Test} from "src/pages/testsListPage/tests/Test";
 import {TestsList} from "src/pages/testsListPage/TestsListPage";
 import {PATHS} from "src/routes/routes";
+import {DevApi} from "src/services/health";
 
 export function App() {
+  // TODO: remove this temporal check server integration
+  useEffect(() => {
+    DevApi.checkHealth();
+  }, [ ]);
+
   return (
     <>
       <ScrollToTop />
