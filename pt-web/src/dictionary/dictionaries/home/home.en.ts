@@ -44,7 +44,7 @@ export const home = {
     title: "Support based on data and simple steps.",
     subtitle:
       "Diagnostics, personal recommendations, and biohacking practices. No medication. Focused on daily progress.",
-    items: [
+    servicesItems: [
       {
         title: "Diagnostics",
         text:

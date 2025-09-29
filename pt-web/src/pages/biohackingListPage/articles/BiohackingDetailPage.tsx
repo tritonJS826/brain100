@@ -4,16 +4,15 @@ import {useDictionary} from "src/dictionary/useDictionary";
 import {PATHS} from "src/routes/routes";
 import styles from "src/pages/biohackingListPage/articles/BiohackingDetailPage.module.scss";
 
-type ParagraphBlock = { type: "paragraph"; text: string };
-type ListBlock = { type: "list"; title?: string; items: string[] };
-type QuoteBlock = { type: "quote"; text: string; author?: string };
-type Block = ParagraphBlock | ListBlock | QuoteBlock;
+type ParagraphNode = { type: "paragraph"; text: string };
+type QuoteNode = { type: "quote"; text: string; author?: string };
+type ContentNode = ParagraphNode | QuoteNode;
 
 export function BiohackingDetailPage() {
-  const {id} = useParams<{id: string}>();
-  const dict = useDictionary(DictionaryKey.BIOHACKING);
+  const {id} = useParams<{ id: string }>();
+  const dictionary = useDictionary(DictionaryKey.BIOHACKING);
 
-  if (!dict) {
+  if (!dictionary) {
     return (
       <div>
         Loading...
@@ -21,25 +20,28 @@ export function BiohackingDetailPage() {
     );
   }
 
-  const article = dict.items.find(i => i.id === id);
-
+  const article = dictionary.articles.find((a: { id: string }) => a.id === id);
   if (!article) {
     return (
       <section className={styles.wrap}>
         <div className={styles.empty}>
           <p>
-            {dict.notFound}
+            {dictionary.notFound}
           </p>
           <Link
             to={PATHS.BIOHACKING.LIST}
             className={styles.btn}
           >
-            {dict.backToAll}
+            {dictionary.backToAll}
           </Link>
         </div>
       </section>
     );
   }
+
+  const content: ContentNode[] = Array.isArray(article.content)
+    ? (article.content as ContentNode[])
+    : [];
 
   return (
     <article
@@ -58,7 +60,7 @@ export function BiohackingDetailPage() {
 
       <header className={styles.head}>
         <p className={styles.eyebrow}>
-          {dict.articleEyebrow}
+          {dictionary.articleEyebrow}
         </p>
         <h1
           id="article-title"
@@ -74,64 +76,43 @@ export function BiohackingDetailPage() {
             to={PATHS.BIOHACKING.LIST}
             className={styles.back}
           >
-            {dict.back}
+            {dictionary.back}
           </Link>
         </div>
       </header>
 
       <div className={styles.content}>
-        {(article.content as ReadonlyArray<Block>).map((block, i) => {
-          if (block.type === "paragraph") {
-            return (
-              <p
-                key={i}
-                className={styles.p}
-              >
-                {block.text}
-              </p>
-            );
+        {content.map((node, i) => {
+          switch (node.type) {
+            case "paragraph":
+              return (
+                <p
+                  key={i}
+                  className={styles.p}
+                >
+                  {node.text}
+                </p>
+              );
+            case "quote":
+              return (
+                <figure
+                  key={i}
+                  className={styles.quote}
+                >
+                  <blockquote className={styles.q}>
+                    {node.text}
+                  </blockquote>
+                  {node.author && (
+                    <figcaption className={styles.caption}>
+                      —
+                      {node.author}
+                    </figcaption>
+                  )}
+                </figure>
+              );
+            default:
+              return null;
           }
-          if (block.type === "list") {
-            return (
-              <section
-                key={i}
-                className={styles.listBlock}
-                aria-label={block.title || dict.listDefaultLabel}
-              >
-                {block.title && <h2 className={styles.h2}>
-                  {block.title}
-                </h2>}
-                <ul className={styles.ul}>
-                  {block.items.map((it, idx) => (
-                    <li
-                      key={idx}
-                      className={styles.li}
-                    >
-                      {it}
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            );
-          }
-          if (block.type === "quote") {
-            return (
-              <figure
-                key={i}
-                className={styles.quote}
-              >
-                <blockquote className={styles.q}>
-                  {block.text}
-                </blockquote>
-                {block.author && <figcaption className={styles.caption}>
-                  —
-                  {block.author}
-                </figcaption>}
-              </figure>
-            );
-          }
-
-          return null;
         })}
       </div>
     </article>

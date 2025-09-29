@@ -4,6 +4,16 @@
   box-sizing: border-box;
 }
 
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  flex: 1;
+}
+
 a {
   text-decoration: none;
   color: inherit;

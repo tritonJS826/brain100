@@ -7,9 +7,9 @@ import styles from "src/pages/aboutUsPage/AboutUsPage.module.scss";
 type ProjectBlock = { title: string; text: string };
 
 export function AboutPage() {
-  const dict = useDictionary(DictionaryKey.ABOUT);
+  const dictionary = useDictionary(DictionaryKey.ABOUT);
 
-  if (!dict) {
+  if (!dictionary) {
     return (
       <div>
         Loading...
@@ -20,32 +20,32 @@ export function AboutPage() {
   return (
     <section
       className={styles.wrap}
-      aria-label={dict.sectionAria}
+      aria-label={dictionary.sectionAria}
     >
       <header className={styles.head}>
         <p className={styles.eyebrow}>
-          {dict.eyebrow}
+          {dictionary.eyebrow}
         </p>
         <h1 className={styles.title}>
-          {dict.title}
+          {dictionary.title}
         </h1>
         <p className={styles.subtitle}>
-          {dict.subtitle}
+          {dictionary.subtitle}
         </p>
       </header>
 
       <section className={styles.project}>
         <ul className={styles.projectGrid}>
-          {dict.project.blocks.map((b: ProjectBlock) => (
+          {dictionary.project.blocks.map((block: ProjectBlock) => (
             <li
-              key={b.title}
+              key={block.title}
               className={styles.projectItem}
             >
               <h2 className={styles.projectTitle}>
-                {b.title}
+                {block.title}
               </h2>
               <p className={styles.projectText}>
-                {b.text}
+                {block.text}
               </p>
             </li>
           ))}
@@ -53,13 +53,13 @@ export function AboutPage() {
       </section>
 
       <SpecialistsSection
-        title={dict.specialistsTitle}
-        items={dict.specialists}
+        title={dictionary.specialistsTitle}
+        items={dictionary.specialists}
       />
 
       <ContactsSection
-        title={dict.contactsTitle}
-        data={dict.contacts}
+        title={dictionary.contactsTitle}
+        data={dictionary.contacts}
       />
     </section>
   );

@@ -6,7 +6,7 @@ export const testsDict = {
   foundPrefix: "Found:",
   cta: "Take the test",
   empty: "Nothing found. Try a different query.",
-  items: [
+  tests: [
     {id: "1", name: "Depression screening test"},
     {id: "2", name: "Mood test"},
     {id: "3", name: "Anxiety level test"},
