@@ -1,6 +1,6 @@
 import {env} from "src/utils/env/env";
 
-const DEV_ROUTE_HEALTH = "/health";
+const DEV_ROUTE_HEALTH = "/health/";
 
 export class DevApi {
 

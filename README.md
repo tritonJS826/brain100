@@ -12,7 +12,7 @@ requirements:
 
 1. Install dependencies:
 ```bash
-pnpm install
+pnpm install && pnpm install:all
 ```
 
 2. Set up environment variables:
@@ -25,9 +25,9 @@ pnpm install
 docker-compose -f local.docker-compose.yml up --build
 ```
 
-4. Run database migrations:
+4. Run database migrations and generate client:
 ```bash
-pnpm run general:prisma:migrate
+pnpm run br-general-python:prisma:migrate && pnpm run br-general-python:prisma:generate
 ```
 
 5. Start the application:
@@ -37,7 +37,7 @@ pnpm start
 
 ### Main modules:
 - Frontend: localhost:5173 (5174 internal - don't use it for development)
-- Backend API: localhost:5173/general  (8000 internal - don't use it for development)
+- Backend API: localhost:5173/br-general  (8000 internal - don't use it for development)
 - Grafana: localhost:5173/grafana/login  
 
 
