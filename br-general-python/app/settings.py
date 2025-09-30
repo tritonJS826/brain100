@@ -52,7 +52,7 @@ class Settings(BaseSettings):
     @classmethod
     def _validate_tls_ssl(cls, v: bool, info):
         # avoid SSL and STARTTLS both true
-        starttls = info.data.get("smtp_starttls", True)
+        starttls = info.data.get("smtp_starttls", False)
         if v and starttls:
             raise ValueError("Only one of SMTP_SSL or SMTP_STARTTLS can be true.")
         return v
