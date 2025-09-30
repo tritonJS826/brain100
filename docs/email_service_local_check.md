@@ -15,7 +15,7 @@ http://localhost:8025
 ### To test sending an email, you can use the following `curl` command:
 
 ```bash
-curl -X POST http://localhost:8010/br-general/email/send \
+curl -X POST http://localhost:8000/br-general/email/send \
   -H "Content-Type: application/json" \
   -d '{
     "to": "user@example.com",

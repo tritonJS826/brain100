@@ -4,7 +4,6 @@ from app.schemas.email import EmailSendRequest, EmailSendResponse
 from app.services.email_service import EmailService
 
 router = APIRouter()
-
 email_service = EmailService()
 
 
@@ -21,10 +20,19 @@ async def send_email(payload: EmailSendRequest, bg: BackgroundTasks):
                 template=payload.template,
                 params=payload.params,
             )
-        except Exception:
-            # In real life, log this exception (Sentry, logs, etc.)
-            # Avoid raising in background to not crash workers
-            pass
+        except Exception as e:
+            # Log the failure to EmailLog
+            await email_service._log_email(
+                to=payload.to,
+                subject=payload.subject,
+                body=payload.html or payload.text or "",
+                template=payload.template or "",
+                status="FAILED",
+                error=str(e),
+            )
+            # Also log to console
+            print(f"Email send failed: {e}")
+            # Do not re-raise to avoid crashing background workers
 
     bg.add_task(_task)
     return EmailSendResponse(accepted=True)
