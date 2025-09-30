@@ -63,7 +63,7 @@ class EmailService:
         body: str,
         template: str = "",
         status: str = "SENT",
-        error: str | None = None,
+        error: Optional[str] = None,
     ) -> None:
         db = Prisma()
         await db.connect()
