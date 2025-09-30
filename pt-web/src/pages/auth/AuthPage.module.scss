@@ -1,0 +1,137 @@
+@use "src/styles/variables" as vars;
+
+.wrap {
+  min-height: 60vh;
+  display: grid;
+  place-items: center;
+  padding: vars.$pad-lg;
+}
+
+.card {
+  width: min(520px, 100%);
+  background: vars.$color-bg;
+  border: 1px solid vars.$color-border;
+  border-radius: vars.$radius-lg;
+  box-shadow: 0 12px 28px rgb(0 0 0 / 12%);
+  padding: vars.$pad-lg;
+  display: grid;
+  gap: vars.$gap-md;
+}
+
+.tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.tab {
+  padding: 12px 16px;
+  border-radius: vars.$radius-pill;
+  border: 1px solid vars.$color-border;
+  background: vars.$color-bg;
+  color: vars.$color-primary;
+  font-weight: 800;
+  cursor: pointer;
+  text-align: center;
+  transition:
+    background-color vars.$transition-fast,
+    border-color vars.$transition-fast;
+}
+
+.tabActive {
+  border-color: vars.$color-primary;
+  background: rgb(0 0 0 / 02%);
+}
+
+.form {
+  display: grid;
+  gap: vars.$gap-md;
+}
+
+.label {
+  display: grid;
+  gap: 6px;
+  color: vars.$color-primary;
+  font-weight: 600;
+}
+
+.input {
+  background: vars.$color-bg;
+  border: 1px solid vars.$color-border;
+  border-radius: vars.$radius-md;
+  padding: 12px 14px;
+  font-size: vars.$font-md;
+  color: vars.$color-primary;
+  outline: none;
+}
+
+.input:focus {
+  border-color: vars.$color-primary;
+  box-shadow: 0 0 0 3px rgb(80 120 255 / 18%);
+}
+
+.errorText {
+  color: vars.$color-error;
+  font-size: vars.$font-sm;
+}
+
+.submit {
+  justify-self: stretch;
+  padding: 14px 18px;
+  border-radius: vars.$radius-pill;
+  border: 2px solid vars.$color-primary;
+  background: vars.$color-bg;
+  color: vars.$color-primary;
+  font-weight: 900;
+  cursor: pointer;
+  transition:
+    background-color vars.$transition-fast,
+    color vars.$transition-fast;
+}
+
+.submit:hover {
+  background: vars.$color-cta-bg;
+  color: #fff;
+}
+
+@media (width <= 768px) {
+  .card {
+    padding: vars.$pad-md;
+    gap: vars.$gap-sm;
+  }
+
+  .tab {
+    padding: 10px 14px;
+  }
+
+  .input {
+    padding: 12px;
+  }
+
+  .submit {
+    padding: 12px 16px;
+  }
+}
+
+@media (width <= 420px) {
+  .wrap {
+    padding: vars.$pad-md;
+  }
+
+  .card {
+    width: 100%;
+    border-radius: vars.$radius-md;
+  }
+
+  .tabs {
+    gap: 6px;
+  }
+
+  .tab {
+    font-size: vars.$font-sm;
+  }
+
+  .submit {
+    font-size: vars.$font-md;
+  }
+}
