@@ -25,15 +25,6 @@ async def send_email(payload: EmailSendRequest, bg: BackgroundTasks):
                 params=payload.params,
             )
         except Exception as e:
-            # Log the failure to EmailLog
-            await email_service.log_email(
-                to=payload.to,
-                subject=payload.subject,
-                body=payload.html or payload.text or "",
-                template=payload.template or "",
-                status="FAILED",
-                error=str(e),
-            )
             # Also log to console
             logger.error(f"Email send failed: {e}")
             # Do not re-raise to avoid crashing background workers
