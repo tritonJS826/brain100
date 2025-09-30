@@ -485,7 +485,7 @@ export function Header() {
                 role="menuitem"
                 onClick={() => setSosOpenTop(false)}
               >
-                Заявка на консультацию
+                {dictionary.sos.consultation}
               </Link>
               <Link
                 to={`${PATHS.SOS.LIST}#contact`}
@@ -493,21 +493,21 @@ export function Header() {
                 role="menuitem"
                 onClick={() => setSosOpenTop(false)}
               >
-                Связаться со специалистом
+                {dictionary.sos.contact}
               </Link>
               <div
                 className={styles.healthOption}
                 role="menuitem"
                 aria-haspopup="false"
               >
-                Инфо помощь:
+                {dictionary.sos.infoHelp}
                 <div className={styles.langOption}>
                   <Link
                     to={`${PATHS.MENTAL_HEALTH.LIST}#panic-attack`}
                     role="menuitem"
                     onClick={() => setSosOpenTop(false)}
                   >
-                    Паническая атака
+                    {dictionary.sos.panic}
                   </Link>
                 </div>
                 <div className={styles.langOption}>
@@ -516,7 +516,7 @@ export function Header() {
                     role="menuitem"
                     onClick={() => setSosOpenTop(false)}
                   >
-                    Тревога
+                    {dictionary.sos.anxiety}
                   </Link>
                 </div>
                 <div className={styles.langOption}>
@@ -525,7 +525,7 @@ export function Header() {
                     role="menuitem"
                     onClick={() => setSosOpenTop(false)}
                   >
-                    Депрессия
+                    {dictionary.sos.depression}
                   </Link>
                 </div>
               </div>

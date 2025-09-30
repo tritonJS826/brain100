@@ -41,6 +41,14 @@ export const header = {
     registerCta: "Sign up and track your results",
     subscribeCta: "Subscribe for article updates",
   },
+  sos: {
+    consultation: "Consultation request",
+    contact: "Contact a specialist",
+    infoHelp: "Info help:",
+    panic: "Panic attack",
+    anxiety: "Anxiety",
+    depression: "Depression",
+  },
 } as const;
 
 export type HeaderDictEn = typeof header;
