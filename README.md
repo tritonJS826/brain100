@@ -6,7 +6,7 @@ requirements:
 * pnpm 8.15.2 (https://pnpm.io)
 * docker 28.1.1
 * docker-compose 2.33.1
-* ruf 0.13.2
+* ruff 0.13.2
 
 ## 🚀 Quick Start
 

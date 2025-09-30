@@ -99,10 +99,6 @@ http://localhost:8000/br-general/health
 or
 http://localhost:8000/br-general/health/general
 
-### Users CRUD
-
-http://localhost:8000/br-general/users
-
 ### Interactive API Docs
 
 http://localhost:8000/docs

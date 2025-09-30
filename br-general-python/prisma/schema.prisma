@@ -10,55 +10,55 @@ datasource db {
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String
-  createdAt DateTime  @default(now())
-  sessions   TestSession[]
+  id        Int           @id @default(autoincrement())
+  email     String        @unique
+  name      String
+  createdAt DateTime      @default(now())
+  sessions  TestSession[]
 }
 
 model Test {
-  id          String       @id @default(cuid())
+  id          String        @id @default(cuid())
   title       String
   description String
   questions   Question[]
   sessions    TestSession[]
-  createdAt   DateTime     @default(now())
+  createdAt   DateTime      @default(now())
 }
 
 model Question {
-  id          String         @id @default(cuid())
-  test        Test           @relation(fields: [testId], references: [id], onDelete: Cascade)
-  testId      String
-  text        String
-  type        QuestionType
-  options     AnswerOption[]
+  id        String         @id @default(cuid())
+  test      Test           @relation(fields: [testId], references: [id], onDelete: Cascade)
+  testId    String
+  text      String
+  type      QuestionType
+  options   AnswerOption[]
   // Добавляем чтобы было дерево вопросов: тут указываем, какой вопрос показать после текущего
-  nextYesId   String?
-  nextNoId    String?
-  createdAt   DateTime       @default(now())
-  answers    GivenAnswer[]
+  nextYesId String?
+  nextNoId  String?
+  createdAt DateTime       @default(now())
+  answers   GivenAnswer[]
 }
 
 model AnswerOption {
-  id          String    @id @default(cuid())
-  question    Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  questionId  String
-  text        String
-  isCorrect   Boolean?  // тру для автопроверки
-  createdAt   DateTime  @default(now())
-  answers     GivenAnswer[]
+  id         String        @id @default(cuid())
+  question   Question      @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId String
+  text       String
+  isCorrect  Boolean? // тру для автопроверки
+  createdAt  DateTime      @default(now())
+  answers    GivenAnswer[]
 }
 
 model TestSession {
-  id          String       @id @default(cuid())
-  test        Test         @relation(fields: [testId], references: [id], onDelete: Cascade)
-  testId      String
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId Int
-  createdAt   DateTime     @default(now())
-  finishedAt  DateTime?
-  answers     GivenAnswer[]
+  id         String        @id @default(cuid())
+  test       Test          @relation(fields: [testId], references: [id], onDelete: Cascade)
+  testId     String
+  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     Int
+  createdAt  DateTime      @default(now())
+  finishedAt DateTime?
+  answers    GivenAnswer[]
 }
 
 model GivenAnswer {
@@ -77,4 +77,18 @@ enum QuestionType {
   RADIO
   CHECKBOX
   TEXT
+}
+
+model EmailLog {
+  id        String   @id @default(cuid())
+  to        String
+  subject   String
+  template  String?
+  // optional: store raw body or rendered HTML
+  body      String?
+  // e.g. "SENT", "FAILED"
+  status    String
+  // error message if failed
+  error     String?
+  createdAt DateTime @default(now())
 }
