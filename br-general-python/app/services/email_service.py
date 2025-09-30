@@ -124,28 +124,24 @@ class EmailService:
                     await smtp.send_message(message)
 
             # ✅Prepare variable for log success
-            status_email = "SENT"
-            error_text_email = ""
             await self.log_email(
                 to=to,
                 subject=subject,
                 body=html or text or "",
                 template=template or "",
-                status=status_email,
-                error=error_text_email,
+                status="SENT",
+                error="",
             )
 
         except Exception as e:
             # log failure
-            status_email = "FAILED"
-            error_text_email = str(e)
             await self.log_email(
                 to=to,
                 subject=subject,
                 body=html or text or "",
                 template=template or "",
-                status=status_email,
-                error=error_text_email,
+                status="FAILED",
+                error=str(e),
             )
             logger.error(f"Error sending email to {to}: {e}")
             raise
