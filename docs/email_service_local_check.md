@@ -3,8 +3,9 @@
 We use [MailHog](https://github.com/mailhog/MailHog) to test emails locally.
 
 Used ports:
-SMTP 1025 for sending emails
-Web UI 8025 for viewing emails in UI
+SMTP: 1025 for sending emails
+
+Web UI: 8025 for viewing emails in UI
 
 http://localhost:8000/br-general/email/send
 
