@@ -4,6 +4,7 @@ from pydantic import Field, field_validator, EmailStr
 
 import os
 
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))  # br-general-python/
 ENV_PATH = os.path.join(BASE_DIR, ".env")
 

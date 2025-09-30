@@ -22,7 +22,7 @@ async def send_email(payload: EmailSendRequest, bg: BackgroundTasks):
             )
         except Exception as e:
             # Log the failure to EmailLog
-            await email_service._log_email(
+            await email_service.log_email(
                 to=payload.to,
                 subject=payload.subject,
                 body=payload.html or payload.text or "",

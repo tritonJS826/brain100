@@ -9,6 +9,10 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from app.settings import settings
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 _TEMPLATES_DIR = Path(__file__).resolve().parent.parent / "templates"
 _env = Environment(
     loader=FileSystemLoader(str(_TEMPLATES_DIR)),
@@ -19,7 +23,8 @@ _env = Environment(
 class EmailService:
     """SMTP-backed email sender."""
 
-    def __init__(self) -> None:
+    def __init__(self, db: Prisma | None = None) -> None:
+        self.db = db or Prisma()
         self.host = settings.smtp_host
         self.port = settings.smtp_port
         self.user = settings.smtp_user
@@ -55,7 +60,7 @@ class EmailService:
 
         return msg
 
-    async def _log_email(
+    async def log_email(
         self,
         *,
         to: str,
@@ -65,10 +70,11 @@ class EmailService:
         status: str = "SENT",
         error: Optional[str] = None,
     ) -> None:
-        db = Prisma()
-        await db.connect()
+        """Public wrapper to store email logs in DB."""
+
+        await self.db.connect()
         try:
-            await db.emaillog.create(
+            await self.db.emaillog.create(
                 data={
                     "to": to,
                     "subject": subject,
@@ -79,7 +85,7 @@ class EmailService:
                 }
             )
         finally:
-            await db.disconnect()
+            await self.db.disconnect()
 
     async def send(
         self,
@@ -117,22 +123,29 @@ class EmailService:
                         await smtp.login(self.user, self.password)
                     await smtp.send_message(message)
 
-            # ✅ log success
-            await self._log_email(
+            # ✅Prepare variable for log success
+            status_email = "SENT"
+            error_text_email = ""
+            await self.log_email(
                 to=to,
                 subject=subject,
                 body=html or text or "",
                 template=template or "",
-                status="SENT",
+                status=status_email,
+                error=error_text_email,
             )
+
         except Exception as e:
-            # ❌ log failure
-            await self._log_email(
+            # log failure
+            status_email = "FAILED"
+            error_text_email = str(e)
+            await self.log_email(
                 to=to,
                 subject=subject,
                 body=html or text or "",
                 template=template or "",
-                status="FAILED",
-                error=str(e),
+                status=status_email,
+                error=error_text_email,
             )
+            logger.error(f"Error sending email to {to}: {e}")
             raise
