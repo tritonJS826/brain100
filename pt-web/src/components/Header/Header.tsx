@@ -21,7 +21,7 @@ const HALF = 2;
 const DROPDOWN_KEYS: MenuKey[] = ["mental", "tests", "biohacking"];
 
 export function Header() {
-  const dictionary = useDictionary(DictionaryKey.COMMON);
+  const dictionary = useDictionary(DictionaryKey.HEADER);
   const [lang, setLang] = useAtom(languageAtomWithPersistence);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -279,7 +279,7 @@ export function Header() {
           <Promo
             to={buildPath.supportConsultation()}
             img={promoMental}
-            title="Оставь заявку на консультацию"
+            title={dictionary.promo.consultCta}
           />
         </div>
       );
@@ -313,7 +313,7 @@ export function Header() {
           <Promo
             to={buildPath.auth()}
             img={promoTests}
-            title="Регистрируйся и следи за результатами"
+            title={dictionary.promo.registerCta}
           />
         </div>
       );
@@ -346,7 +346,7 @@ export function Header() {
         <Promo
           to={buildPath.auth()}
           img={promoBio}
-          title="Подпишись и получай новости о статьях"
+          title={dictionary.promo.subscribeCta}
         />
       </div>
     );
