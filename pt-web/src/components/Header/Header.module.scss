@@ -65,7 +65,7 @@
   text-decoration: none;
   color: vars.$color-primary;
   font-weight: 600;
-  font-size: vars.$font-md;
+  font-size: vars.$font-lg;
   border-bottom: 2px solid transparent;
   line-height: 1.2;
   white-space: nowrap;
@@ -107,6 +107,7 @@
   border-radius: vars.$radius-pill;
   text-decoration: none;
   transition: background-color vars.$transition-fast;
+  cursor: pointer;
 }
 
 .cta:hover {
@@ -176,12 +177,17 @@
   border-color: vars.$color-cta-bg;
 }
 
+.sosWrap {
+  order: 2;
+  position: relative;
+}
+
 .langMenu {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 32px);
   right: 0;
   left: auto;
-  min-width: 120px;
+  min-width: 150px;
   padding: 6px;
   background: vars.$color-bg;
   border: 1px solid vars.$color-border;
@@ -217,19 +223,25 @@
   border: 0;
   width: 100%;
   text-align: left;
-  padding: 8px;
+  padding: 10px 12px;
   border-radius: vars.$radius-sm;
   font-weight: 700;
   color: vars.$color-primary;
   cursor: pointer;
+  text-decoration: none;
   transition:
     background-color vars.$transition-fast,
     color vars.$transition-fast;
+  display: block;
 }
 
 .langOption:hover {
   background: vars.$color-cta-bg;
   color: vars.$color-primary-hover;
+}
+
+.sosMenu {
+  min-width: 260px;
 }
 
 .burgerWrap {
@@ -309,16 +321,14 @@
 }
 
 .dockInner {
+  border-top: 1px solid vars.$color-border;
   position: absolute;
-  top: 8px;
   left: var(--dock-x, 50%);
   transform: translateX(-50%);
-  width: min(55vw, 588px);
+  width: 100%;
   background: vars.$color-bg;
-  border: 1px solid vars.$color-border;
-  border-radius: vars.$radius-lg;
   box-shadow: 0 20px 40px rgb(0 0 0 / 14%);
-  padding: vars.$pad-md;
+  padding: vars.$gap-lg vars.$gap-xl;
   max-height: clamp(320px, 60vh, 620px);
   overflow: hidden;
 }
@@ -378,11 +388,10 @@
   padding: 0;
   margin: 0;
   display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: max-content;
+  grid-auto-flow: row;
   gap: 8px 14px;
-  overflow-x: auto;
-  white-space: nowrap;
+  overflow: visible;
+  white-space: normal;
   align-items: start;
 }
 
@@ -543,6 +552,11 @@
   transition: max-height vars.$transition-base;
   display: grid;
   gap: 8px;
+  max-height: 0;
+}
+
+.submenuOpen {
+  max-height: 520px;
 }
 
 .submenuLink {
@@ -604,13 +618,90 @@
   text-decoration: none;
 }
 
+.healthOption {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  width: 100%;
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: vars.$radius-sm;
+  font-weight: 700;
+  color: vars.$color-primary;
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    background-color vars.$transition-fast,
+    color vars.$transition-fast;
+  display: block;
+}
+
+/* список + промо справа */
+.dockLayout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: vars.$gap-lg;
+  align-items: stretch;
+}
+
+.dockLists {
+  display: grid;
+  gap: vars.$gap-md;
+  align-content: start;
+  overflow: auto;
+  padding-right: vars.$pad-sm;
+}
+
+.dockListTwoCols {
+  column-count: 2;
+  column-gap: vars.$gap-lg;
+}
+
+.dockListTwoCols > li {
+  break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+  -moz-column-break-inside: avoid;
+  margin-bottom: 8px;
+}
+
+.dockPromo {
+  position: relative;
+  display: block;
+  border-radius: vars.$radius-lg;
+  overflow: hidden;
+  border: 1px solid vars.$color-border;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 10%);
+  text-decoration: none;
+  height: 100%;
+  min-height: 220px;
+}
+
+.dockPromoImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform vars.$transition-fast;
+}
+
+.dockPromo:hover .dockPromoImg {
+  transform: scale(1.03);
+}
+
+.dockPromoTitle {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  font-weight: 800;
+  font-size: vars.$font-lg;
+  color: #fff;
+  text-shadow: 0 2px 12px rgb(0 0 0 / 60%);
+}
+
 @media (width >= 1800px) {
   .navAll {
     gap: clamp(18px, 2vw, 36px);
-  }
-
-  .dockInner {
-    width: min(48vw, 540px);
   }
 }
 
@@ -668,6 +759,18 @@
 
   .sosFloat {
     display: inline-flex;
+  }
+
+  .dockLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .dockListTwoCols {
+    column-count: 1;
+  }
+
+  .dockPromo {
+    min-height: 180px;
   }
 }
 

@@ -23,7 +23,7 @@ export function Footer() {
     links: [
       {label: dict.footer.links.about, to: PATHS.ABOUT},
       {label: dict.footer.links.states, to: PATHS.MENTAL_HEALTH.LIST},
-      {label: dict.footer.links.tests, to: PATHS.DIAGNOSTICS.LIST},
+      {label: dict.footer.links.tests, to: PATHS.TESTS.LIST},
     ],
   } as const;
 
@@ -31,7 +31,7 @@ export function Footer() {
     title: dict.footer.resourcesTitle,
     links: [
       {label: dict.footer.links.statesCatalog, to: PATHS.MENTAL_HEALTH.LIST},
-      {label: dict.footer.links.testsCatalog, to: PATHS.DIAGNOSTICS.LIST},
+      {label: dict.footer.links.testsCatalog, to: PATHS.TESTS.LIST},
       {label: dict.footer.links.biohackingCatalog, to: PATHS.BIOHACKING.LIST},
     ],
   } as const;

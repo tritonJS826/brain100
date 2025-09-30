@@ -65,7 +65,7 @@ export function TestsList() {
             <div className={styles.cardBody}>
               <h2 className={styles.cardTitle}>
                 <Link
-                  to={buildPath.diagnosticsDetail(test.id)}
+                  to={buildPath.testsDetail(test.id)}
                   className={styles.cardLink}
                 >
                   {test.name}
@@ -74,7 +74,7 @@ export function TestsList() {
               <p className={styles.cardText} />
             </div>
             <div className={styles.cardFoot}>
-              <Button to={buildPath.diagnosticsDetail(test.id)}>
+              <Button to={buildPath.testsDetail(test.id)}>
                 {dictionary.cta}
               </Button>
             </div>

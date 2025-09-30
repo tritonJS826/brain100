@@ -4,7 +4,7 @@ export const common = {
   nav: {
     about: "О нас",
     mental: "Состояния",
-    diagnostics: "Тесты",
+    tests: "Тесты",
     biohacking: "Биохакинг",
     profile: "Личный кабинет",
     sos: "SOS",
@@ -21,7 +21,7 @@ export const common = {
         depression: "Депрессия",
         burnout: "Выгорание",
       },
-      diagnostics: {
+      tests: {
         "1": "Тест на наличие депрессии",
         "2": "Тест о настроении",
       },

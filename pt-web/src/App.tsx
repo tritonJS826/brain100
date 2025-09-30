@@ -46,11 +46,11 @@ export function App() {
           />
 
           <Route
-            path={PATHS.DIAGNOSTICS.LIST}
+            path={PATHS.TESTS.LIST}
             element={<TestsList />}
           />
           <Route
-            path={PATHS.DIAGNOSTICS.DETAIL}
+            path={PATHS.TESTS.DETAIL}
             element={<Test />}
           />
 
@@ -61,39 +61,6 @@ export function App() {
           <Route
             path={PATHS.BIOHACKING.DETAIL}
             element={<BiohackingDetailPage />}
-          />
-
-          <Route
-            path={PATHS.SOS.LIST}
-            element={<div>
-              Поддержка
-            </div>}
-          />
-          <Route
-            path={PATHS.SOS.DETAIL}
-            element={<div>
-              Поддержка — состояние
-            </div>}
-          />
-
-          <Route
-            path={PATHS.SPECIALISTS.LIST}
-            element={<div>
-              Специалисты
-            </div>}
-          />
-          <Route
-            path={PATHS.SPECIALISTS.DETAIL}
-            element={<div>
-              Профиль специалиста
-            </div>}
-          />
-
-          <Route
-            path={PATHS.CONTACTS}
-            element={<div>
-              Контакты
-            </div>}
           />
         </Routes>
       </main>
