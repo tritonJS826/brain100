@@ -123,14 +123,14 @@ class EmailService:
                         await smtp.login(self.user, self.password)
                     await smtp.send_message(message)
 
-            # ✅Prepare variable for log success
+            # Log success
             await self.log_email(
                 to=to,
                 subject=subject,
                 body=html or text or "",
                 template=template or "",
                 status="SENT",
-                error="",
+                error=None,
             )
 
         except Exception as e:
