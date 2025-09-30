@@ -9,6 +9,7 @@ import {ArticlesListPage} from "src/pages/articlesListPage/ArticlesListPage";
 import {BiohackingDetailPage} from "src/pages/biohackingListPage/articles/BiohackingDetailPage";
 import {BiohackingListPage} from "src/pages/biohackingListPage/BiohackingListPage";
 import {HomePage} from "src/pages/homePage/Homepage";
+import {SupportPage} from "src/pages/support/SupportPage";
 import {Test} from "src/pages/testsListPage/tests/Test";
 import {TestsList} from "src/pages/testsListPage/TestsListPage";
 import {PATHS} from "src/routes/routes";
@@ -61,6 +62,10 @@ export function App() {
           <Route
             path={PATHS.BIOHACKING.DETAIL}
             element={<BiohackingDetailPage />}
+          />
+          <Route
+            path={PATHS.SOS.LIST}
+            element={<SupportPage />}
           />
         </Routes>
       </main>

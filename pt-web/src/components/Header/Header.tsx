@@ -32,19 +32,11 @@ export function Header() {
   const [langOpenTop, setLangOpenTop] = useState(false);
   const [langOpenDrawer, setLangOpenDrawer] = useState(false);
 
-  const [sosOpenTop, setSosOpenTop] = useState(false);
-  const [sosOpenDrawer, setSosOpenDrawer] = useState(false);
-
   const navRef = useRef<HTMLElement | null>(null);
   const langBtnTopRef = useRef<HTMLButtonElement | null>(null);
   const langMenuTopRef = useRef<HTMLDivElement | null>(null);
   const langBtnDrawerRef = useRef<HTMLButtonElement | null>(null);
   const langMenuDrawerRef = useRef<HTMLDivElement | null>(null);
-
-  const sosBtnTopRef = useRef<HTMLButtonElement | null>(null);
-  const sosMenuTopRef = useRef<HTMLDivElement | null>(null);
-  const sosBtnDrawerRef = useRef<HTMLButtonElement | null>(null);
-  const sosMenuDrawerRef = useRef<HTMLDivElement | null>(null);
 
   const closeTimerRef = useRef<number | null>(null);
 
@@ -96,8 +88,6 @@ export function Header() {
         closeDock();
         setLangOpenTop(false);
         setLangOpenDrawer(false);
-        setSosOpenTop(false);
-        setSosOpenDrawer(false);
       }
     };
     document.addEventListener("keydown", onKey);
@@ -161,42 +151,6 @@ export function Header() {
     return () => document.removeEventListener("mousedown", onDown);
   }, [langOpenDrawer]);
 
-  useEffect(() => {
-    if (!sosOpenTop) {
-      return;
-    }
-    const onDown = (e: MouseEvent) => {
-      const t = e.target as Node;
-      if (
-        sosMenuTopRef.current && !sosMenuTopRef.current.contains(t) &&
-        sosBtnTopRef.current && !sosBtnTopRef.current.contains(t)
-      ) {
-        setSosOpenTop(false);
-      }
-    };
-    document.addEventListener("mousedown", onDown);
-
-    return () => document.removeEventListener("mousedown", onDown);
-  }, [sosOpenTop]);
-
-  useEffect(() => {
-    if (!sosOpenDrawer) {
-      return;
-    }
-    const onDown = (e: MouseEvent) => {
-      const t = e.target as Node;
-      if (
-        sosMenuDrawerRef.current && !sosMenuDrawerRef.current.contains(t) &&
-        sosBtnDrawerRef.current && !sosBtnDrawerRef.current.contains(t)
-      ) {
-        setSosOpenDrawer(false);
-      }
-    };
-    document.addEventListener("mousedown", onDown);
-
-    return () => document.removeEventListener("mousedown", onDown);
-  }, [sosOpenDrawer]);
-
   const toggleDrawerSection = (key: MenuKey) => {
     setDrawerActive(prev => (prev === key ? null : key));
   };
@@ -229,7 +183,7 @@ export function Header() {
     ([entryId, entryLabel]) => ({id: entryId, label: entryLabel}),
   );
 
-  const Promo = ({to, img, title}: {to: string; img: string; title: string}) => (
+  const Promo = ({to, img, title}: { to: string; img: string; title: string }) => (
     <Link
       to={to}
       className={styles.dockPromo}
@@ -461,76 +415,12 @@ export function Header() {
             </div>
           </div>
 
-          <div className={styles.sosWrap}>
-            <button
-              ref={sosBtnTopRef}
-              type="button"
-              className={styles.cta}
-              onClick={() => setSosOpenTop(v => !v)}
-              aria-haspopup="true"
-              aria-expanded={sosOpenTop}
-              aria-controls="sos-menu-top"
-            >
-              {dictionary.nav.sos}
-            </button>
-            <div
-              id="sos-menu-top"
-              ref={sosMenuTopRef}
-              className={`${styles.langMenu} ${styles.sosMenu} ${sosOpenTop ? styles.langMenuOpen : ""}`}
-              role="menu"
-            >
-              <Link
-                to={buildPath.supportConsultation()}
-                className={styles.langOption}
-                role="menuitem"
-                onClick={() => setSosOpenTop(false)}
-              >
-                {dictionary.sos.consultation}
-              </Link>
-              <Link
-                to={`${PATHS.SOS.LIST}#contact`}
-                className={styles.langOption}
-                role="menuitem"
-                onClick={() => setSosOpenTop(false)}
-              >
-                {dictionary.sos.contact}
-              </Link>
-              <div
-                className={styles.healthOption}
-                role="menuitem"
-                aria-haspopup="false"
-              >
-                {dictionary.sos.infoHelp}
-                <div className={styles.langOption}>
-                  <Link
-                    to={`${PATHS.MENTAL_HEALTH.LIST}#panic-attack`}
-                    role="menuitem"
-                    onClick={() => setSosOpenTop(false)}
-                  >
-                    {dictionary.sos.panic}
-                  </Link>
-                </div>
-                <div className={styles.langOption}>
-                  <Link
-                    to={`${PATHS.MENTAL_HEALTH.LIST}#anxiety`}
-                    role="menuitem"
-                    onClick={() => setSosOpenTop(false)}
-                  >
-                    {dictionary.sos.anxiety}
-                  </Link>
-                </div>
-                <div className={styles.langOption}>
-                  <Link
-                    to={`${PATHS.MENTAL_HEALTH.LIST}#depression`}
-                    role="menuitem"
-                    onClick={() => setSosOpenTop(false)}
-                  >
-                    {dictionary.sos.depression}
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
+          <Link
+            to={buildPath.supportList()}
+            className={styles.cta}
+          >
+            {dictionary.nav.sos}
+          </Link>
 
           <li className={styles.burgerWrap}>
             <button
@@ -608,9 +498,9 @@ export function Header() {
                       <button
                         type="button"
                         className={`
-                          ${styles.drawerLink}
-                          ${styles.drawerLinkBtn}
-                          ${drawerActive === menuKey ? styles.drawerLinkOpen : ""}`}
+                        ${styles.drawerLink}
+                        ${styles.drawerLinkBtn}
+                        ${drawerActive === menuKey ? styles.drawerLinkOpen : ""}`}
                         onClick={() => toggleDrawerSection(menuKey)}
                         aria-expanded={drawerActive === menuKey}
                       >
@@ -723,92 +613,13 @@ export function Header() {
             </div>
           </div>
 
-          <div className={styles.langWrap}>
-            <button
-              ref={sosBtnDrawerRef}
-              type="button"
-              className={styles.cta}
-              onClick={() => setSosOpenDrawer(v => !v)}
-              aria-haspopup="true"
-              aria-expanded={sosOpenDrawer}
-              aria-controls="sos-menu-drawer"
-            >
-              {dictionary.nav.sos}
-            </button>
-            <div
-              id="sos-menu-drawer"
-              ref={sosMenuDrawerRef}
-              className={`
-                ${styles.langMenu}
-                ${styles.langMenuSide}
-                ${styles.sosMenu}
-                ${sosOpenDrawer ? styles.langMenuOpen : ""}`}
-              role="menu"
-            >
-              <Link
-                to={buildPath.supportConsultation()}
-                className={styles.langOption}
-                role="menuitem"
-                onClick={() => {
-                  setSosOpenDrawer(false);
-                  setDrawerOpen(false);
-                }}
-              >
-                Заявка на консультацию
-              </Link>
-              <Link
-                to={`${PATHS.SOS.LIST}#contact`}
-                className={styles.langOption}
-                role="menuitem"
-                onClick={() => {
-                  setSosOpenDrawer(false);
-                  setDrawerOpen(false);
-                }}
-              >
-                Связаться со специалистом
-              </Link>
-              <div
-                className={styles.langOption}
-                role="menuitem"
-                aria-haspopup="false"
-              >
-                Инфо помощь:
-                <Link
-                  to={`${PATHS.MENTAL_HEALTH.LIST}#panic-attack`}
-                  className={styles.healthOption}
-                  role="menuitem"
-                  onClick={() => {
-                    setSosOpenDrawer(false);
-                    setDrawerOpen(false);
-                  }}
-                >
-                  Паническая атака
-                </Link>
-                <Link
-                  to={`${PATHS.MENTAL_HEALTH.LIST}#anxiety`}
-                  className={styles.healthOption}
-                  role="menuitem"
-                  onClick={() => {
-                    setSosOpenDrawer(false);
-                    setDrawerOpen(false);
-                  }}
-                >
-                  Тревога
-                </Link>
-                <Link
-                  to={`${PATHS.MENTAL_HEALTH.LIST}#depression`}
-                  className={styles.healthOption}
-                  role="menuitem"
-                  onClick={() => {
-                    setSosOpenDrawer(false);
-                    setDrawerOpen(false);
-                  }}
-                >
-                  Депрессия
-                </Link>
-              </div>
-            </div>
-          </div>
+          <Link
+            to={buildPath.supportList()}
+            className={styles.cta}
+            onClick={() => setDrawerOpen(false)}
+          >
+            {dictionary.nav.sos}
+          </Link>
 
           <NavLink
             to={PATHS.PROFILE.PAGE}
@@ -820,6 +631,13 @@ export function Header() {
           </NavLink>
         </div>
       </aside>
+      <NavLink
+        to={PATHS.SOS.LIST}
+        className={styles.sosFloat}
+        aria-label="Страница поддержки"
+      >
+        SOS
+      </NavLink>
     </header>
   );
 }

@@ -41,14 +41,6 @@ export const header = {
     registerCta: "Регистрируйся и следи за результатами",
     subscribeCta: "Подпишись и получай новости о статьях",
   },
-  sos: {
-    consultation: "Заявка на консультацию",
-    contact: "Связаться со специалистом",
-    infoHelp: "Инфо помощь:",
-    panic: "Паническая атака",
-    anxiety: "Тревога",
-    depression: "Депрессия",
-  },
 } as const;
 
 export type HeaderDictRu = typeof header;

@@ -177,11 +177,6 @@
   border-color: vars.$color-cta-bg;
 }
 
-.sosWrap {
-  order: 2;
-  position: relative;
-}
-
 .langMenu {
   position: absolute;
   top: calc(100% + 32px);
@@ -238,10 +233,6 @@
 .langOption:hover {
   background: vars.$color-cta-bg;
   color: vars.$color-primary-hover;
-}
-
-.sosMenu {
-  min-width: 260px;
 }
 
 .burgerWrap {
@@ -347,21 +338,6 @@
   box-shadow: -4px -4px 12px rgb(0 0 0 / 05%);
 }
 
-.dockCols {
-  height: 100%;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: vars.$gap-lg;
-  overflow: auto;
-  padding-right: vars.$pad-sm;
-}
-
-.dockCol {
-  display: grid;
-  gap: vars.$gap-md;
-  align-content: start;
-}
-
 .dockHeading {
   display: inline-block;
   color: vars.$color-primary;
@@ -383,17 +359,17 @@
   gap: vars.$gap-sm;
 }
 
-.dockListRow {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: grid;
-  grid-auto-flow: row;
-  gap: 8px 14px;
-  overflow: visible;
-  white-space: normal;
-  align-items: start;
-}
+// .dockListRow {
+//   list-style: none;
+//   padding: 0;
+//   margin: 0;
+//   display: grid;
+//   grid-auto-flow: row;
+//   gap: 8px 14px;
+//   overflow: visible;
+//   white-space: normal;
+//   align-items: start;
+// }
 
 .dockLink {
   display: block;
@@ -408,28 +384,6 @@
 
 .dockLink:hover {
   color: vars.$color-cta-bg;
-}
-
-.dockCta {
-  margin: 0 auto;
-  padding: 10px 16px;
-  font-size: vars.$font-sm;
-  font-weight: 700;
-  color: vars.$color-primary;
-  background-color: vars.$color-bg;
-  border: 1px solid vars.$color-border;
-  border-radius: vars.$radius-pill;
-  text-decoration: none;
-  transition:
-    background-color vars.$transition-fast,
-    color vars.$transition-fast,
-    border-color vars.$transition-fast;
-}
-
-.dockCta:hover {
-  background-color: vars.$color-cta-bg;
-  color: vars.$color-primary-hover;
-  border-color: vars.$color-cta-bg;
 }
 
 .backdrop {
@@ -598,45 +552,6 @@
   transform: translateY(0);
 }
 
-.sosFloat {
-  position: fixed;
-  right: 12px;
-  bottom: 18vh;
-  z-index: 140;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  width: 54px;
-  height: 54px;
-  border-radius: 999px;
-  font-weight: 800;
-  font-size: 14px;
-  color: vars.$color-primary;
-  background: vars.$color-bg;
-  border: 2px solid vars.$color-primary;
-  box-shadow: 0 8px 18px rgb(0 0 0 / 18%);
-  text-decoration: none;
-}
-
-.healthOption {
-  appearance: none;
-  background: transparent;
-  border: 0;
-  width: 100%;
-  text-align: left;
-  padding: 10px 12px;
-  border-radius: vars.$radius-sm;
-  font-weight: 700;
-  color: vars.$color-primary;
-  cursor: pointer;
-  text-decoration: none;
-  transition:
-    background-color vars.$transition-fast,
-    color vars.$transition-fast;
-  display: block;
-}
-
-/* список + промо справа */
 .dockLayout {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -699,6 +614,38 @@
   text-shadow: 0 2px 12px rgb(0 0 0 / 60%);
 }
 
+.sosFloat {
+  position: fixed;
+  right: 25px;
+  bottom: 60px;
+  z-index: 140;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 14px;
+  color: vars.$color-primary;
+  background: vars.$color-bg;
+  border: 2px solid vars.$color-primary;
+  box-shadow: 0 10px 20px rgb(0 0 0 / 20%);
+  text-decoration: none;
+  letter-spacing: 0.5px;
+}
+
+.sosFloat:hover {
+  background: vars.$color-cta-bg;
+  color: vars.$color-primary-hover;
+  box-shadow: 0 12px 24px rgb(0 0 0 / 24%);
+  transform: translateY(-2px);
+}
+
+.sosFloat:active {
+  transform: translateY(1px);
+}
+
 @media (width >= 1800px) {
   .navAll {
     gap: clamp(18px, 2vw, 36px);
@@ -757,10 +704,6 @@
     right: 0;
   }
 
-  .sosFloat {
-    display: inline-flex;
-  }
-
   .dockLayout {
     grid-template-columns: 1fr;
   }
@@ -771,6 +714,10 @@
 
   .dockPromo {
     min-height: 180px;
+  }
+
+  .sosFloat {
+    display: inline-flex;
   }
 }
 
