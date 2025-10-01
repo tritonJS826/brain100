@@ -19,35 +19,3 @@
   font-size: vars.$subtitle-size;
   line-height: 1.5;
 }
-
-.toolbar {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: 12px;
-  margin-top: 8px;
-}
-
-.search {
-  width: 100%;
-  min-height: 44px;
-  padding: 10px 12px;
-  border: 1px solid vars.$color-border;
-  border-radius: vars.$radius-md;
-  font-size: clamp(14px, 1.4vw, 16px);
-  color: vars.$color-primary;
-  background: #fff;
-}
-
-.search:focus {
-  outline: none;
-  border-color: vars.$color-cta-bg;
-  box-shadow: 0 0 0 3px rgb(32 148 243 / 18%);
-}
-
-@media (width <= 1080px) {
-  .toolbar {
-    grid-template-columns: 1fr;
-    align-items: stretch;
-  }
-}

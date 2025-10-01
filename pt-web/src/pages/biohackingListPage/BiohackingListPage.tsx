@@ -1,4 +1,3 @@
-import {useState} from "react";
 import {Link} from "react-router-dom";
 import {Button} from "src/components/Button/Button";
 import {EmptyState} from "src/components/EmptyState/EmptyState";
@@ -6,7 +5,6 @@ import {PageHeader} from "src/components/PageHeader/PageHeader";
 import {DictionaryKey} from "src/dictionary/dictionaryLoader";
 import {useDictionary} from "src/dictionary/useDictionary";
 import {buildPath} from "src/routes/routes";
-import {filterBySearch} from "src/utils/filterBySearch";
 import styles from "src/pages/biohackingListPage/BiohackingListPage.module.scss";
 
 type BioItem = {
@@ -29,7 +27,6 @@ type BioDictionary = {
 
 export function BiohackingListPage() {
   const dictionary = useDictionary(DictionaryKey.BIOHACKING) as BioDictionary | null;
-  const [searchQuery, setSearchQuery] = useState("");
 
   if (!dictionary) {
     return (
@@ -39,11 +36,7 @@ export function BiohackingListPage() {
     );
   }
 
-  const filteredItems = filterBySearch<BioItem>(
-    dictionary.articlesItems,
-    searchQuery,
-    (item) => [item.title, item.subtitle ?? "", item.excerpt ?? ""].join(" "),
-  );
+  const items = dictionary.articlesItems;
 
   return (
     <section
@@ -53,14 +46,10 @@ export function BiohackingListPage() {
       <PageHeader
         title={dictionary.title}
         subtitle={dictionary.subtitle}
-        searchValue={searchQuery}
-        searchPlaceholder={dictionary.searchPlaceholder}
-        ariaSearchLabel={dictionary.ariaSearchLabel}
-        onSearchChange={setSearchQuery}
       />
 
       <ul className={styles.grid}>
-        {filteredItems.map((item) => (
+        {items.map((item) => (
           <li
             key={item.id}
             className={styles.card}
@@ -106,7 +95,7 @@ export function BiohackingListPage() {
         ))}
       </ul>
 
-      {filteredItems.length === 0 && <EmptyState message={dictionary.empty} />}
+      {items.length === 0 && <EmptyState message={dictionary.empty} />}
     </section>
   );
 }

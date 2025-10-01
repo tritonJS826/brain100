@@ -2,9 +2,9 @@ import React, {useEffect, useRef, useState} from "react";
 import {Link, NavLink} from "react-router-dom";
 import {useAtom} from "jotai";
 import {UserRound} from "lucide-react";
-import promoMental from "src/assets/1_consult.jpg";
-import promoTests from "src/assets/2_register.jpg";
-import promoBio from "src/assets/3_follow.jpg";
+import promoMental from "src/assets/1_consult.avif";
+import promoTests from "src/assets/2_register.avif";
+import promoBio from "src/assets/3_follow.avif";
 import logo from "src/assets/BRAIN100.webp";
 import {
   LEFT_LINK_KEYS,
@@ -306,6 +306,10 @@ export function Header() {
     );
   };
 
+  const handleNavLinkClick = () => {
+    closeDock();
+  };
+
   return (
     <header
       className={styles.header}
@@ -320,6 +324,7 @@ export function Header() {
           to={PATHS.HOME}
           className={styles.logo}
           aria-label={dictionary.nav.ariaHome}
+          onClick={handleNavLinkClick}
         >
           <img
             src={logo}
@@ -353,6 +358,7 @@ export function Header() {
                           : PATHS.BIOHACKING.LIST
                   }
                   className={({isActive}) => `${styles.navLink} ${isActive ? styles.active : ""}`}
+                  onClick={handleNavLinkClick}
                 >
                   {labelByKey(menuKey)}
                 </NavLink>
@@ -366,6 +372,7 @@ export function Header() {
             to={PATHS.PROFILE.PAGE}
             className={styles.iconBtn}
             aria-label={dictionary.nav.profile}
+            onClick={handleNavLinkClick}
           >
             <UserRound className={styles.icon} />
           </NavLink>
@@ -415,12 +422,13 @@ export function Header() {
             </div>
           </div>
 
-          <Link
+          <NavLink
             to={buildPath.supportList()}
             className={styles.cta}
+            onClick={handleNavLinkClick}
           >
             {dictionary.nav.sos}
-          </Link>
+          </NavLink>
 
           <li className={styles.burgerWrap}>
             <button
@@ -498,9 +506,9 @@ export function Header() {
                       <button
                         type="button"
                         className={`
-                        ${styles.drawerLink}
-                        ${styles.drawerLinkBtn}
-                        ${drawerActive === menuKey ? styles.drawerLinkOpen : ""}`}
+                          ${styles.drawerLink}
+                          ${styles.drawerLinkBtn}
+                          ${drawerActive === menuKey ? styles.drawerLinkOpen : ""}`}
                         onClick={() => toggleDrawerSection(menuKey)}
                         aria-expanded={drawerActive === menuKey}
                       >
@@ -613,13 +621,13 @@ export function Header() {
             </div>
           </div>
 
-          <Link
+          <NavLink
             to={buildPath.supportList()}
             className={styles.cta}
             onClick={() => setDrawerOpen(false)}
           >
             {dictionary.nav.sos}
-          </Link>
+          </NavLink>
 
           <NavLink
             to={PATHS.PROFILE.PAGE}
@@ -631,10 +639,12 @@ export function Header() {
           </NavLink>
         </div>
       </aside>
+
       <NavLink
         to={PATHS.SOS.LIST}
         className={styles.sosFloat}
         aria-label="Страница поддержки"
+        onClick={handleNavLinkClick}
       >
         SOS
       </NavLink>
