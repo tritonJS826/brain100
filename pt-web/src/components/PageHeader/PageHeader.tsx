@@ -1,27 +1,15 @@
-import {ChangeEvent} from "react";
 import styles from "src/components/PageHeader/PageHeader.module.scss";
 
 type PageHeaderProps = {
   title: string;
   subtitle: string;
-  searchValue: string;
-  searchPlaceholder: string;
-  ariaSearchLabel: string;
-  onSearchChange: (value: string) => void;
 };
 
-export function PageHeader({
-  title,
-  subtitle,
-  searchValue,
-  searchPlaceholder,
-  ariaSearchLabel,
-  onSearchChange,
-}: PageHeaderProps) {
+export function PageHeader({title, subtitle}: PageHeaderProps) {
   return (
     <header className={styles.head}>
       <h1
-        id="diag-title"
+        id="page-title"
         className={styles.title}
       >
         {title}
@@ -29,16 +17,6 @@ export function PageHeader({
       {subtitle && <p className={styles.subtitle}>
         {subtitle}
       </p>}
-      <div className={styles.toolbar}>
-        <input
-          type="search"
-          value={searchValue}
-          placeholder={searchPlaceholder}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => onSearchChange(e.target.value)}
-          className={styles.search}
-          aria-label={ariaSearchLabel}
-        />
-      </div>
     </header>
   );
 }

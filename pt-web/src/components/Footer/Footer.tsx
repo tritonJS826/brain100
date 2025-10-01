@@ -13,33 +13,33 @@ const SOCIALS = [
 ] as const;
 
 export function Footer() {
-  const dict = useDictionary(DictionaryKey.COMMON);
-  if (!dict) {
+  const dictionary = useDictionary(DictionaryKey.FOOTER);
+  if (!dictionary) {
     return null;
   }
 
   const COL_1 = {
-    title: dict.footer.sectionsTitle,
+    title: dictionary.sectionsTitle,
     links: [
-      {label: dict.footer.links.about, to: PATHS.ABOUT},
-      {label: dict.footer.links.states, to: PATHS.MENTAL_HEALTH.LIST},
-      {label: dict.footer.links.tests, to: PATHS.DIAGNOSTICS.LIST},
+      {label: dictionary.links.about, to: PATHS.ABOUT},
+      {label: dictionary.links.states, to: PATHS.MENTAL_HEALTH.LIST},
+      {label: dictionary.links.tests, to: PATHS.TESTS.LIST},
     ],
   } as const;
 
   const COL_2 = {
-    title: dict.footer.resourcesTitle,
+    title: dictionary.resourcesTitle,
     links: [
-      {label: dict.footer.links.statesCatalog, to: PATHS.MENTAL_HEALTH.LIST},
-      {label: dict.footer.links.testsCatalog, to: PATHS.DIAGNOSTICS.LIST},
-      {label: dict.footer.links.biohackingCatalog, to: PATHS.BIOHACKING.LIST},
+      {label: dictionary.links.statesCatalog, to: PATHS.MENTAL_HEALTH.LIST},
+      {label: dictionary.links.testsCatalog, to: PATHS.TESTS.LIST},
+      {label: dictionary.links.biohackingCatalog, to: PATHS.BIOHACKING.LIST},
     ],
   } as const;
 
   return (
     <footer
       className={styles.footer}
-      aria-label={dict.footer.ariaFooter}
+      aria-label={dictionary.ariaFooter}
     >
       <div className={styles.grid}>
         {[COL_1, COL_2].map((col) => (
@@ -75,7 +75,7 @@ export function Footer() {
       <div className={styles.bottom}>
         <ul
           className={styles.socials}
-          aria-label={dict.footer.socialsAria}
+          aria-label={dictionary.socialsAria}
         >
           {SOCIALS.map((s) => (
             <li
@@ -96,7 +96,7 @@ export function Footer() {
         </ul>
 
         <p className={styles.copy}>
-          {dict.footer.copyright}
+          {dictionary.copyright}
         </p>
       </div>
     </footer>

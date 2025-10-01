@@ -65,7 +65,7 @@
   text-decoration: none;
   color: vars.$color-primary;
   font-weight: 600;
-  font-size: vars.$font-md;
+  font-size: vars.$font-lg;
   border-bottom: 2px solid transparent;
   line-height: 1.2;
   white-space: nowrap;
@@ -107,6 +107,7 @@
   border-radius: vars.$radius-pill;
   text-decoration: none;
   transition: background-color vars.$transition-fast;
+  cursor: pointer;
 }
 
 .cta:hover {
@@ -178,10 +179,10 @@
 
 .langMenu {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 32px);
   right: 0;
   left: auto;
-  min-width: 120px;
+  min-width: 150px;
   padding: 6px;
   background: vars.$color-bg;
   border: 1px solid vars.$color-border;
@@ -217,14 +218,16 @@
   border: 0;
   width: 100%;
   text-align: left;
-  padding: 8px;
+  padding: 10px 12px;
   border-radius: vars.$radius-sm;
   font-weight: 700;
   color: vars.$color-primary;
   cursor: pointer;
+  text-decoration: none;
   transition:
     background-color vars.$transition-fast,
     color vars.$transition-fast;
+  display: block;
 }
 
 .langOption:hover {
@@ -309,16 +312,14 @@
 }
 
 .dockInner {
+  border-top: 1px solid vars.$color-border;
   position: absolute;
-  top: 8px;
   left: var(--dock-x, 50%);
   transform: translateX(-50%);
-  width: min(55vw, 588px);
+  width: 100%;
   background: vars.$color-bg;
-  border: 1px solid vars.$color-border;
-  border-radius: vars.$radius-lg;
   box-shadow: 0 20px 40px rgb(0 0 0 / 14%);
-  padding: vars.$pad-md;
+  padding: vars.$gap-lg vars.$gap-xl;
   max-height: clamp(320px, 60vh, 620px);
   overflow: hidden;
 }
@@ -335,21 +336,6 @@
   border-left: 1px solid vars.$color-border;
   border-top: 1px solid vars.$color-border;
   box-shadow: -4px -4px 12px rgb(0 0 0 / 05%);
-}
-
-.dockCols {
-  height: 100%;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: vars.$gap-lg;
-  overflow: auto;
-  padding-right: vars.$pad-sm;
-}
-
-.dockCol {
-  display: grid;
-  gap: vars.$gap-md;
-  align-content: start;
 }
 
 .dockHeading {
@@ -373,18 +359,17 @@
   gap: vars.$gap-sm;
 }
 
-.dockListRow {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: max-content;
-  gap: 8px 14px;
-  overflow-x: auto;
-  white-space: nowrap;
-  align-items: start;
-}
+// .dockListRow {
+//   list-style: none;
+//   padding: 0;
+//   margin: 0;
+//   display: grid;
+//   grid-auto-flow: row;
+//   gap: 8px 14px;
+//   overflow: visible;
+//   white-space: normal;
+//   align-items: start;
+// }
 
 .dockLink {
   display: block;
@@ -399,28 +384,6 @@
 
 .dockLink:hover {
   color: vars.$color-cta-bg;
-}
-
-.dockCta {
-  margin: 0 auto;
-  padding: 10px 16px;
-  font-size: vars.$font-sm;
-  font-weight: 700;
-  color: vars.$color-primary;
-  background-color: vars.$color-bg;
-  border: 1px solid vars.$color-border;
-  border-radius: vars.$radius-pill;
-  text-decoration: none;
-  transition:
-    background-color vars.$transition-fast,
-    color vars.$transition-fast,
-    border-color vars.$transition-fast;
-}
-
-.dockCta:hover {
-  background-color: vars.$color-cta-bg;
-  color: vars.$color-primary-hover;
-  border-color: vars.$color-cta-bg;
 }
 
 .backdrop {
@@ -543,6 +506,11 @@
   transition: max-height vars.$transition-base;
   display: grid;
   gap: 8px;
+  max-height: 0;
+}
+
+.submenuOpen {
+  max-height: 520px;
 }
 
 .submenuLink {
@@ -584,33 +552,103 @@
   transform: translateY(0);
 }
 
+.dockLayout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: vars.$gap-lg;
+  align-items: stretch;
+}
+
+.dockLists {
+  display: grid;
+  gap: vars.$gap-md;
+  align-content: start;
+  overflow: auto;
+  padding-right: vars.$pad-sm;
+}
+
+.dockListTwoCols {
+  column-count: 2;
+  column-gap: vars.$gap-lg;
+}
+
+.dockListTwoCols > li {
+  break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+  -moz-column-break-inside: avoid;
+  margin-bottom: 8px;
+}
+
+.dockPromo {
+  position: relative;
+  display: block;
+  border-radius: vars.$radius-lg;
+  overflow: hidden;
+  border: 1px solid vars.$color-border;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 10%);
+  text-decoration: none;
+  height: 100%;
+  min-height: 220px;
+}
+
+.dockPromoImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform vars.$transition-fast;
+}
+
+.dockPromo:hover .dockPromoImg {
+  transform: scale(1.03);
+}
+
+.dockPromoTitle {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  font-weight: 800;
+  font-size: vars.$font-lg;
+  color: #fff;
+  text-shadow: 0 2px 12px rgb(0 0 0 / 60%);
+}
+
 .sosFloat {
   position: fixed;
-  right: 12px;
-  bottom: 18vh;
+  right: 25px;
+  bottom: 60px;
   z-index: 140;
   display: none;
   align-items: center;
   justify-content: center;
-  width: 54px;
-  height: 54px;
+  width: 56px;
+  height: 56px;
   border-radius: 999px;
   font-weight: 800;
   font-size: 14px;
   color: vars.$color-primary;
   background: vars.$color-bg;
   border: 2px solid vars.$color-primary;
-  box-shadow: 0 8px 18px rgb(0 0 0 / 18%);
+  box-shadow: 0 10px 20px rgb(0 0 0 / 20%);
   text-decoration: none;
+  letter-spacing: 0.5px;
+}
+
+.sosFloat:hover {
+  background: vars.$color-cta-bg;
+  color: vars.$color-primary-hover;
+  box-shadow: 0 12px 24px rgb(0 0 0 / 24%);
+  transform: translateY(-2px);
+}
+
+.sosFloat:active {
+  transform: translateY(1px);
 }
 
 @media (width >= 1800px) {
   .navAll {
     gap: clamp(18px, 2vw, 36px);
-  }
-
-  .dockInner {
-    width: min(48vw, 540px);
   }
 }
 
@@ -664,6 +702,18 @@
   .langMenu {
     top: calc(100% + 6px);
     right: 0;
+  }
+
+  .dockLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .dockListTwoCols {
+    column-count: 1;
+  }
+
+  .dockPromo {
+    min-height: 180px;
   }
 
   .sosFloat {

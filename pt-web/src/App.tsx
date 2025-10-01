@@ -9,6 +9,8 @@ import {ArticlesListPage} from "src/pages/articlesListPage/ArticlesListPage";
 import {BiohackingDetailPage} from "src/pages/biohackingListPage/articles/BiohackingDetailPage";
 import {BiohackingListPage} from "src/pages/biohackingListPage/BiohackingListPage";
 import {HomePage} from "src/pages/homePage/Homepage";
+import {SupportConsultationPage} from "src/pages/supportPage/SupportConsultationPage/SupportConsultationPage";
+import {SupportPage} from "src/pages/supportPage/SupportPage";
 import {Test} from "src/pages/testsListPage/tests/Test";
 import {TestsList} from "src/pages/testsListPage/TestsListPage";
 import {PATHS} from "src/routes/routes";
@@ -46,11 +48,11 @@ export function App() {
           />
 
           <Route
-            path={PATHS.DIAGNOSTICS.LIST}
+            path={PATHS.TESTS.LIST}
             element={<TestsList />}
           />
           <Route
-            path={PATHS.DIAGNOSTICS.DETAIL}
+            path={PATHS.TESTS.DETAIL}
             element={<Test />}
           />
 
@@ -62,38 +64,13 @@ export function App() {
             path={PATHS.BIOHACKING.DETAIL}
             element={<BiohackingDetailPage />}
           />
-
           <Route
             path={PATHS.SOS.LIST}
-            element={<div>
-              Поддержка
-            </div>}
+            element={<SupportPage />}
           />
           <Route
-            path={PATHS.SOS.DETAIL}
-            element={<div>
-              Поддержка — состояние
-            </div>}
-          />
-
-          <Route
-            path={PATHS.SPECIALISTS.LIST}
-            element={<div>
-              Специалисты
-            </div>}
-          />
-          <Route
-            path={PATHS.SPECIALISTS.DETAIL}
-            element={<div>
-              Профиль специалиста
-            </div>}
-          />
-
-          <Route
-            path={PATHS.CONTACTS}
-            element={<div>
-              Контакты
-            </div>}
+            path={PATHS.SOS.CONSULTATION}
+            element={<SupportConsultationPage />}
           />
         </Routes>
       </main>
