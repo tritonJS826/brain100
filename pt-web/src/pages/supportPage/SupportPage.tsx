@@ -9,7 +9,7 @@ const hotlineNumber = import.meta.env.VITE_HOTLINE_PHONE as string | undefined;
 
 export function SupportPage() {
   const isAuthenticated = Boolean(localStorage.getItem("accessToken"));
-  const telHref = hotlineNumber ? `tel:${hotlineNumber}` : undefined;
+  const telHref = hotlineNumber;
 
   return (
     <div className={styles.page}>
@@ -73,7 +73,7 @@ export function SupportPage() {
 
         <ul className={styles.topics}>
           <li className={styles.topic}>
-            <Button to={`${PATHS.MENTAL_HEALTH?.LIST ?? "/mental-health"}#panic-attack`}>
+            <Button to={`${PATHS.MENTAL_HEALTH?.LIST}#panic-attack`}>
               Паническая атака
             </Button>
             <p className={styles.topicDesc}>
@@ -81,7 +81,7 @@ export function SupportPage() {
             </p>
           </li>
           <li className={styles.topic}>
-            <Button to={`${PATHS.MENTAL_HEALTH?.LIST ?? "/mental-health"}#anxiety`}>
+            <Button to={`${PATHS.MENTAL_HEALTH?.LIST}#anxiety`}>
               Тревога
             </Button>
             <p className={styles.topicDesc}>
@@ -89,7 +89,7 @@ export function SupportPage() {
             </p>
           </li>
           <li className={styles.topic}>
-            <Button to={`${PATHS.MENTAL_HEALTH?.LIST ?? "/mental-health"}#depression`}>
+            <Button to={`${PATHS.MENTAL_HEALTH?.LIST}#depression`}>
               Депрессия
             </Button>
             <p className={styles.topicDesc}>
