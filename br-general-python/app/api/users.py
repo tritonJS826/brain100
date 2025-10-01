@@ -33,19 +33,30 @@ async def register(user_in: UserCreate):
     return user
 
 
-def get_current_user(token: str = Depends(oauth2_scheme)):
+async def get_current_user(token: str = Depends(oauth2_scheme)):
     try:
         payload = jwt.decode(
-            token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm]
+            token,
+            settings.jwt_secret_key,
+            algorithms=[settings.jwt_algorithm],
         )
-        user_id: str = payload.get("sub")
+        user_id = payload.get("sub")
         if user_id is None:
             raise HTTPException(status_code=401, detail="Invalid token")
-        return user_id
+
+        # fetch user from Prisma
+        user = await db.user.find_unique(where={"id": int(user_id)})
+        if not user:
+            raise HTTPException(status_code=401, detail="User not found")
+
+        return user
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
 
 
 @router.get("/me")
-async def read_users_me(current_user: str = Depends(get_current_user)):
-    return {"user_id": current_user}
+async def read_users_me(current_user: int = Depends(get_current_user)):
+    return {
+        "id": current_user.id,
+        "email": current_user.email,
+    }
