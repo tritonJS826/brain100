@@ -4,7 +4,6 @@ from pydantic import Field, field_validator, EmailStr
 
 import os
 
-
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))  # br-general-python/
 ENV_PATH = os.path.join(BASE_DIR, ".env")
 
@@ -28,6 +27,11 @@ class Settings(BaseSettings):
     smtp_ssl: bool = Field(..., alias="SMTP_SSL")
     smtp_sender_email: EmailStr = Field(..., alias="SMTP_SENDER_EMAIL")
     smtp_sender_name: str = Field(..., alias="SMTP_SENDER_NAME")
+
+    # user auth / jwt
+    jwt_secret_key: str = Field(..., alias="JWT_SECRET_KEY")
+    jwt_algorithm: str = Field(..., alias="JWT_ALGORITHM")
+    access_token_expire_minutes: int = Field(..., alias="ACCESS_TOKEN_EXPIRE_MINUTES")
 
     model_config = SettingsConfigDict(
         env_file=ENV_PATH,
