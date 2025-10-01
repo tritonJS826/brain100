@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     webapp_domain: str = Field(..., alias="WEBAPP_DOMAIN")
 
     # routing / base
-    BASE_URL: str = Field("http://127.0.0.1:8000", alias="BASE_URL")
+    BASE_URL: AnyHttpUrl = Field(..., alias="BASE_URL")
     API_PREFIX: str = Field("/br-general", alias="API_PREFIX")
 
     # db
