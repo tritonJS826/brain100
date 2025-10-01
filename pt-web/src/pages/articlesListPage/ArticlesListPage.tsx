@@ -1,4 +1,3 @@
-import {useState} from "react";
 import {Link} from "react-router-dom";
 import {Button} from "src/components/Button/Button";
 import {EmptyState} from "src/components/EmptyState/EmptyState";
@@ -6,7 +5,6 @@ import {PageHeader} from "src/components/PageHeader/PageHeader";
 import {DictionaryKey} from "src/dictionary/dictionaryLoader";
 import {useDictionary} from "src/dictionary/useDictionary";
 import {buildPath} from "src/routes/routes";
-import {filterBySearch} from "src/utils/filterBySearch";
 import styles from "src/pages/articlesListPage/ArticlesListPage.module.scss";
 
 type ArticleItem = {
@@ -28,7 +26,6 @@ type ArticlesDictionary = {
 
 export function ArticlesListPage() {
   const dictionary = useDictionary(DictionaryKey.MENTAL) as ArticlesDictionary | null;
-  const [searchQuery, setSearchQuery] = useState("");
 
   if (!dictionary) {
     return (
@@ -38,11 +35,7 @@ export function ArticlesListPage() {
     );
   }
 
-  const filteredArticles = filterBySearch<ArticleItem>(
-    dictionary.articles,
-    searchQuery,
-    (item) => [item.title, item.subtitle ?? "", item.excerpt ?? ""].join(" "),
-  );
+  const items = dictionary.articles;
 
   return (
     <section
@@ -52,14 +45,10 @@ export function ArticlesListPage() {
       <PageHeader
         title={dictionary.title}
         subtitle={dictionary.subtitle}
-        searchValue={searchQuery}
-        searchPlaceholder={dictionary.searchPlaceholder}
-        ariaSearchLabel={dictionary.ariaSearchLabel}
-        onSearchChange={setSearchQuery}
       />
 
       <ul className={styles.grid}>
-        {filteredArticles.map((item) => (
+        {items.map((item) => (
           <li
             key={item.id}
             className={styles.card}
@@ -73,16 +62,12 @@ export function ArticlesListPage() {
                   {item.title}
                 </Link>
               </h2>
-              {item.subtitle && (
-                <p className={styles.cardSubtitle}>
-                  {item.subtitle}
-                </p>
-              )}
-              {item.excerpt && (
-                <p className={styles.cardText}>
-                  {item.excerpt}
-                </p>
-              )}
+              {item.subtitle && <p className={styles.cardSubtitle}>
+                {item.subtitle}
+              </p>}
+              {item.excerpt && <p className={styles.cardText}>
+                {item.excerpt}
+              </p>}
             </div>
             <div className={styles.cardFoot}>
               <Button to={buildPath.mentalHealthDetail(item.id)}>
@@ -93,9 +78,7 @@ export function ArticlesListPage() {
         ))}
       </ul>
 
-      {filteredArticles.length === 0 && (
-        <EmptyState message={dictionary.empty} />
-      )}
+      {items.length === 0 && <EmptyState message={dictionary.empty} />}
     </section>
   );
 }

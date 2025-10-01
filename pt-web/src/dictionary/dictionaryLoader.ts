@@ -4,6 +4,10 @@ import type {BiohackingDictEn} from "src/dictionary/dictionaries/biohacking/bioh
 import type {BiohackingDictRu} from "src/dictionary/dictionaries/biohacking/biohacking.ru";
 import type {CommonDictEn} from "src/dictionary/dictionaries/common/common.en";
 import type {CommonDictRu} from "src/dictionary/dictionaries/common/common.ru";
+import type {FooterDictEn} from "src/dictionary/dictionaries/footer/footer.en";
+import type {FooterDictRu} from "src/dictionary/dictionaries/footer/footer.ru";
+import type {HeaderDictEn} from "src/dictionary/dictionaries/header/header.en";
+import type {HeaderDictRu} from "src/dictionary/dictionaries/header/header.ru";
 import type {HomeDictEn} from "src/dictionary/dictionaries/home/home.en";
 import type {HomeDictRu} from "src/dictionary/dictionaries/home/home.ru";
 import type {MentalDictEn} from "src/dictionary/dictionaries/mental/mental.en";
@@ -18,6 +22,8 @@ export enum DictionaryKey {
   MENTAL = "mental",
   BIOHACKING = "biohacking",
   ABOUT = "about",
+  HEADER = "header",
+  FOOTER = "footer",
 }
 
 export type Language = "en" | "ru";
@@ -29,6 +35,8 @@ export type DictionaryMap = {
   [DictionaryKey.MENTAL]: MentalDictEn | MentalDictRu;
   [DictionaryKey.BIOHACKING]: BiohackingDictEn | BiohackingDictRu;
   [DictionaryKey.ABOUT]: AboutDictEn | AboutDictRu;
+  [DictionaryKey.HEADER]: HeaderDictEn | HeaderDictRu;
+  [DictionaryKey.FOOTER]: FooterDictEn | FooterDictRu;
 };
 
 const loaders: {
@@ -59,6 +67,14 @@ const loaders: {
   [DictionaryKey.ABOUT]: {
     en: async () => (await import("./dictionaries/about/about.en")).aboutDict,
     ru: async () => (await import("./dictionaries/about/about.ru")).aboutDict,
+  },
+  [DictionaryKey.HEADER]: {
+    en: async () => (await import("./dictionaries/header/header.en")).header,
+    ru: async () => (await import("./dictionaries/header/header.ru")).header,
+  },
+  [DictionaryKey.FOOTER]: {
+    en: async () => (await import("./dictionaries/footer/footer.en")).footer,
+    ru: async () => (await import("./dictionaries/footer/footer.ru")).footer,
   },
 };
 

@@ -7,9 +7,9 @@ export const PATHS = {
     DETAIL: "/mental-health/:id" as const,
   },
 
-  DIAGNOSTICS: {
-    LIST: "/diagnostics" as const,
-    DETAIL: "/diagnostics/:id" as const,
+  TESTS: {
+    LIST: "/tests" as const,
+    DETAIL: "/tests/:id" as const,
   },
 
   BIOHACKING: {
@@ -20,20 +20,15 @@ export const PATHS = {
   SOS: {
     LIST: "/support" as const,
     DETAIL: "/support/:id" as const,
-  },
-
-  SPECIALISTS: {
-    LIST: "/specialists" as const,
-    DETAIL: "/specialists/:id" as const,
+    CONSULTATION: "/support/consultation" as const,
   },
 
   PROFILE: {
     PAGE: "/profile" as const,
-    TESTS: "/profile/tests" as const,
     SETTINGS: "/profile/settings" as const,
   },
 
-  CONTACTS: "/contacts" as const,
+  AUTH: {PAGE: "/auth" as const},
 
   ADMIN: {
     PAGE: "/admin" as const,
@@ -54,23 +49,24 @@ export const PATHS = {
 
 export const buildPath = {
   mentalHealthList: () => PATHS.MENTAL_HEALTH.LIST,
-  diagnosticsList: () => PATHS.DIAGNOSTICS.LIST,
+  testsList: () => PATHS.TESTS.LIST,
   biohackingList: () => PATHS.BIOHACKING.LIST,
   supportList: () => PATHS.SOS.LIST,
-  specialistsList: () => PATHS.SPECIALISTS.LIST,
 
   mentalHealthDetail: (id: string | number) => `/mental-health/${id}`,
-  diagnosticsDetail: (id: string | number) => `/diagnostics/${id}`,
+  testsDetail: (id: string | number) => `/tests/${id}`,
   biohackingDetail: (id: string | number) => `/biohacking/${id}`,
   supportDetail: (id: string | number) => `/support/${id}`,
   specialistDetail: (id: string | number) => `/specialists/${id}`,
 
+  supportConsultation: () => PATHS.SOS.CONSULTATION,
+
   about: () => PATHS.ABOUT,
-  contacts: () => PATHS.CONTACTS,
 
   profilePage: () => PATHS.PROFILE.PAGE,
-  profileTests: () => PATHS.PROFILE.TESTS,
   profileSettings: () => PATHS.PROFILE.SETTINGS,
+
+  auth: () => PATHS.AUTH.PAGE,
 
   adminPage: () => PATHS.ADMIN.PAGE,
   adminArticlesList: () => PATHS.ADMIN.ARTICLES.LIST,

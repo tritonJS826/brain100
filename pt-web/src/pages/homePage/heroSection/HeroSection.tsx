@@ -25,7 +25,7 @@ export function Hero() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
     if (intent === OPTION_TEST_VALUE) {
-      navigate(PATHS.DIAGNOSTICS.LIST);
+      navigate(PATHS.TESTS.LIST);
     } else if (intent === OPTION_STATES_VALUE) {
       navigate(PATHS.MENTAL_HEALTH.LIST);
     } else if (intent === OPTION_CONTACT_VALUE) {

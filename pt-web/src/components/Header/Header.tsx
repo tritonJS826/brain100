@@ -2,6 +2,9 @@ import React, {useEffect, useRef, useState} from "react";
 import {Link, NavLink} from "react-router-dom";
 import {useAtom} from "jotai";
 import {UserRound} from "lucide-react";
+import promoMental from "src/assets/1_consult.avif";
+import promoTests from "src/assets/2_register.avif";
+import promoBio from "src/assets/3_follow.avif";
 import logo from "src/assets/BRAIN100.webp";
 import {
   LEFT_LINK_KEYS,
@@ -15,16 +18,17 @@ import {buildPath, PATHS} from "src/routes/routes";
 import styles from "src/components/Header/Header.module.scss";
 
 const HALF = 2;
-const DROPDOWN_KEYS: MenuKey[] = ["mental", "diagnostics", "biohacking"];
+const DROPDOWN_KEYS: MenuKey[] = ["mental", "tests", "biohacking"];
 
 export function Header() {
-  const dictionary = useDictionary(DictionaryKey.COMMON);
+  const dictionary = useDictionary(DictionaryKey.HEADER);
   const [lang, setLang] = useAtom(languageAtomWithPersistence);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [dockOpen, setDockOpen] = useState(false);
   const [activeKey, setActiveKey] = useState<MenuKey | null>(null);
   const [drawerActive, setDrawerActive] = useState<MenuKey | null>(null);
+
   const [langOpenTop, setLangOpenTop] = useState(false);
   const [langOpenDrawer, setLangOpenDrawer] = useState(false);
 
@@ -33,6 +37,7 @@ export function Header() {
   const langMenuTopRef = useRef<HTMLDivElement | null>(null);
   const langBtnDrawerRef = useRef<HTMLButtonElement | null>(null);
   const langMenuDrawerRef = useRef<HTMLDivElement | null>(null);
+
   const closeTimerRef = useRef<number | null>(null);
 
   const closeDock = () => {
@@ -67,7 +72,6 @@ export function Header() {
     cancelClose();
     setActiveKey(key);
     setDockOpen(true);
-
     if (el && navRef.current) {
       const navBox = navRef.current.getBoundingClientRect();
       const elBox = el.getBoundingClientRect();
@@ -163,20 +167,37 @@ export function Header() {
     switch (key) {
       case "about": return dictionary.nav.about;
       case "mental": return dictionary.nav.mental;
-      case "diagnostics": return dictionary.nav.diagnostics;
+      case "tests": return dictionary.nav.tests;
       case "biohacking": return dictionary.nav.biohacking;
       default: return "";
     }
   };
 
-  const mentalItems = Object.entries(dictionary.nav.menus.mental).map(
-    ([id, label]) => ({id, label}),
+  const mentalMenuItems = Object.entries(dictionary.nav.menus.mental).map(
+    ([entryId, entryLabel]) => ({id: entryId, label: entryLabel}),
   );
-  const diagnosticItems = Object.entries(dictionary.nav.menus.diagnostics).map(
-    ([id, label]) => ({id, label}),
+  const testMenuItems = Object.entries(dictionary.nav.menus.tests).map(
+    ([entryId, entryLabel]) => ({id: entryId, label: entryLabel}),
   );
-  const biohackingItems = Object.entries(dictionary.nav.menus.biohacking).map(
-    ([id, label]) => ({id, label}),
+  const biohackingMenuItems = Object.entries(dictionary.nav.menus.biohacking).map(
+    ([entryId, entryLabel]) => ({id: entryId, label: entryLabel}),
+  );
+
+  const Promo = ({to, img, title}: { to: string; img: string; title: string }) => (
+    <Link
+      to={to}
+      className={styles.dockPromo}
+      onClick={closeDock}
+    >
+      <img
+        src={img}
+        alt={title}
+        className={styles.dockPromoImg}
+      />
+      <span className={styles.dockPromoTitle}>
+        {title}
+      </span>
+    </Link>
   );
 
   const renderDockContent = (key: MenuKey | null) => {
@@ -186,8 +207,8 @@ export function Header() {
 
     if (key === "mental") {
       return (
-        <div className={styles.dockCols}>
-          <div className={styles.dockCol}>
+        <div className={styles.dockLayout}>
+          <div className={styles.dockLists}>
             <NavLink
               to={PATHS.MENTAL_HEALTH.LIST}
               className={styles.dockHeading}
@@ -195,78 +216,66 @@ export function Header() {
             >
               {dictionary.dock.allStates}
             </NavLink>
-            <ul className={styles.dockList}>
-              <li>
-                <ul className={styles.dockListRow}>
-                  {mentalItems.map(i => (
-                    <li key={i.id}>
-                      <NavLink
-                        to={buildPath.mentalHealthDetail(i.id)}
-                        className={styles.dockLink}
-                        onClick={closeDock}
-                      >
-                        {i.label}
-                      </NavLink>
-                    </li>
-                  ))}
-                </ul>
-              </li>
+            <ul className={`${styles.dockList} ${styles.dockListTwoCols}`}>
+              {mentalMenuItems.map(mentalItem => (
+                <li key={mentalItem.id}>
+                  <NavLink
+                    to={buildPath.mentalHealthDetail(mentalItem.id)}
+                    className={styles.dockLink}
+                    onClick={closeDock}
+                  >
+                    {mentalItem.label}
+                  </NavLink>
+                </li>
+              ))}
             </ul>
-            <NavLink
-              to={PATHS.DIAGNOSTICS.LIST}
-              className={styles.dockCta}
-              onClick={closeDock}
-            >
-              {dictionary.dock.takeTest}
-            </NavLink>
           </div>
+          <Promo
+            to={buildPath.supportConsultation()}
+            img={promoMental}
+            title={dictionary.promo.consultCta}
+          />
         </div>
       );
     }
 
-    if (key === "diagnostics") {
+    if (key === "tests") {
       return (
-        <div className={styles.dockCols}>
-          <div className={styles.dockCol}>
+        <div className={styles.dockLayout}>
+          <div className={styles.dockLists}>
             <NavLink
-              to={PATHS.DIAGNOSTICS.LIST}
+              to={PATHS.TESTS.LIST}
               className={styles.dockHeading}
               onClick={closeDock}
             >
               {dictionary.dock.allTests}
             </NavLink>
-            <ul className={styles.dockList}>
-              <li>
-                <ul className={styles.dockListRow}>
-                  {diagnosticItems.map(test => (
-                    <li key={test.id}>
-                      <NavLink
-                        to={buildPath.diagnosticsDetail(test.id)}
-                        className={styles.dockLink}
-                        onClick={closeDock}
-                      >
-                        {test.label}
-                      </NavLink>
-                    </li>
-                  ))}
-                </ul>
-              </li>
+            <ul className={`${styles.dockList} ${styles.dockListTwoCols}`}>
+              {testMenuItems.map(testItem => (
+                <li key={testItem.id}>
+                  <NavLink
+                    to={buildPath.testsDetail(testItem.id)}
+                    className={styles.dockLink}
+                    onClick={closeDock}
+                  >
+                    {testItem.label}
+                  </NavLink>
+                </li>
+              ))}
             </ul>
-            <NavLink
-              to={PATHS.DIAGNOSTICS.LIST}
-              className={styles.dockCta}
-              onClick={closeDock}
-            >
-              {dictionary.dock.takeTest}
-            </NavLink>
           </div>
+          <Promo
+            to={buildPath.auth()}
+            img={promoTests}
+            title={dictionary.promo.registerCta}
+          />
         </div>
       );
     }
 
     return (
-      <div className={styles.dockCols}>
-        <div className={styles.dockCol}>
+      <div className={styles.dockLayout}>
+        <div className={styles.dockLists}>
           <NavLink
             to={PATHS.BIOHACKING.LIST}
             className={styles.dockHeading}
@@ -274,33 +283,31 @@ export function Header() {
           >
             {dictionary.dock.allArticles}
           </NavLink>
-          <ul className={styles.dockList}>
-            <li>
-              <ul className={styles.dockListRow}>
-                {biohackingItems.map(a => (
-                  <li key={a.id}>
-                    <NavLink
-                      to={buildPath.biohackingDetail(a.id)}
-                      className={styles.dockLink}
-                      onClick={closeDock}
-                    >
-                      {a.label}
-                    </NavLink>
-                  </li>
-                ))}
-              </ul>
-            </li>
+          <ul className={`${styles.dockList} ${styles.dockListTwoCols}`}>
+            {biohackingMenuItems.map(articleItem => (
+              <li key={articleItem.id}>
+                <NavLink
+                  to={buildPath.biohackingDetail(articleItem.id)}
+                  className={styles.dockLink}
+                  onClick={closeDock}
+                >
+                  {articleItem.label}
+                </NavLink>
+              </li>
+            ))}
           </ul>
-          <NavLink
-            to={PATHS.DIAGNOSTICS.LIST}
-            className={styles.dockCta}
-            onClick={closeDock}
-          >
-            {dictionary.dock.takeTest}
-          </NavLink>
         </div>
+        <Promo
+          to={buildPath.auth()}
+          img={promoBio}
+          title={dictionary.promo.subscribeCta}
+        />
       </div>
     );
+  };
+
+  const handleNavLinkClick = () => {
+    closeDock();
   };
 
   return (
@@ -317,6 +324,7 @@ export function Header() {
           to={PATHS.HOME}
           className={styles.logo}
           aria-label={dictionary.nav.ariaHome}
+          onClick={handleNavLinkClick}
         >
           <img
             src={logo}
@@ -331,27 +339,28 @@ export function Header() {
             aria-label="Main sections"
             onMouseLeave={scheduleClose}
           >
-            {LEFT_LINK_KEYS.map(key => (
+            {LEFT_LINK_KEYS.map(menuKey => (
               <li
-                key={key}
+                key={menuKey}
                 className={styles.navItem}
-                onMouseEnter={(e) => onEnterNav(key, e.currentTarget as HTMLElement)}
-                aria-haspopup={DROPDOWN_KEYS.includes(key)}
-                aria-expanded={dockOpen && activeKey === key}
+                onMouseEnter={(e) => onEnterNav(menuKey, e.currentTarget as HTMLElement)}
+                aria-haspopup={DROPDOWN_KEYS.includes(menuKey)}
+                aria-expanded={dockOpen && activeKey === menuKey}
               >
                 <NavLink
                   to={
-                    key === "about"
+                    menuKey === "about"
                       ? PATHS.ABOUT
-                      : key === "mental"
+                      : menuKey === "mental"
                         ? PATHS.MENTAL_HEALTH.LIST
-                        : key === "diagnostics"
-                          ? PATHS.DIAGNOSTICS.LIST
+                        : menuKey === "tests"
+                          ? PATHS.TESTS.LIST
                           : PATHS.BIOHACKING.LIST
                   }
                   className={({isActive}) => `${styles.navLink} ${isActive ? styles.active : ""}`}
+                  onClick={handleNavLinkClick}
                 >
-                  {labelByKey(key)}
+                  {labelByKey(menuKey)}
                 </NavLink>
               </li>
             ))}
@@ -363,6 +372,7 @@ export function Header() {
             to={PATHS.PROFILE.PAGE}
             className={styles.iconBtn}
             aria-label={dictionary.nav.profile}
+            onClick={handleNavLinkClick}
           >
             <UserRound className={styles.icon} />
           </NavLink>
@@ -377,7 +387,7 @@ export function Header() {
               aria-expanded={langOpenTop}
               aria-controls="lang-menu-top"
             >
-              {(lang === "ru" ? dictionary.lang.ru : dictionary.lang.en)}
+              {lang === "ru" ? dictionary.lang.ru : dictionary.lang.en}
             </button>
             <div
               id="lang-menu-top"
@@ -391,7 +401,8 @@ export function Header() {
                 role="menuitem"
                 aria-current={lang === "ru"}
                 onClick={() => {
-                  setLang("ru"); setLangOpenTop(false);
+                  setLang("ru");
+                  setLangOpenTop(false);
                 }}
               >
                 {dictionary.lang.ru}
@@ -402,13 +413,22 @@ export function Header() {
                 role="menuitem"
                 aria-current={lang === "en"}
                 onClick={() => {
-                  setLang("en"); setLangOpenTop(false);
+                  setLang("en");
+                  setLangOpenTop(false);
                 }}
               >
                 {dictionary.lang.en}
               </button>
             </div>
           </div>
+
+          <NavLink
+            to={buildPath.supportList()}
+            className={styles.cta}
+            onClick={handleNavLinkClick}
+          >
+            {dictionary.nav.sos}
+          </NavLink>
 
           <li className={styles.burgerWrap}>
             <button
@@ -426,13 +446,6 @@ export function Header() {
               </span>
             </button>
           </li>
-
-          <NavLink
-            to={PATHS.SOS.LIST}
-            className={styles.cta}
-          >
-            {dictionary.nav.sos}
-          </NavLink>
         </div>
       </nav>
 
@@ -485,62 +498,63 @@ export function Header() {
 
         <div className={styles.drawerScroll}>
           <ul className={styles.drawerList}>
-            {LEFT_LINK_KEYS.map(key => (
-              <li key={key}>
-                {DROPDOWN_KEYS.includes(key)
+            {LEFT_LINK_KEYS.map(menuKey => (
+              <li key={menuKey}>
+                {DROPDOWN_KEYS.includes(menuKey)
                   ? (
                     <>
                       <button
                         type="button"
-                        className={`${styles.drawerLink} ${styles.drawerLinkBtn} ${drawerActive === key
-                          ? styles.drawerLinkOpen
-                          : ""}`}
-                        onClick={() => toggleDrawerSection(key)}
-                        aria-expanded={drawerActive === key}
+                        className={`
+                          ${styles.drawerLink}
+                          ${styles.drawerLinkBtn}
+                          ${drawerActive === menuKey ? styles.drawerLinkOpen : ""}`}
+                        onClick={() => toggleDrawerSection(menuKey)}
+                        aria-expanded={drawerActive === menuKey}
                       >
-                        {labelByKey(key)}
+                        {labelByKey(menuKey)}
                         <span
-                          className={`${styles.chevron} ${drawerActive === key ? styles.chevronDown : styles.chevronRight}`}
+                          className={`${styles.chevron} ${drawerActive === menuKey ? styles.chevronDown : styles.chevronRight}`}
                           aria-hidden
                         />
                       </button>
 
-                      <ul
-                        className={`${styles.submenu} ${drawerActive === key ? styles.submenuOpen : ""}`}
-                        style={{maxHeight: drawerActive === key ? "520px" : "0px"}}
-                      >
-                        {key === "mental" && mentalItems.map(i => (
-                          <li key={i.id}>
+                      <ul className={`${styles.submenu} ${drawerActive === menuKey ? styles.submenuOpen : ""}`}>
+                        {menuKey === "mental" &&
+                        mentalMenuItems.map(mentalItem => (
+                          <li key={mentalItem.id}>
                             <NavLink
-                              to={buildPath.mentalHealthDetail(i.id)}
+                              to={buildPath.mentalHealthDetail(mentalItem.id)}
                               className={styles.submenuLink}
                               onClick={() => setDrawerOpen(false)}
                             >
-                              {i.label}
+                              {mentalItem.label}
                             </NavLink>
                           </li>
                         ))}
 
-                        {key === "diagnostics" && diagnosticItems.map(t => (
-                          <li key={t.id}>
+                        {menuKey === "tests" &&
+                        testMenuItems.map(testItem => (
+                          <li key={testItem.id}>
                             <NavLink
-                              to={buildPath.diagnosticsDetail(t.id)}
+                              to={buildPath.testsDetail(testItem.id)}
                               className={styles.submenuLink}
                               onClick={() => setDrawerOpen(false)}
                             >
-                              {t.label}
+                              {testItem.label}
                             </NavLink>
                           </li>
                         ))}
 
-                        {key === "biohacking" && biohackingItems.map(a => (
-                          <li key={a.id}>
+                        {menuKey === "biohacking" &&
+                        biohackingMenuItems.map(articleItem => (
+                          <li key={articleItem.id}>
                             <NavLink
-                              to={buildPath.biohackingDetail(a.id)}
+                              to={buildPath.biohackingDetail(articleItem.id)}
                               className={styles.submenuLink}
                               onClick={() => setDrawerOpen(false)}
                             >
-                              {a.label}
+                              {articleItem.label}
                             </NavLink>
                           </li>
                         ))}
@@ -549,11 +563,11 @@ export function Header() {
                   )
                   : (
                     <NavLink
-                      to={key === "about" ? PATHS.ABOUT : PATHS.HOME}
+                      to={menuKey === "about" ? PATHS.ABOUT : PATHS.HOME}
                       className={styles.drawerLink}
                       onClick={() => setDrawerOpen(false)}
                     >
-                      {labelByKey(key)}
+                      {labelByKey(menuKey)}
                     </NavLink>
                   )}
               </li>
@@ -572,7 +586,7 @@ export function Header() {
               aria-expanded={langOpenDrawer}
               aria-controls="lang-menu-drawer"
             >
-              {(lang === "ru" ? dictionary.lang.ru : dictionary.lang.en)}
+              {lang === "ru" ? dictionary.lang.ru : dictionary.lang.en}
             </button>
             <div
               id="lang-menu-drawer"
@@ -586,7 +600,8 @@ export function Header() {
                 role="menuitem"
                 aria-current={lang === "ru"}
                 onClick={() => {
-                  setLang("ru"); setLangOpenDrawer(false);
+                  setLang("ru");
+                  setLangOpenDrawer(false);
                 }}
               >
                 {dictionary.lang.ru}
@@ -597,13 +612,22 @@ export function Header() {
                 role="menuitem"
                 aria-current={lang === "en"}
                 onClick={() => {
-                  setLang("en"); setLangOpenDrawer(false);
+                  setLang("en");
+                  setLangOpenDrawer(false);
                 }}
               >
                 {dictionary.lang.en}
               </button>
             </div>
           </div>
+
+          <NavLink
+            to={buildPath.supportList()}
+            className={styles.cta}
+            onClick={() => setDrawerOpen(false)}
+          >
+            {dictionary.nav.sos}
+          </NavLink>
 
           <NavLink
             to={PATHS.PROFILE.PAGE}
@@ -613,16 +637,17 @@ export function Header() {
           >
             <UserRound className={styles.icon} />
           </NavLink>
-
-          <NavLink
-            to={PATHS.SOS.LIST}
-            className={styles.cta}
-            onClick={() => setDrawerOpen(false)}
-          >
-            {dictionary.nav.sos}
-          </NavLink>
         </div>
       </aside>
+
+      <NavLink
+        to={PATHS.SOS.LIST}
+        className={styles.sosFloat}
+        aria-label="Страница поддержки"
+        onClick={handleNavLinkClick}
+      >
+        SOS
+      </NavLink>
     </header>
   );
 }
