@@ -7,7 +7,7 @@ from starlette.middleware.sessions import (
 
 from app.db import db
 from app.settings import settings
-from app.api.routers import api_router
+from app.api import api_router
 
 
 @asynccontextmanager
@@ -18,6 +18,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
+app.router.redirect_slashes = False
 
 # Только для OAuth: хранит state/nonce в подписанной cookie (НЕ серверные сессии)
 app.add_middleware(
