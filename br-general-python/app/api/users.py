@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordBearer
 
 from jose import JWTError, ExpiredSignatureError, jwt
 
-from app.schemas.user import UserCreate, UserWithTokens, UserOut
+from app.schemas.user import UserWithTokens, UserOut
 from app.services.auth_service import AuthService
 from app.repositories.user_repository import UserRepository
 from app.db import db
@@ -18,24 +18,6 @@ user_repo = UserRepository()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/br-general/auth/login")
 
 
-@router.post("/register", response_model=UserOut)
-async def register(user_in: UserCreate):
-    # check if user exists
-    existing = await user_repo.get_by_email(db, user_in.email)
-    if existing:
-        raise HTTPException(status_code=400, detail="Email already registered")
-
-    # hash password
-    hashed_pw = auth_service.get_password_hash(user_in.password)
-
-    # save new user
-    user = await user_repo.create_user(
-        db, email=user_in.email, hashed_password=hashed_pw
-    )
-
-    return user
-
-
 async def get_current_user(
     access_token: str = Depends(oauth2_scheme),
     x_refresh_token: str | None = Header(default=None),
@@ -48,13 +30,24 @@ async def get_current_user(
                 settings.jwt_secret_key,
                 algorithms=[settings.jwt_algorithm],
             )
-            return {"user_id": payload.get("sub"), "tokens": None}
+            user_id = payload.get("sub")
+            # return existing tokens (still valid)
+            return {
+                "user_id": user_id,
+                "tokens": {
+                    "access_token": access_token,
+                    # may be None if not sent
+                    "refresh_token": x_refresh_token,
+                    "token_type": "bearer",
+                },
+            }
 
         except ExpiredSignatureError:
-            pass  # will fall back to refresh
+            if not x_refresh_token:
+                raise HTTPException(status_code=401, detail="Access token expired")
+            # will fall back to refresh
 
         except JWTError:
-            # instead of raising immediately, try refresh if provided
             if not x_refresh_token:
                 raise HTTPException(status_code=401, detail="Invalid token")
 
@@ -66,13 +59,11 @@ async def get_current_user(
 
         user_id = refresh_payload.get("sub")
         new_access = auth_service.create_access_token({"sub": user_id})
-        # new_refresh = auth_service.create_refresh_token({"sub": user_id})
 
         return {
             "user_id": user_id,
             "tokens": {
                 "access_token": new_access,
-                # keep the same refresh token for simplicity
                 "refresh_token": x_refresh_token,
                 "token_type": "bearer",
             },

@@ -35,3 +35,7 @@ class RefreshTokenRequest(BaseModel):
 class UserWithTokens(BaseModel):
     user: UserOut
     tokens: Token | None = None
+
+
+class LogoutResponse(BaseModel):
+    message: str
