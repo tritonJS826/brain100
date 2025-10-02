@@ -11,6 +11,7 @@ import {BiohackingDetailPage} from "src/pages/biohackingListPage/articles/Biohac
 import {BiohackingListPage} from "src/pages/biohackingListPage/BiohackingListPage";
 import {HomePage} from "src/pages/homePage/Homepage";
 import {ProfilePage} from "src/pages/profilePage/ProfilePage";
+import {ConditionHistoryPage} from "src/pages/profilePage/сonditionHistoryPage/ConditionHistoryPage";
 import {SupportConsultationPage} from "src/pages/supportPage/SupportConsultationPage/SupportConsultationPage";
 import {SupportPage} from "src/pages/supportPage/SupportPage";
 import {Test} from "src/pages/testsListPage/tests/Test";
@@ -81,6 +82,10 @@ export function App() {
           <Route
             path={PATHS.PROFILE.PAGE}
             element={<ProfilePage />}
+          />
+          <Route
+            path={PATHS.PROFILE.CONDITION}
+            element={<ConditionHistoryPage />}
           />
         </Routes>
       </main>

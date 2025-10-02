@@ -12,6 +12,10 @@ import type {HomeDictEn} from "src/dictionary/dictionaries/home/home.en";
 import type {HomeDictRu} from "src/dictionary/dictionaries/home/home.ru";
 import type {MentalDictEn} from "src/dictionary/dictionaries/mental/mental.en";
 import type {MentalDictRu} from "src/dictionary/dictionaries/mental/mental.ru";
+import type {ProfileDictEn} from "src/dictionary/dictionaries/profile/profile.en";
+import type {ProfileDictRu} from "src/dictionary/dictionaries/profile/profile.ru";
+import type {SupportDictEn} from "src/dictionary/dictionaries/support/support.en";
+import type {SupportDictRu} from "src/dictionary/dictionaries/support/support.ru";
 import type {TestsDictEn} from "src/dictionary/dictionaries/tests/tests.en";
 import type {TestsDictRu} from "src/dictionary/dictionaries/tests/tests.ru";
 
@@ -24,6 +28,8 @@ export enum DictionaryKey {
   ABOUT = "about",
   HEADER = "header",
   FOOTER = "footer",
+  SUPPORT = "support",
+  PROFILE = "profile",
 }
 
 export type Language = "en" | "ru";
@@ -37,6 +43,8 @@ export type DictionaryMap = {
   [DictionaryKey.ABOUT]: AboutDictEn | AboutDictRu;
   [DictionaryKey.HEADER]: HeaderDictEn | HeaderDictRu;
   [DictionaryKey.FOOTER]: FooterDictEn | FooterDictRu;
+  [DictionaryKey.SUPPORT]: SupportDictEn | SupportDictRu;
+  [DictionaryKey.PROFILE]: ProfileDictEn | ProfileDictRu;
 };
 
 const loaders: {
@@ -75,6 +83,14 @@ const loaders: {
   [DictionaryKey.FOOTER]: {
     en: async () => (await import("./dictionaries/footer/footer.en")).footer,
     ru: async () => (await import("./dictionaries/footer/footer.ru")).footer,
+  },
+  [DictionaryKey.SUPPORT]: {
+    en: async () => (await import("./dictionaries/support/support.en")).supportDict,
+    ru: async () => (await import("./dictionaries/support/support.ru")).supportDict,
+  },
+  [DictionaryKey.PROFILE]: {
+    en: async () => (await import("./dictionaries/profile/profile.en")).profileDict,
+    ru: async () => (await import("./dictionaries/profile/profile.ru")).profileDict,
   },
 };
 
