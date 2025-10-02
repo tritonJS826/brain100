@@ -1,0 +1,76 @@
+export const profileDict = {
+  page: {title: "Profile", subtitle: "Your data and subscription status."},
+  user: {
+    title: "User data",
+    city: "City",
+    phone: "Phone",
+    language: "Language",
+    timezone: "Time zone",
+    memberSince: "Member since",
+    preferredContact: "Preferred contact",
+    preferredContactPhone: "Phone",
+    preferredContactEmail: "E-mail",
+    id: "ID",
+  },
+  plan: {
+    title: "Subscription",
+    baseTitle: "Basic plan",
+    supportTitle: "Support plan",
+    buyBtn: "Buy subscription",
+    scheduleBtn: "Schedule consultation",
+    statsIncluded: "Consultations in plan",
+    statsDaysLeft: "Days left",
+    descActivePrefix: "Subscription is active until",
+    descActiveSuffix: "Priority booking and emergency call are available.",
+    descInactive: "Get the Support plan to access priority booking and the emergency call.",
+    priorityBooking: "Priority booking",
+    emergencyCall: "Emergency call",
+    hint: "Support plan purchase will be available soon.",
+  },
+  tests: {
+    title: "Test results",
+    subtitle: "The last run is shown first",
+    date: "Date",
+    name: "Name",
+    status: "Status",
+    recommendation: "Recommendation",
+  },
+  history: {
+    titlePrefix: "History:",
+    emptyTitle: "Test history",
+    emptySubtitle: "No data for the selected condition",
+    date: "Date",
+    name: "Name",
+    status: "Status",
+    recommendation: "Recommendation",
+  },
+  conditions: {
+    panic: "Panic attack",
+    depression: "Depression",
+    burnout: "Burnout",
+  },
+  status: {
+    low: "Low",
+    moderate: "Moderate",
+    high: "High",
+  },
+  recommendations: {
+    panic: {
+      low: "Continue breathing techniques, add short daily walks.",
+      moderate: "Practice grounding, track triggers, do 4–6 breathing for 5 minutes.",
+      high: "Avoid excess caffeine, use 4–6 breathing, create an avoidance reduction plan.",
+    },
+    depression: {
+      low: "Sleep 7–8 hours, light activity 20–30 minutes, maintain social contacts.",
+      moderate: "Structure your day, keep an activity diary, set soft weekly goals.",
+      high: "Consult a specialist, reduce workload.",
+    },
+    burnout: {
+      low: "Take short breaks, balance work and rest.",
+      moderate: "Plan recovery windows, delegate tasks where possible.",
+      high: "Redistribute workload, schedule recovery, take a micro-break every hour.",
+    },
+  },
+} as const;
+
+export type ProfileDictEn = typeof profileDict;

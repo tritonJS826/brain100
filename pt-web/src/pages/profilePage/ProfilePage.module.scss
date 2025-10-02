@@ -34,6 +34,13 @@
   gap: 6px;
 }
 
+.cardTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .cardTitle {
   margin: 0;
   color: vars.$color-primary;
@@ -68,24 +75,12 @@
   color: vars.$color-text-secondary;
 }
 
-.userMeta {
-  color: vars.$color-text-secondary;
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  font-size: vars.$font-sm;
-}
-
-.metaItem {
-  white-space: nowrap;
-}
-
 .planHeader {
   display: grid;
   gap: vars.$gap-sm;
 }
 
-.planStatus {
+.planStatusInline {
   display: flex;
   align-items: center;
   gap: vars.$gap-sm;
@@ -110,15 +105,10 @@
   border: 1px solid transparent;
 }
 
-.planPremium {
+.planSupport {
   color: #fff;
-  background: #a16207;
-  border-color: #a16207;
-}
-
-.planIcon {
-  width: 18px;
-  height: 18px;
+  background: #0e7490;
+  border-color: #0e7490;
 }
 
 .planPrimaryActions {
@@ -135,17 +125,7 @@
   align-items: stretch;
 }
 
-.planPrimaryActions > * {
-  min-height: var(--btn-h);
-  padding: 0 var(--btn-pad-x);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--btn-gap);
-  border-radius: vars.$radius-pill;
-  box-sizing: border-box;
-}
-
+.planPrimaryActions > *,
 .planSecondaryActions > * {
   min-height: var(--btn-h);
   padding: 0 var(--btn-pad-x);
@@ -182,6 +162,41 @@
 .planBody {
   display: grid;
   gap: vars.$gap-sm;
+}
+
+.statActions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: vars.$gap-sm;
+}
+
+.statBtn {
+  appearance: none;
+  border: 1px solid vars.$color-border;
+  background: #fff;
+  color: vars.$color-primary;
+  border-radius: vars.$radius-pill;
+  padding: 12px 16px;
+  display: grid;
+  place-items: center;
+  gap: 6px;
+  font-weight: 700;
+  cursor: default;
+}
+
+.statBtn:hover {
+  background: #fff;
+}
+
+.statBtnValue {
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.statBtnLabel {
+  font-size: vars.$font-sm;
+  color: vars.$color-text-secondary;
 }
 
 .planDesc {
@@ -222,6 +237,47 @@
   font-size: vars.$font-sm;
 }
 
+.topicsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: vars.$gap-sm;
+}
+
+.topicCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid vars.$color-border;
+  background: #fff;
+  border-radius: vars.$radius-md;
+  color: vars.$color-primary;
+  text-decoration: none;
+  font-weight: 700;
+  transition:
+    background-color vars.$transition-fast,
+    border-color vars.$transition-fast,
+    transform vars.$transition-fast;
+}
+
+.topicCard:hover {
+  background: vars.$color-cta-bg;
+  border-color: vars.$color-cta-bg;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.topicTitle {
+  font-weight: 800;
+}
+
+.topicHint {
+  color: inherit;
+  opacity: 0.9;
+  font-size: vars.$font-sm;
+}
+
 .tableWrap {
   width: 100%;
   overflow-x: auto;
@@ -230,20 +286,29 @@
 .table {
   width: 100%;
   border-collapse: collapse;
+  background: #fff;
+  border: 1px solid vars.$color-border;
+  border-radius: vars.$radius-md;
+  overflow: hidden;
 }
 
-.table th {
-  padding: 12px;
-  border-bottom: 1px solid vars.$color-border;
-  text-align: left;
-  vertical-align: top;
-}
-
+.table th,
 .table td {
-  padding: 12px;
+  padding: 12px 14px;
   border-bottom: 1px solid vars.$color-border;
   text-align: left;
   vertical-align: top;
+}
+
+.table thead th {
+  background: #fafafa;
+  color: vars.$color-primary;
+  font-weight: 800;
+  font-size: vars.$font-sm;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: 0;
 }
 
 .thIcon {
@@ -253,20 +318,13 @@
   transform: translateY(2px);
 }
 
-.colDate {
-  white-space: nowrap;
-  width: 160px;
-}
-
+.colDate,
 .cellDate {
   white-space: nowrap;
   width: 160px;
 }
 
-.colRec {
-  width: 52%;
-}
-
+.colRec,
 .cellRec {
   width: 52%;
 }
@@ -289,62 +347,16 @@
   text-decoration: underline;
 }
 
-.expandRow td {
-  background: rgb(0 0 0 / 03%);
-  padding: 0;
-}
-
-.expandWrap {
-  padding: 14px;
-  display: grid;
-  gap: 12px;
-}
-
-.expandTitle {
-  font-weight: 800;
-  color: vars.$color-primary;
-}
-
-.innerTable {
-  width: 100%;
-  border-collapse: collapse;
-  background: #fff;
-  border: 1px solid vars.$color-border;
-  border-radius: vars.$radius-md;
-  overflow: hidden;
-}
-
-.innerTable th {
-  padding: 10px 12px;
-  border-bottom: 1px solid vars.$color-border;
-  vertical-align: top;
-}
-
-.innerTable td {
-  padding: 10px 12px;
-  border-bottom: 1px solid vars.$color-border;
-  vertical-align: top;
-}
-
-.innerTable tr:last-child td {
-  border-bottom: 0;
-}
-
-.colDateSm {
-  white-space: nowrap;
-  width: 130px;
-}
-
-.cellTitle {
-  min-width: 160px;
-}
-
 @media (width <= 640px) {
   .planPrimaryActions {
     grid-template-columns: 1fr;
   }
 
   .planSecondaryActions {
+    grid-template-columns: 1fr;
+  }
+
+  .statActions {
     grid-template-columns: 1fr;
   }
 
@@ -355,10 +367,7 @@
   .table tr {
     display: grid;
     grid-template-columns: 1fr;
-    border: 1px solid vars.$color-border;
-    border-radius: vars.$radius-md;
-    margin: 12px 0;
-    background: #fff;
+    border-bottom: 1px solid vars.$color-border;
   }
 
   .table td {
@@ -366,8 +375,11 @@
     gap: 12px;
     justify-content: space-between;
     align-items: flex-start;
-    border-bottom: 1px solid vars.$color-border;
     padding: 10px 12px;
+  }
+
+  .table tr td:last-child {
+    border-bottom: 0;
   }
 
   .table td::before {
@@ -380,70 +392,6 @@
 
   .cellRec {
     width: auto;
-  }
-
-  .expandRow td {
-    display: block;
-    padding: 0 !important;
-    border: 0;
-  }
-
-  .expandRow td::before {
-    content: none !important;
-  }
-
-  .expandWrap {
-    padding: 12px;
-  }
-
-  .innerTable {
-    display: block;
-    width: 100%;
-  }
-
-  .innerTable thead {
-    display: none !important;
-  }
-
-  .innerTable tbody {
-    display: grid;
-    gap: 8px;
-  }
-
-  .innerTable tr {
-    display: grid;
-    gap: 8px;
-    border: 1px solid vars.$color-border;
-    border-radius: vars.$radius-md;
-    background: #fff;
-  }
-
-  .innerTable td {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    border-bottom: 1px solid vars.$color-border;
-    padding: 10px 12px;
-  }
-
-  .innerTable tr td:last-child {
-    border-bottom: 0;
-  }
-
-  .innerTable td::before {
-    content: attr(data-label);
-    font-weight: 700;
-    color: vars.$color-primary;
-    flex: 0 0 44%;
-    max-width: 220px;
-  }
-
-  .table tr + tr {
-    margin-top: 0;
-  }
-
-  .table tr td:last-child {
-    border-bottom: 0;
   }
 }
 
