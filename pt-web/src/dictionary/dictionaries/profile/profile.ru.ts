@@ -1,7 +1,8 @@
-export const profileDict = {
+export const profileDictRu = {
   page: {
     title: "Профиль",
     subtitle: "Ваши данные и статус подписки.",
+    logoutBtn: "Выйти",
   },
   user: {
     title: "Данные пользователя",
@@ -76,4 +77,4 @@ export const profileDict = {
   },
 } as const;
 
-export type ProfileDictRu = typeof profileDict;
+export type ProfileDictRu = typeof profileDictRu;

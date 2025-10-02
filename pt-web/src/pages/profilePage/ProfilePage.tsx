@@ -1,9 +1,9 @@
-/* eslint-disable max-len */
 import React, {useMemo, useState} from "react";
-import {NavLink} from "react-router-dom";
+import {NavLink, useNavigate} from "react-router-dom";
 import {CalendarClock, PhoneCall} from "lucide-react";
 import {Button} from "src/components/Button/Button";
 import {PageHeader} from "src/components/PageHeader/PageHeader";
+import {useAuth} from "src/contexts/AuthContext";
 import {DictionaryKey} from "src/dictionary/dictionaryLoader";
 import {useDictionary} from "src/dictionary/useDictionary";
 import {buildPath, PATHS} from "src/routes/routes";
@@ -27,19 +27,6 @@ type PlanKind = "free" | "support";
 type ConditionKey = "panic" | "depression" | "burnout";
 type StatusKey = "low" | "moderate" | "high";
 
-type User = {
-  id: string;
-  name: string;
-  email: string;
-  plan: PlanKind;
-  city: string;
-  phone?: string;
-  language?: string;
-  timezone?: string;
-  memberSinceISO?: string;
-  preferredContact?: "email" | "phone";
-};
-
 type PlanDetails = {
   kind: PlanKind;
   planTitle: string;
@@ -56,7 +43,7 @@ export type TestResult = {
 };
 
 type ProfileDictionary = {
-  page: { title: string; subtitle: string };
+  page: { title: string; subtitle: string; logoutBtn: string };
   user: {
     title: string;
     city: string;
@@ -106,42 +93,25 @@ type ProfileDictionary = {
   recommendations: Record<ConditionKey, Record<StatusKey, string>>;
 };
 
-function useProfileData(): { user: User; plan: PlanDetails; tests: TestResult[] } {
+function useDemoPlanAndTests(): { plan: PlanDetails; tests: TestResult[]; memberSinceISO: string } {
   const storedPlan = (localStorage.getItem(DEMO_PLAN_KEY) as PlanKind) || "free";
 
   const memberSinceISO = new Date(Date.now() - (DAYS_AGO_120 * MS_IN_DAY)).toISOString();
   const expiresISO = new Date(Date.now() + (DAYS_AGO_14 * MS_IN_DAY)).toISOString();
 
-  const user: User = {
-    id: "1",
-    name: "Иван Петров",
-    email: "ivan@example.com",
-    plan: storedPlan,
-    city: "Dresden, Germany",
-    phone: "+49 151 23456789",
-    language: "Deutsch, English",
-    timezone: "Europe/Berlin (UTC+1/UTC+2)",
-    memberSinceISO,
-    preferredContact: "email",
-  };
-
   const plan: PlanDetails =
     storedPlan === "free"
-      ? {kind: "free", planTitle: "Базовый план", includedConsultations: 0, usedConsultations: 0}
+      ? {kind: "free", planTitle: "base", includedConsultations: 0, usedConsultations: 0}
       : {
         kind: "support",
-        planTitle: "План поддержки",
+        planTitle: "support",
         includedConsultations: 2,
         usedConsultations: 1,
         expiresISO,
       };
 
   const now = Date.now();
-  const dateTest = (daysAgo: number) => {
-    const ts = now - (daysAgo * MS_IN_DAY);
-
-    return new Date(ts).toISOString();
-  };
+  const dateTest = (daysAgo: number) => new Date(now - (daysAgo * MS_IN_DAY)).toISOString();
 
   const tests: TestResult[] = [
     {id: "t10", conditionId: "panic", dateISO: dateTest(DAYS_AGO_2), status: "moderate"},
@@ -152,14 +122,45 @@ function useProfileData(): { user: User; plan: PlanDetails; tests: TestResult[] 
     {id: "t5", conditionId: "panic", dateISO: dateTest(DAYS_AGO_23), status: "high"},
   ];
 
-  return {user, plan, tests};
+  return {plan, tests, memberSinceISO};
 }
 
 export function ProfilePage() {
   const dict = useDictionary(DictionaryKey.PROFILE) as ProfileDictionary | null;
+  const navigate = useNavigate();
+  const {user: authUser, logout} = useAuth();
 
-  const {user, plan, tests} = useProfileData();
+  const {plan, tests, memberSinceISO} = useDemoPlanAndTests();
   const [upgradeHint, setUpgradeHint] = useState(false);
+
+  const storedName =
+    localStorage.getItem("userName") ||
+    localStorage.getItem("profileName") ||
+    "—";
+
+  type Preferred = "phone" | "email";
+
+  const mergedUser: {
+    id: string;
+    name: string;
+    email: string;
+    city: string;
+    phone: string;
+    language: string;
+    timezone: string;
+    memberSinceISO: string;
+    preferredContact: Preferred;
+  } = {
+    id: String(authUser?.id ?? "—"),
+    name: storedName,
+    email: authUser?.email ?? "—",
+    city: "Dresden, Germany",
+    phone: "+49 151 23456789",
+    language: "Deutsch, English",
+    timezone: "Europe/Berlin (UTC+1/UTC+2)",
+    memberSinceISO,
+    preferredContact: "email",
+  };
 
   const hotlineNumber = import.meta.env.VITE_HOTLINE_PHONE as string | undefined;
   const isSupport = plan.kind === "support";
@@ -185,6 +186,11 @@ export function ProfilePage() {
 
   const planTitle = isSupport ? dict.plan.supportTitle : dict.plan.baseTitle;
 
+  const onLogout = async () => {
+    await logout();
+    navigate(PATHS.HOME);
+  };
+
   return (
     <div className={styles.page}>
       <PageHeader
@@ -194,60 +200,67 @@ export function ProfilePage() {
 
       <section className={styles.grid}>
         <div className={styles.card}>
+          <div className={styles.userHeader}>
+            <div>
+              <div className={styles.userName}>
+                {mergedUser.name}
+              </div>
+              <div className={styles.userEmail}>
+                {mergedUser.email}
+              </div>
+            </div>
+
+            <button
+              type="button"
+              className={styles.logoutBtn}
+              onClick={onLogout}
+            >
+              {dict.page.logoutBtn}
+            </button>
+          </div>
+
           <h2 className={styles.cardTitle}>
             {dict.user.title}
           </h2>
+
           <div className={styles.userRow}>
             <div className={styles.userInfo}>
-              <div className={styles.userName}>
-                {user.name}
+              <div>
+                {dict.user.city}
+                :
+                {mergedUser.city}
               </div>
-              <div className={styles.userEmail}>
-                {user.email}
+              <div>
+                {dict.user.phone}
+                :
+                {mergedUser.phone}
               </div>
-
-              <div className={styles.userInfo}>
-                <div>
-                  {dict.user.city}
-                  :
-                  {" "}
-                  {user.city}
-                </div>
-                <div>
-                  {dict.user.phone}
-                  :
-                  {" "}
-                  {user.phone}
-                </div>
-                <div>
-                  {dict.user.language}
-                  :
-                  {" "}
-                  {user.language}
-                </div>
-                <div>
-                  {dict.user.timezone}
-                  :
-                  {" "}
-                  {user.timezone}
-                </div>
-                <div>
-                  {dict.user.memberSince}
-                  :
-                  {" "}
-                  {toDate(user.memberSinceISO)}
-                </div>
-                <div>
-                  {dict.user.preferredContact}
-                  :
-                  {user.preferredContact === "phone" ? ` ${dict.user.preferredContactPhone}` : ` ${dict.user.preferredContactEmail}`}
-                </div>
-                <div>
-                  {dict.user.id}
-                  :
-                  {" "}
-                  {user.id}
-                </div>
+              <div>
+                {dict.user.language}
+                :
+                {mergedUser.language}
+              </div>
+              <div>
+                {dict.user.timezone}
+                :
+                {mergedUser.timezone}
+              </div>
+              <div>
+                {dict.user.memberSince}
+                :
+                {toDate(mergedUser.memberSinceISO)}
+              </div>
+              <div>
+                {dict.user.preferredContact}
+                :
+                {mergedUser.preferredContact === "phone"
+                  ? ` ${dict.user.preferredContactPhone}`
+                  : ` ${dict.user.preferredContactEmail}`}
+              </div>
+              <div>
+                {dict.user.id}
+                :
+                {mergedUser.id}
               </div>
             </div>
           </div>

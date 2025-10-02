@@ -1,5 +1,7 @@
 import {AboutDictEn} from "src/dictionary/dictionaries/about/about.en";
 import {AboutDictRu} from "src/dictionary/dictionaries/about/about.ru";
+import type {AuthDictEn} from "src/dictionary/dictionaries/auth/auth.en";
+import type {AuthDictRu} from "src/dictionary/dictionaries/auth/auth.ru";
 import type {BiohackingDictEn} from "src/dictionary/dictionaries/biohacking/biohacking.en";
 import type {BiohackingDictRu} from "src/dictionary/dictionaries/biohacking/biohacking.ru";
 import type {CommonDictEn} from "src/dictionary/dictionaries/common/common.en";
@@ -30,6 +32,7 @@ export enum DictionaryKey {
   FOOTER = "footer",
   SUPPORT = "support",
   PROFILE = "profile",
+  AUTH = "auth",
 }
 
 export type Language = "en" | "ru";
@@ -45,6 +48,7 @@ export type DictionaryMap = {
   [DictionaryKey.FOOTER]: FooterDictEn | FooterDictRu;
   [DictionaryKey.SUPPORT]: SupportDictEn | SupportDictRu;
   [DictionaryKey.PROFILE]: ProfileDictEn | ProfileDictRu;
+  [DictionaryKey.AUTH]: AuthDictEn | AuthDictRu;
 };
 
 const loaders: {
@@ -88,9 +92,16 @@ const loaders: {
     en: async () => (await import("./dictionaries/support/support.en")).supportDict,
     ru: async () => (await import("./dictionaries/support/support.ru")).supportDict,
   },
+
+  // 🔧 ВОТ ЭТОТ БЛОК МЕНЯЕМ
   [DictionaryKey.PROFILE]: {
-    en: async () => (await import("./dictionaries/profile/profile.en")).profileDict,
-    ru: async () => (await import("./dictionaries/profile/profile.ru")).profileDict,
+    en: async () => (await import("./dictionaries/profile/profile.en")).profileDictEn,
+    ru: async () => (await import("./dictionaries/profile/profile.ru")).profileDictRu,
+  },
+
+  [DictionaryKey.AUTH]: {
+    en: async () => (await import("./dictionaries/auth/auth.en")).authDict,
+    ru: async () => (await import("./dictionaries/auth/auth.ru")).authDict,
   },
 };
 

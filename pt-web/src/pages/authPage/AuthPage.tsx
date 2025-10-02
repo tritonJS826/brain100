@@ -1,75 +1,190 @@
-/* eslint-disable max-len */
 import React, {useState} from "react";
+import {useNavigate} from "react-router-dom";
+import {DictionaryKey} from "src/dictionary/dictionaryLoader";
+import {useDictionary} from "src/dictionary/useDictionary";
+import {PATHS} from "src/routes/routes";
+import {loginByEmail, registerByEmail} from "src/services/auth";
 import styles from "src/pages/authPage/AuthPage.module.scss";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL;
-const GOOGLE_OAUTH_URL =
-  import.meta.env.VITE_AUTH_GOOGLE_URL || (API_BASE ? `${API_BASE}/auth/google` : "/auth/google");
+type AuthDictionary = {
+  tabs: { login: string; register: string };
+  title: { login: string; register: string };
+  subtitle: { login: string; register: string };
+  fields: { fullName: string; email: string; password: string; passwordRepeat: string };
+  placeholders: { fullName: string; email: string; password: string; passwordRepeat: string };
+  errors: { nameRequired: string; passwordsMismatch: string; requestFailed: string };
+  buttons: { submitLogin: string; submitRegister: string; loading: string };
+};
 
 export function AuthPage() {
-  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const dict = useDictionary(DictionaryKey.AUTH) as AuthDictionary | null;
 
-  const onGoogleClick = () => {
+  const [mode, setMode] = useState<"login" | "register">("register");
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState(localStorage.getItem("userEmail") || "");
+  const [password, setPassword] = useState("");
+  const [password2, setPassword2] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  if (!dict) {
+    return (
+      <div>
+        Loading...
+      </div>
+    );
+  }
+
+  const isRegister = mode === "register";
+
+  const onSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
+    e.preventDefault();
     if (loading) {
       return;
     }
+
+    setError(null);
+
+    if (isRegister) {
+      if (!fullName.trim()) {
+        setError(dict.errors.nameRequired);
+
+        return;
+      }
+      if (password !== password2) {
+        setError(dict.errors.passwordsMismatch);
+
+        return;
+      }
+    }
+
     setLoading(true);
-    window.location.assign(GOOGLE_OAUTH_URL);
+    try {
+      if (isRegister) {
+        await registerByEmail(email, password, fullName.trim());
+      } else {
+        await loginByEmail(email, password);
+      }
+      navigate(PATHS.PROFILE.PAGE, {replace: true});
+    } catch (err) {
+      const message = err instanceof Error ? err.message : dict.errors.requestFailed;
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className={styles.wrap}>
       <div className={styles.card}>
+        <div className={styles.tabs}>
+          <button
+            type="button"
+            className={`${styles.tab} ${mode === "login" ? styles.tabActive : ""}`}
+            onClick={() => setMode("login")}
+            disabled={loading}
+          >
+            {dict.tabs.login}
+          </button>
+          <button
+            type="button"
+            className={`${styles.tab} ${mode === "register" ? styles.tabActive : ""}`}
+            onClick={() => setMode("register")}
+            disabled={loading}
+          >
+            {dict.tabs.register}
+          </button>
+        </div>
+
         <header className={styles.head}>
           <h1 className={styles.title}>
-            Вход в аккаунт
+            {isRegister ? dict.title.register : dict.title.login}
           </h1>
           <p className={styles.subtitle}>
-            Продолжите через Google
+            {isRegister ? dict.subtitle.register : dict.subtitle.login}
           </p>
         </header>
 
-        <button
-          type="button"
-          className={styles.googleBtn}
-          onClick={onGoogleClick}
-          disabled={loading}
-          aria-label="Войти через Google"
+        <form
+          onSubmit={onSubmit}
+          className={styles.form}
+          noValidate
         >
-          <span
-            className={styles.googleMark}
-            aria-hidden="true"
-          >
-            <svg
-              viewBox="0 0 48 48"
-              className={styles.googleSvg}
-            >
-              <path
-                fill="#FFC107"
-                d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.6-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.7 1.1 7.8 2.9l5.7-5.7C33.5 7.1 29 5 24 5 12.9 5 4 13.9 4 25s8.9 20 20 20 20-8.9 20-20c0-1.5-.2-3-.4-4.5z"
+          {isRegister && (
+            <label className={styles.label}>
+              {dict.fields.fullName}
+              <input
+                className={styles.input}
+                value={fullName}
+                onChange={(e) => setFullName(e.currentTarget.value)}
+                autoComplete="name"
+                placeholder={dict.placeholders.fullName}
+                minLength={2}
+                required
               />
-              <path
-                fill="#FF3D00"
-                d="M6.3 14.7l6.6 4.9C14.7 16.3 18.9 13 24 13c3 0 5.7 1.1 7.8 2.9l5.7-5.7C33.5 7.1 29 5 24 5 16.1 5 9.3 9.6 6.3 14.7z"
-              />
-              <path
-                fill="#4CAF50"
-                d="M24 45c5 0 9.5-1.9 12.9-5l-6-4.9C29 36.8 26.6 38 24 38c-5.2 0-9.6-3.3-11.2-7.9l-6.6 5.1C9.3 40.4 16.1 45 24 45z"
-              />
-              <path
-                fill="#1976D2"
-                d="M43.6 20.5H42V20H24v8h11.3c-.8 2.4-2.4 4.4-4.4 5.7l6 4.9C39.7 35.9 44 30.9 44 23.9c0-1.2-.2-2.4-.4-3.4z"
-              />
-            </svg>
-          </span>
-          <span className={styles.googleText}>
-            {loading ? "Переходим к Google…" : "Продолжить с Google"}
-          </span>
-        </button>
+            </label>
+          )}
 
-        <p className={styles.note}>
-          Нажимая кнопку, вы соглашаетесь с условиями сервиса и обработкой персональных данных.
-        </p>
+          <label className={styles.label}>
+            {dict.fields.email}
+            <input
+              type="email"
+              className={styles.input}
+              value={email}
+              onChange={(e) => setEmail(e.currentTarget.value)}
+              autoComplete="email"
+              placeholder={dict.placeholders.email}
+              required
+            />
+          </label>
+
+          <label className={styles.label}>
+            {dict.fields.password}
+            <input
+              type="password"
+              className={styles.input}
+              value={password}
+              onChange={(e) => setPassword(e.currentTarget.value)}
+              autoComplete={isRegister ? "new-password" : "current-password"}
+              placeholder={dict.placeholders.password}
+              minLength={6}
+              required
+            />
+          </label>
+
+          {isRegister && (
+            <label className={styles.label}>
+              {dict.fields.passwordRepeat}
+              <input
+                type="password"
+                className={styles.input}
+                value={password2}
+                onChange={(e) => setPassword2(e.currentTarget.value)}
+                autoComplete="new-password"
+                placeholder={dict.placeholders.passwordRepeat}
+                minLength={6}
+                required
+              />
+            </label>
+          )}
+
+          {error && <div className={styles.err}>
+            {error}
+          </div>}
+
+          <button
+            type="submit"
+            className={styles.submit}
+            disabled={loading}
+          >
+            {loading
+              ? dict.buttons.loading
+              : isRegister
+                ? dict.buttons.submitRegister
+                : dict.buttons.submitLogin}
+          </button>
+        </form>
       </div>
     </div>
   );
