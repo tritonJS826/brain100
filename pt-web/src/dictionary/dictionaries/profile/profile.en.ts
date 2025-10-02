@@ -1,5 +1,9 @@
-export const profileDict = {
-  page: {title: "Profile", subtitle: "Your data and subscription status."},
+export const profileDictEn = {
+  page: {
+    title: "Profile",
+    subtitle: "Your data and subscription status.",
+    logoutBtn: "Sign out",
+  },
   user: {
     title: "User data",
     city: "City",
@@ -73,4 +77,4 @@ export const profileDict = {
   },
 } as const;
 
-export type ProfileDictEn = typeof profileDict;
+export type ProfileDictEn = typeof profileDictEn;

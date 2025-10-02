@@ -6,6 +6,14 @@
   --btn-gap: 10px;
 }
 
+.userHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
 .page {
   max-width: vars.$container-max;
   margin: 0 auto;
@@ -20,6 +28,7 @@
 }
 
 .card {
+  position: relative;
   background: vars.$color-bg;
   border: 1px solid vars.$color-border;
   border-radius: vars.$radius-lg;
@@ -27,6 +36,35 @@
   padding: vars.$pad-lg;
   display: grid;
   gap: vars.$gap-md;
+}
+
+.cardActions {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  display: flex;
+  gap: 8px;
+}
+
+.logoutBtn {
+  border: 1px solid vars.$color-border;
+  background: #fff;
+  color: vars.$color-primary;
+  font-weight: 700;
+  border-radius: vars.$radius-pill;
+  padding: 10px 14px;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background-color vars.$transition-fast,
+    border-color vars.$transition-fast,
+    color vars.$transition-fast;
+}
+
+.logoutBtn:hover {
+  background: vars.$color-cta-bg;
+  border-color: vars.$color-cta-bg;
+  color: #fff;
 }
 
 .cardHead {

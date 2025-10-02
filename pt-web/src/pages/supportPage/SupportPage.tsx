@@ -2,23 +2,47 @@ import React from "react";
 import {PhoneCall} from "lucide-react";
 import {Button} from "src/components/Button/Button";
 import {PageHeader} from "src/components/PageHeader/PageHeader";
+import {DictionaryKey} from "src/dictionary/dictionaryLoader";
+import {useDictionary} from "src/dictionary/useDictionary";
 import {PATHS} from "src/routes/routes";
 import styles from "src/pages/supportPage/SupportPage.module.scss";
 
 const hotlineNumber = import.meta.env.VITE_HOTLINE_PHONE as string | undefined;
 
+type SelfhelpItem = {
+  id: string;
+  link: string;
+  title: string;
+  desc: string;
+};
+
+type SupportDictionary = {
+  page: { title: string; subtitle: string };
+  emergency: { title: string; callNow: string; ariaLabel: string };
+  consultation: { title: string; lead: string; cta: string };
+  selfhelp: { title: string; lead: string };
+  selfhelpItems: SelfhelpItem[];
+};
+
 export function SupportPage() {
+  const dictionary = useDictionary(DictionaryKey.SUPPORT) as SupportDictionary | null;
+
+  if (!dictionary) {
+    return (
+      <div className={styles.page}>
+        Loading...
+      </div>
+    );
+  }
+
   const isAuthenticated = Boolean(localStorage.getItem("accessToken"));
-  const telHref = hotlineNumber;
+  const telHref = hotlineNumber ? `tel:${hotlineNumber}` : undefined;
 
   return (
     <div className={styles.page}>
       <PageHeader
-        title="Поддержка"
-        subtitle={
-          "В экстренной ситуации звоните сразу. " +
-    "Далее можно отправить заявку на консультацию и почитать материалы по самопомощи."
-        }
+        title={dictionary.page.title}
+        subtitle={dictionary.page.subtitle}
       />
 
       <section
@@ -26,20 +50,22 @@ export function SupportPage() {
         id="emergency"
       >
         <h2 className={styles.cardTitleHero}>
-          Экстренная помощь
+          {dictionary.emergency.title}
         </h2>
 
         <div className={styles.heroRow}>
           <a
             href={telHref}
-            className={`${styles.callNowBtn} ${isAuthenticated ? styles.callNowOk : styles.callNowBad}`}
-            aria-label="Позвонить на горячую линию"
+            className={`${styles.callNowBtn} ${
+              isAuthenticated ? styles.callNowOk : styles.callNowBad
+            }`}
+            aria-label={dictionary.emergency.ariaLabel}
           >
             <PhoneCall
               className={styles.callNowIcon}
               aria-hidden="true"
             />
-            Позвонить на горячую линию
+            {dictionary.emergency.callNow}
           </a>
         </div>
       </section>
@@ -49,14 +75,14 @@ export function SupportPage() {
         id="consultation"
       >
         <h2 className={styles.cardTitle}>
-          Консультация со специалистом
+          {dictionary.consultation.title}
         </h2>
         <p className={styles.lead}>
-          Оставьте заявку, и мы свяжемся с вами для согласования времени.
+          {dictionary.consultation.lead}
         </p>
 
         <Button to={PATHS.SOS.CONSULTATION}>
-          Отправить заявку на консультацию
+          {dictionary.consultation.cta}
         </Button>
       </section>
 
@@ -65,37 +91,26 @@ export function SupportPage() {
         id="selfhelp"
       >
         <h2 className={styles.cardTitle}>
-          Самопомощь
+          {dictionary.selfhelp.title}
         </h2>
         <p className={styles.lead}>
-          Ознакомьтесь с короткими рекомендациями, чтобы помочь себе в моменте.
+          {dictionary.selfhelp.lead}
         </p>
 
         <ul className={styles.topics}>
-          <li className={styles.topic}>
-            <Button to={`${PATHS.MENTAL_HEALTH?.LIST}#panic-attack`}>
-              Паническая атака
-            </Button>
-            <p className={styles.topicDesc}>
-              Как распознать приступ и что делать прямо сейчас.
-            </p>
-          </li>
-          <li className={styles.topic}>
-            <Button to={`${PATHS.MENTAL_HEALTH?.LIST}#anxiety`}>
-              Тревога
-            </Button>
-            <p className={styles.topicDesc}>
-              Способы снизить напряжение и вернуть контроль.
-            </p>
-          </li>
-          <li className={styles.topic}>
-            <Button to={`${PATHS.MENTAL_HEALTH?.LIST}#depression`}>
-              Депрессия
-            </Button>
-            <p className={styles.topicDesc}>
-              Когда обращаться за помощью и базовые шаги поддержки.
-            </p>
-          </li>
+          {dictionary.selfhelpItems.map((helpItem) => (
+            <li
+              key={helpItem.id}
+              className={styles.topic}
+            >
+              <Button to={`${PATHS.MENTAL_HEALTH.LIST}${helpItem.link}`}>
+                {helpItem.title}
+              </Button>
+              <p className={styles.topicDesc}>
+                {helpItem.desc}
+              </p>
+            </li>
+          ))}
         </ul>
       </section>
     </div>
