@@ -10,11 +10,12 @@ datasource db {
 }
 
 model User {
-  id        Int           @id @default(autoincrement())
-  email     String        @unique
-  name      String
-  createdAt DateTime      @default(now())
-  sessions  TestSession[]
+  id              Int           @id @default(autoincrement())
+  email           String        @unique
+  hashed_password String
+  name            String?
+  createdAt       DateTime      @default(now())
+  sessions        TestSession[]
 }
 
 model Test {
