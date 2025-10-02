@@ -1,5 +1,4 @@
 # Description: API router for the application, including health, user, and email endpoints.
-# app/api/__init__.py
 
 from . import users, health, email, auth
 from fastapi import APIRouter

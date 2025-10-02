@@ -1,10 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException
-from app.schemas.user import UserCreate, UserOut
+from fastapi import APIRouter, Depends, HTTPException, Header
+from fastapi.security import OAuth2PasswordBearer
+
+from jose import JWTError, ExpiredSignatureError, jwt
+
+from app.schemas.user import UserCreate, UserWithTokens, UserOut
 from app.services.auth_service import AuthService
 from app.repositories.user_repository import UserRepository
 from app.db import db
-from fastapi.security import OAuth2PasswordBearer
-from jose import jwt, JWTError
+
 from app.settings import settings
 
 router = APIRouter()
@@ -33,30 +36,57 @@ async def register(user_in: UserCreate):
     return user
 
 
-async def get_current_user(token: str = Depends(oauth2_scheme)):
-    try:
-        payload = jwt.decode(
-            token,
-            settings.jwt_secret_key,
-            algorithms=[settings.jwt_algorithm],
-        )
-        user_id = payload.get("sub")
-        if user_id is None:
-            raise HTTPException(status_code=401, detail="Invalid token")
+async def get_current_user(
+    access_token: str = Depends(oauth2_scheme),
+    x_refresh_token: str | None = Header(default=None),
+):
+    # try access first
+    if access_token:
+        try:
+            payload = jwt.decode(
+                access_token,
+                settings.jwt_secret_key,
+                algorithms=[settings.jwt_algorithm],
+            )
+            return {"user_id": payload.get("sub"), "tokens": None}
 
-        # fetch user from Prisma
-        user = await db.user.find_unique(where={"id": int(user_id)})
-        if not user:
-            raise HTTPException(status_code=401, detail="User not found")
+        except ExpiredSignatureError:
+            pass  # will fall back to refresh
 
-        return user
-    except JWTError:
-        raise HTTPException(status_code=401, detail="Invalid token")
+        except JWTError:
+            # instead of raising immediately, try refresh if provided
+            if not x_refresh_token:
+                raise HTTPException(status_code=401, detail="Invalid token")
+
+    # fallback: refresh token
+    if x_refresh_token:
+        refresh_payload = auth_service.decode_token(x_refresh_token)
+        if not refresh_payload or refresh_payload.get("type") != "refresh":
+            raise HTTPException(status_code=401, detail="Invalid refresh token")
+
+        user_id = refresh_payload.get("sub")
+        new_access = auth_service.create_access_token({"sub": user_id})
+        # new_refresh = auth_service.create_refresh_token({"sub": user_id})
+
+        return {
+            "user_id": user_id,
+            "tokens": {
+                "access_token": new_access,
+                # keep tye same refresh token for simplicity
+                "refresh_token": x_refresh_token,
+                "token_type": "bearer",
+            },
+        }
+
+    raise HTTPException(status_code=401, detail="Not authenticated")
 
 
-@router.get("/me")
-async def read_users_me(current_user: UserOut = Depends(get_current_user)):
-    return {
-        "id": current_user.id,
-        "email": current_user.email,
-    }
+@router.get("/me", response_model=UserWithTokens)
+async def read_users_me(
+    current=Depends(get_current_user),
+    x_refresh_token: str | None = Header(default=None),
+):
+    user = await db.user.find_unique(where={"id": int(current["user_id"])})
+    user_out = UserOut(id=user.id, email=user.email)
+
+    return UserWithTokens(user=user_out, tokens=current["tokens"])
