@@ -34,8 +34,6 @@ model User {
 
   sessions      TestSession[]
   subscriptions Subscription[]
-
-  @@index([role])
 }
 
 model Test {
@@ -54,7 +52,6 @@ model Question {
   text      String
   type      QuestionType
   options   AnswerOption[]
-  // дерево вопросов
   nextYesId String?
   nextNoId  String?
   createdAt DateTime       @default(now())
@@ -66,7 +63,7 @@ model AnswerOption {
   question   Question      @relation(fields: [questionId], references: [id], onDelete: Cascade)
   questionId String
   text       String
-  isCorrect  Boolean?
+  isCorrect  Boolean
   createdAt  DateTime      @default(now())
   answers    GivenAnswer[]
 }
@@ -80,9 +77,6 @@ model TestSession {
   createdAt  DateTime      @default(now())
   finishedAt DateTime?
   answers    GivenAnswer[]
-
-  @@index([userId, testId])
-  @@index([userId, createdAt])
 }
 
 model GivenAnswer {
@@ -109,17 +103,14 @@ model EmailLog {
 }
 
 model Subscription {
-  id                    Int       @id @default(autoincrement())
+  id                    Int      @id @default(autoincrement())
   userId                Int
-  plan                  Plan      @default(FREE) // FREE | BASIC
-  startedAt             DateTime  @default(now())
-  endsAt                DateTime? // end_of_subscription
-  consultationsIncluded Int       @default(0)
-  consultationsUsed     Int       @default(0)
-  createdAt             DateTime  @default(now())
+  plan                  Plan     @default(FREE)
+  startedAt             DateTime @default(now())
+  endsAt                DateTime // end_of_subscription
+  consultationsIncluded Int      @default(0)
+  consultationsUsed     Int      @default(0)
+  createdAt             DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  @@index([userId]) // выборки по пользователю
-  @@index([endsAt]) // фильтры по дате окончания
 }
