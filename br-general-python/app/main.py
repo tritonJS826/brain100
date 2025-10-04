@@ -22,7 +22,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     lifespan=lifespan,
-    generate_unique_id_function=generate_operation_id,  # 👈 ключевая строка
+    generate_unique_id_function=generate_operation_id,
 )
 
 app.include_router(api_router)
