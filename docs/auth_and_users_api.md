@@ -1,136 +1,240 @@
-# 📄 Auth & User API Overview
+# Authentication & User API Documentation
 
-This document describes the **authentication** and **user** endpoints provided by the backend.  
-It is intended for frontend developers and other backend contributors.  
+## Overview
+This document describes the authentication and user management endpoints of the **br-general-python** backend. It defines how users register, log in, refresh tokens, and retrieve their profile data.
+
+All endpoints follow REST conventions and return JSON. Authentication uses **JWT (JSON Web Token)** with short-lived access tokens and long-lived refresh tokens.
 
 ---
 
-## 🔐 Auth Endpoints (`/auth`)
+## 🧩 Endpoints Summary
 
-All endpoints under `/auth` deal with **authentication and token management**.
+| Endpoint | Method | Description | Auth Required |
+|-----------|---------|--------------|----------------|
+| `/br-general/auth/register` | `POST` | Register a new user | ❌ No |
+| `/br-general/auth/login` | `POST` | Authenticate and get tokens | ❌ No |
+| `/br-general/auth/refresh` | `POST` | Refresh access & refresh tokens | ❌ No |
+| `/br-general/users/me` | `GET` | Get current logged-in user | ✅ Yes |
+| `/br-general/auth/logout` | `POST` | Logout (stateless, frontend clears tokens) | ✅ Yes |
 
-### 1. `POST /auth/register`
-- **Purpose**: Create a new user account and immediately log them in.  
-- **Request body**:
-  ```json
-  {
-    "email": "user@example.com",
-    "password": "strongpassword123"
+---
+
+## 🧾 Endpoint Details
+
+### 1. **Register** — `/br-general/auth/register`
+**Method:** `POST`
+
+Registers a new user with email and password.
+
+**Request Body:**
+```json
+{
+  "email": "user@example.com",
+  "password": "strongpassword123"
+}
+```
+
+**Responses:**
+- `200 OK` → User created successfully
+- `400 Bad Request` → Email already registered
+
+**Example (curl):**
+```bash
+curl -X POST http://localhost:8000/br-general/auth/register \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"test@example.com","password":"pass1234"}'
+```
+
+---
+
+### 2. **Login** — `/br-general/auth/login`
+**Method:** `POST`
+
+Authenticates user and returns **access** and **refresh** tokens.
+
+**Form Data:**
+```
+username=<email>
+password=<password>
+```
+
+**Response Example:**
+```json
+{
+  "user": {
+    "id": 1,
+    "email": "user@example.com"
+  },
+  "tokens": {
+    "access_token": "<JWT_ACCESS_TOKEN>",
+    "refresh_token": "<JWT_REFRESH_TOKEN>",
+    "token_type": "bearer"
   }
-  ```
-- **Response**:
-  ```json
-  {
-    "user": {
-      "id": 1,
-      "email": "user@example.com"
-    },
-    "tokens": {
-      "access_token": "jwt_access_here",
-      "refresh_token": "jwt_refresh_here",
-      "token_type": "bearer"
-    }
+}
+```
+
+**Example (curl):**
+```bash
+curl -X POST http://localhost:8000/br-general/auth/login \
+  -d 'username=user@example.com' -d 'password=pass1234'
+```
+
+---
+
+### 3. **Refresh Tokens** — `/br-general/auth/refresh`
+**Method:** `POST`
+
+Generates a new access/refresh token pair using an existing refresh token. The old pair becomes invalid after expiration.
+
+**Request Body:**
+```json
+{
+  "access_token": "<expired or valid access token>",
+  "refresh_token": "<valid refresh token>"
+}
+```
+
+**Response Example:**
+```json
+{
+  "user": {
+    "id": 1,
+    "email": "user@example.com"
+  },
+  "tokens": {
+    "access_token": "<new_access_token>",
+    "refresh_token": "<new_refresh_token>",
+    "token_type": "bearer"
   }
-  ```
+}
+```
+
+**Example (curl):**
+```bash
+curl -X POST http://localhost:8000/br-general/auth/refresh \
+  -H 'Content-Type: application/json' \
+  -d '{"access_token":"<expired>","refresh_token":"<valid_refresh>"}'
+```
 
 ---
 
-### 2. `POST /auth/login`
-- **Purpose**: Authenticate an existing user.  
-- **Request body** (form-data, `application/x-www-form-urlencoded`):
-  ```
-  username=<email>
-  password=<password>
-  ```
-- **Response**: Same as `/auth/register`.
+### 4. **Get Current User** — `/br-general/users/me`
+**Method:** `GET`
+
+Returns the current authenticated user. Requires a valid access token.
+
+**Headers:**
+```
+Authorization: Bearer <access_token>
+```
+
+**Response Example:**
+```json
+{
+  "user": {
+    "id": 1,
+    "email": "user@example.com"
+  },
+  "tokens": null
+}
+```
+
+If access token is expired and refresh token is provided in the header:
+```
+X-Refresh-Token: <refresh_token>
+```
+then backend automatically rotates tokens and includes new ones in response headers:
+```
+X-New-Access-Token: <new_access_token>
+X-New-Refresh-Token: <new_refresh_token>
+```
 
 ---
 
-### 3. `POST /auth/refresh`
-- **Purpose**: Rotate tokens when the access token expires.  
-- **Request body**:
-  ```json
-  {
-    "access_token": "old_access_jwt",
-    "refresh_token": "valid_refresh_jwt"
-  }
-  ```
-- **Response**: New `{ user, tokens }` with **rotated refresh token**.
 
 ---
 
-### 4. `POST /auth/logout`
-- **Purpose**: Stateless logout.  
-- **Important**: The backend does not invalidate tokens.  
-  The client (frontend or mobile app) must discard stored tokens.  
-- **Response**:
-  ```json
-  {
-    "message": "Successfully logged out. Please discard your tokens on the client."
-  }
-  ```
+### 5. **Logout** — `/br-general/auth/logout`
+**Method:** `POST`
+
+Stateless endpoint that allows users to log out from the frontend.  
+Since JWT tokens are stateless and not stored server-side, this endpoint simply confirms logout.  
+Frontend should delete tokens locally.
+
+**Headers:**
+```
+Authorization: Bearer <access_token>
+```
+
+**Response Example:**
+```json
+{
+  "detail": "Logged out successfully"
+}
+```
+
+**Example (curl):**
+```bash
+curl -X POST http://localhost:8000/br-general/auth/logout \
+  -H "Authorization: Bearer <access_token>"
+```
+
+
+## 🔐 Token Logic
+
+| Token Type | Purpose | Lifetime | Location |
+|-------------|----------|-----------|-----------|
+| Access Token | Used for API authentication | ~30 minutes | Header `Authorization: Bearer` |
+| Refresh Token | Used to renew access tokens | 7 days | Stored client-side securely |
+
+Both tokens contain:
+- `sub`: User ID
+- `iat`: Issued-at timestamp
+- `exp`: Expiration timestamp
+- `jti`: Unique ID (helps prevent replay)
+- `type`: `access` or `refresh`
 
 ---
 
-## 👤 User Endpoints (`/users`)
+## 💻 Frontend Integration Notes
 
-All endpoints under `/users` deal with **user profile data**.  
+- Always store **both tokens** after login or registration.
+- Use the `access_token` in `Authorization` header for all requests.
+- When receiving `401 Unauthorized` with message `Token expired`, call `/br-general/auth/refresh`.
+- After `/refresh`, replace both tokens in storage.
+- On logout → simply delete tokens from client (backend is stateless).
 
-### 1. `GET /users/me`
-- **Purpose**: Fetch the current logged-in user.  
-- **Auth**: Requires valid access token (or refresh token fallback).  
-- **Headers**:
-  ```
-  Authorization: Bearer <access_token>
-  x-refresh-token: <refresh_token>   (optional, only needed if access expired)
-  ```
-- **Response**:
-  ```json
-  {
-    "user": {
-      "id": 1,
-      "email": "user@example.com"
-    },
-    "tokens": {
-      "access_token": "new_or_same_access",
-      "refresh_token": "same_refresh",
-      "token_type": "bearer"
-    }
-  }
-  ```
+**Best practice:** Keep refresh token in HTTP-only cookie or secure storage.
 
 ---
 
-## 🔑 Token Lifecycle
+## ⚙️ Backend Implementation Notes
 
-- **Access token**:  
-  - Short-lived (e.g. 2h).  
-  - Used in `Authorization: Bearer <token>` header.  
+### AuthService Highlights
+- Uses **Argon2** for password hashing (secure & modern).
+- Adds `iat` and `jti` claims to JWT for traceability.
+- Uses unified configuration via `settings` for all cryptographic parameters.
+- Handles token decoding gracefully — expired or invalid tokens return meaningful results.
 
-- **Refresh token**:  
-  - Long-lived (e.g. 7 days).  
-  - Used to obtain new access tokens when they expire.  
-  - Sent in header `x-refresh-token` or via `/auth/refresh` endpoint.  
+### Configuration (from `.env`)
+```
+JWT_SECRET_KEY=<your_secret>
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+REFRESH_TOKEN_EXPIRE_MINUTES=10080  # 7 days
+JWT_ALGORITHM=HS256
+```
 
-- **Rotation rules**:  
-  - `/auth/refresh` → rotates both access and refresh tokens.  
-  - `/users/me` → refreshes **only the access token** (refresh stays the same).  
+---
+
+## ✅ Example Flow Summary
+1. **Register** → create user
+2. **Login** → get access + refresh tokens
+3. **Use** `/users/me` → authorized actions
+4. **Expire** access → auto-refresh or manual `/refresh`
+5. **Logout** → delete tokens client-side
 
 ---
 
-## ⚡ Frontend Guidelines
-
-- Always store **both tokens** (`access_token`, `refresh_token`) after login/register.  
-- For API calls:  
-  - Send `access_token` in the `Authorization` header:  
-    ```
-    Authorization: Bearer <access_token>
-    ```
-  - If the access token is expired, also include the `x-refresh-token` header to allow automatic refresh:  
-    ```
-    x-refresh-token: <refresh_token>
-    ```
-- If the backend responds with `"Token expired"` or `"Invalid token"`, call `/auth/refresh` with both tokens in the request body to get a new pair.  
-- On logout, clear both tokens from local storage — the backend is stateless.  
-
----
+**Author:** API Team — br-general-python
+**Version:** v1.0.0
+**Last Updated:** 2025-10-04
