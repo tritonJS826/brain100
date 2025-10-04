@@ -2,4 +2,12 @@ from prisma import Prisma
 
 db = Prisma()
 
-__all__ = ["db"]
+
+async def connect():
+    if not db.is_connected():
+        await db.connect()
+
+
+async def disconnect():
+    if db.is_connected():
+        await db.disconnect()
