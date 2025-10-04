@@ -3,11 +3,17 @@
 from . import users, health, email, auth
 from fastapi import APIRouter
 from app.settings import settings
+from app.api import user_page
 
 api_router = APIRouter()
 api_router.include_router(health.router, prefix="/br-general/health", tags=["health"])
 api_router.include_router(auth.router, prefix="/br-general/auth", tags=["auth"])
 api_router.include_router(users.router, prefix="/br-general/users", tags=["users"])
+
+api_router.include_router(
+    user_page.router, prefix="/br-general/user_page", tags=["user page"]
+)
+
 # For production, disable email send and user create endpoints
 if settings.env_type != "prod":
     api_router.include_router(email.router, prefix="/br-general/email", tags=["email"])
