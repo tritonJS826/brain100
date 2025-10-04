@@ -26,7 +26,7 @@ enum Plan {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(cuid())
   email     String   @unique
   name      String
   role      Role     @default(PATIENT)
@@ -37,7 +37,7 @@ model User {
 }
 
 model Test {
-  id          Int           @id @default(autoincrement())
+  id          String        @id @default(cuid())
   title       String
   description String
   questions   Question[]
@@ -46,22 +46,22 @@ model Test {
 }
 
 model Question {
-  id        Int            @id @default(autoincrement())
+  id        String         @id @default(cuid())
   test      Test           @relation(fields: [testId], references: [id], onDelete: Cascade)
-  testId    Int
+  testId    String
   text      String
   type      QuestionType
   options   AnswerOption[]
-  nextYesId Int?
-  nextNoId  Int?
+  nextYesId String?
+  nextNoId  String?
   createdAt DateTime       @default(now())
   answers   GivenAnswer[]
 }
 
 model AnswerOption {
-  id         Int           @id @default(autoincrement())
+  id         String        @id @default(cuid())
   question   Question      @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  questionId Int
+  questionId String
   text       String
   isCorrect  Boolean
   createdAt  DateTime      @default(now())
@@ -69,30 +69,30 @@ model AnswerOption {
 }
 
 model TestSession {
-  id         Int           @id @default(autoincrement())
+  id         String        @id @default(cuid())
   test       Test          @relation(fields: [testId], references: [id], onDelete: Cascade)
-  testId     Int
+  testId     String
   user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId     Int
+  userId     String
   createdAt  DateTime      @default(now())
   finishedAt DateTime?
   answers    GivenAnswer[]
 }
 
 model GivenAnswer {
-  id             Int           @id @default(autoincrement())
+  id             String        @id @default(cuid())
   session        TestSession   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  sessionId      Int
+  sessionId      String
   question       Question      @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  questionId     Int
+  questionId     String
   answerOption   AnswerOption? @relation(fields: [answerOptionId], references: [id], onDelete: SetNull)
-  answerOptionId Int?
+  answerOptionId String?
   freeText       String?
   createdAt      DateTime      @default(now())
 }
 
 model EmailLog {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(cuid())
   to        String
   subject   String
   template  String?
@@ -103,8 +103,8 @@ model EmailLog {
 }
 
 model Subscription {
-  id                    Int      @id @default(autoincrement())
-  userId                Int
+  id                    String   @id @default(cuid())
+  userId                String
   plan                  Plan     @default(FREE)
   startedAt             DateTime @default(now())
   endsAt                DateTime
