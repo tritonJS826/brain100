@@ -1,3 +1,5 @@
+// prisma/schema.prisma
+
 generator client {
   provider = "prisma-client-py"
 }
@@ -7,83 +9,112 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum QuestionType {
+  RADIO
+  CHECKBOX
+  TEXT
+}
+
+enum Role {
+  PATIENT
+  DOCTOR
+}
+
+enum Plan {
+  FREE
+  BASIC
+}
+
 model User {
-  id              String        @id @default(cuid())
-  email           String        @unique
-  name            String?
-  createdAt       DateTime      @default(now())
+  id              String   @id @default(cuid())
+  email           String   @unique
   hashed_password String
-  sessions        TestSession[]
+  name            String
+  role            Role     @default(PATIENT)
+  createdAt       DateTime @default(now())
+
+  sessions      TestSession[]
+  subscriptions Subscription[]
 }
 
 model Test {
   id          String        @id @default(cuid())
   title       String
   description String
-  createdAt   DateTime      @default(now())
   questions   Question[]
   sessions    TestSession[]
+  createdAt   DateTime      @default(now())
 }
 
 model Question {
   id        String         @id @default(cuid())
+  test      Test           @relation(fields: [testId], references: [id], onDelete: Cascade)
   testId    String
   text      String
   type      QuestionType
+  options   AnswerOption[]
   nextYesId String?
   nextNoId  String?
   createdAt DateTime       @default(now())
-  options   AnswerOption[]
   answers   GivenAnswer[]
-  test      Test           @relation(fields: [testId], references: [id], onDelete: Cascade)
 }
 
 model AnswerOption {
   id         String        @id @default(cuid())
+  question   Question      @relation(fields: [questionId], references: [id], onDelete: Cascade)
   questionId String
   text       String
-  isCorrect  Boolean?
+  isCorrect  Boolean
   createdAt  DateTime      @default(now())
-  question   Question      @relation(fields: [questionId], references: [id], onDelete: Cascade)
   answers    GivenAnswer[]
 }
 
 model TestSession {
   id         String        @id @default(cuid())
+  test       Test          @relation(fields: [testId], references: [id], onDelete: Cascade)
   testId     String
+  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId     String
   createdAt  DateTime      @default(now())
   finishedAt DateTime?
   answers    GivenAnswer[]
-  test       Test          @relation(fields: [testId], references: [id], onDelete: Cascade)
-  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model GivenAnswer {
   id             String        @id @default(cuid())
+  session        TestSession   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   sessionId      String
+  question       Question      @relation(fields: [questionId], references: [id], onDelete: Cascade)
   questionId     String
+  answerOption   AnswerOption? @relation(fields: [answerOptionId], references: [id], onDelete: SetNull)
   answerOptionId String?
   freeText       String?
   createdAt      DateTime      @default(now())
-  answerOption   AnswerOption? @relation(fields: [answerOptionId], references: [id])
-  question       Question      @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  session        TestSession   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 }
 
 model EmailLog {
   id        String   @id @default(cuid())
   to        String
   subject   String
+  // optional: store raw body or rendered HTML
   template  String?
+  // e.g. "SENT", "FAILED"
   body      String?
+  // error message if failed
   status    String
   error     String?
   createdAt DateTime @default(now())
 }
 
-enum QuestionType {
-  RADIO
-  CHECKBOX
-  TEXT
+model Subscription {
+  id                    String   @id @default(cuid())
+  userId                String
+  plan                  Plan     @default(FREE)
+  startedAt             DateTime @default(now())
+  endsAt                DateTime
+  consultationsIncluded Int      @default(0)
+  consultationsUsed     Int      @default(0)
+  createdAt             DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }

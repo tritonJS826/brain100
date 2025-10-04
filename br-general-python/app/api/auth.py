@@ -31,14 +31,18 @@ async def register(user_in: UserCreate):
 
     # save new user
     user = await user_repo.create_user(
-        db, email=user_in.email, hashed_password=hashed_pw
+        db,
+        email=user_in.email,
+        hashed_password=hashed_pw,
+        name=user_in.name,
+        role=user_in.role,
     )
 
     # create tokens for immediate login
     access_token = auth_service.create_access_token({"sub": str(user.id)})
     refresh_token = auth_service.create_refresh_token({"sub": str(user.id)})
 
-    user_out = UserOut(id=user.id, email=user.email)
+    user_out = UserOut(id=user.id, email=user.email, name=user.name, role=user.role)
 
     return UserWithTokens(
         user=user_out,
@@ -65,7 +69,9 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     access_token = auth_service.create_access_token({"sub": str(user.id)})
     refresh_token = auth_service.create_refresh_token({"sub": str(user.id)})
 
-    user_out = UserOut(id=str(user.id), email=user.email)
+    user_out = UserOut(
+        id=str(user.id), email=user.email, name=user.name, role=user.role
+    )
 
     return UserWithTokens(
         user=user_out,
@@ -100,7 +106,9 @@ async def refresh_tokens(body: RefreshTokenRequest):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    user_out = UserOut(id=user.id, email=user.email)
+    user_out = UserOut(
+        id=str(user.id), email=user.email, name=user.name, role=user.role
+    )
 
     return UserWithTokens(
         user=user_out,
