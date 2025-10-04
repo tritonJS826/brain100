@@ -1,16 +1,40 @@
 # 📄 Auth & User API Overview
 
 This document describes the **authentication** and **user** endpoints provided by the backend.  
-It is intended for frontend developers and other backend contributors.  
+It is intended for frontend developers and other backend contributors.
 
 ---
+
+## 🧰 1. Generate from terminal (recommended)
+
+Run this in your Ubuntu shell:
+
+```bash
+python -c "import secrets; print(secrets.token_hex(64))"
+```
+
+```bash
+<token_generated>
+```
+
+## 🗝️ 2. Put it in your .env
+
+Inside your project’s root .env file:
+
+```bash
+JWT_SECRET_KEY=<token_generated>
+JWT_ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=180 # 3 hours
+REFRESH_TOKEN_EXPIRE_MINUTES=10080  # 7 days
+```
 
 ## 🔐 Auth Endpoints (`/auth`)
 
 All endpoints under `/auth` deal with **authentication and token management**.
 
 ### 1. `POST /auth/register`
-- **Purpose**: Create a new user account and immediately log them in.  
+
+- **Purpose**: Create a new user account and immediately log them in.
 - **Request body**:
   ```json
   {
@@ -36,7 +60,8 @@ All endpoints under `/auth` deal with **authentication and token management**.
 ---
 
 ### 2. `POST /auth/login`
-- **Purpose**: Authenticate an existing user.  
+
+- **Purpose**: Authenticate an existing user.
 - **Request body** (form-data, `application/x-www-form-urlencoded`):
   ```
   username=<email>
@@ -47,7 +72,8 @@ All endpoints under `/auth` deal with **authentication and token management**.
 ---
 
 ### 3. `POST /auth/refresh`
-- **Purpose**: Rotate tokens when the access token expires.  
+
+- **Purpose**: Rotate tokens when the access token expires.
 - **Request body**:
   ```json
   {
@@ -60,9 +86,10 @@ All endpoints under `/auth` deal with **authentication and token management**.
 ---
 
 ### 4. `POST /auth/logout`
-- **Purpose**: Stateless logout.  
+
+- **Purpose**: Stateless logout.
 - **Important**: The backend does not invalidate tokens.  
-  The client (frontend or mobile app) must discard stored tokens.  
+  The client (frontend or mobile app) must discard stored tokens.
 - **Response**:
   ```json
   {
@@ -74,11 +101,12 @@ All endpoints under `/auth` deal with **authentication and token management**.
 
 ## 👤 User Endpoints (`/users`)
 
-All endpoints under `/users` deal with **user profile data**.  
+All endpoints under `/users` deal with **user profile data**.
 
 ### 1. `GET /users/me`
-- **Purpose**: Fetch the current logged-in user.  
-- **Auth**: Requires valid access token (or refresh token fallback).  
+
+- **Purpose**: Fetch the current logged-in user.
+- **Auth**: Requires valid access token (or refresh token fallback).
 - **Headers**:
   ```
   Authorization: Bearer <access_token>
@@ -103,34 +131,35 @@ All endpoints under `/users` deal with **user profile data**.
 
 ## 🔑 Token Lifecycle
 
-- **Access token**:  
-  - Short-lived (e.g. 2h).  
-  - Used in `Authorization: Bearer <token>` header.  
+- **Access token**:
+    - Short-lived (e.g. 2h).
+    - Used in `Authorization: Bearer <token>` header.
 
-- **Refresh token**:  
-  - Long-lived (e.g. 7 days).  
-  - Used to obtain new access tokens when they expire.  
-  - Sent in header `x-refresh-token` or via `/auth/refresh` endpoint.  
+- **Refresh token**:
+    - Long-lived (e.g. 7 days).
+    - Used to obtain new access tokens when they expire.
+    - Sent in header `x-refresh-token` or via `/auth/refresh` endpoint.
 
-- **Rotation rules**:  
-  - `/auth/refresh` → rotates both access and refresh tokens.  
-  - `/users/me` → refreshes **only the access token** (refresh stays the same).  
+- **Rotation rules**:
+    - `/auth/refresh` → rotates both access and refresh tokens.
+    - `/users/me` → refreshes **only the access token** (refresh stays the same).
 
 ---
 
 ## ⚡ Frontend Guidelines
 
-- Always store **both tokens** (`access_token`, `refresh_token`) after login/register.  
-- For API calls:  
-  - Send `access_token` in the `Authorization` header:  
-    ```
-    Authorization: Bearer <access_token>
-    ```
-  - If the access token is expired, also include the `x-refresh-token` header to allow automatic refresh:  
-    ```
-    x-refresh-token: <refresh_token>
-    ```
-- If the backend responds with `"Token expired"` or `"Invalid token"`, call `/auth/refresh` with both tokens in the request body to get a new pair.  
-- On logout, clear both tokens from local storage — the backend is stateless.  
+- Always store **both tokens** (`access_token`, `refresh_token`) after login/register.
+- For API calls:
+    - Send `access_token` in the `Authorization` header:
+      ```
+      Authorization: Bearer <access_token>
+      ```
+    - If the access token is expired, also include the `x-refresh-token` header to allow automatic refresh:
+      ```
+      x-refresh-token: <refresh_token>
+      ```
+- If the backend responds with `"Token expired"` or `"Invalid token"`, call `/auth/refresh` with both tokens in the
+  request body to get a new pair.
+- On logout, clear both tokens from local storage — the backend is stateless.
 
 ---
