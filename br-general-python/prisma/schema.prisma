@@ -26,11 +26,12 @@ enum Plan {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String
-  role      Role     @default(PATIENT)
-  createdAt DateTime @default(now())
+  id              String   @id @default(cuid())
+  email           String   @unique
+  hashed_password String
+  name            String
+  role            Role     @default(PATIENT)
+  createdAt       DateTime @default(now())
 
   sessions      TestSession[]
   subscriptions Subscription[]
@@ -95,9 +96,9 @@ model EmailLog {
   id        String   @id @default(cuid())
   to        String
   subject   String
-  template  String?
-  body      String?
-  status    String
+  template  String? // optional: store raw body or rendered HTML
+  body      String? // e.g. "SENT", "FAILED"
+  status    String // error message if failed
   error     String?
   createdAt DateTime @default(now())
 }
