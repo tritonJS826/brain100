@@ -6,11 +6,8 @@ import promoMental from "src/assets/1_consult.avif";
 import promoTests from "src/assets/2_register.avif";
 import promoBio from "src/assets/3_follow.avif";
 import logo from "src/assets/BRAIN100.webp";
-import {
-  LEFT_LINK_KEYS,
-  MenuKey,
-  TIMEOUT_MENU_MS,
-} from "src/components/Header/header.config";
+import {LEFT_LINK_KEYS, MenuKey, TIMEOUT_MENU_MS} from "src/components/Header/header.config";
+import {useAuth} from "src/contexts/AuthContext";
 import {languageAtomWithPersistence} from "src/dictionary/dictionaryAtom";
 import {DictionaryKey} from "src/dictionary/dictionaryLoader";
 import {useDictionary} from "src/dictionary/useDictionary";
@@ -28,7 +25,6 @@ export function Header() {
   const [dockOpen, setDockOpen] = useState(false);
   const [activeKey, setActiveKey] = useState<MenuKey | null>(null);
   const [drawerActive, setDrawerActive] = useState<MenuKey | null>(null);
-
   const [langOpenTop, setLangOpenTop] = useState(false);
   const [langOpenDrawer, setLangOpenDrawer] = useState(false);
 
@@ -37,8 +33,11 @@ export function Header() {
   const langMenuTopRef = useRef<HTMLDivElement | null>(null);
   const langBtnDrawerRef = useRef<HTMLButtonElement | null>(null);
   const langMenuDrawerRef = useRef<HTMLDivElement | null>(null);
-
   const closeTimerRef = useRef<number | null>(null);
+
+  const {user} = useAuth();
+  const isAuthenticated = Boolean(user);
+  const profileTo = isAuthenticated ? PATHS.PROFILE.PAGE : PATHS.AUTH.PAGE;
 
   const closeDock = () => {
     setDockOpen(false);
@@ -265,7 +264,7 @@ export function Header() {
             </ul>
           </div>
           <Promo
-            to={buildPath.auth()}
+            to={isAuthenticated ? PATHS.PROFILE.PAGE : buildPath.auth()}
             img={promoTests}
             title={dictionary.promo.registerCta}
           />
@@ -298,7 +297,7 @@ export function Header() {
           </ul>
         </div>
         <Promo
-          to={buildPath.auth()}
+          to={isAuthenticated ? PATHS.PROFILE.PAGE : buildPath.auth()}
           img={promoBio}
           title={dictionary.promo.subscribeCta}
         />
@@ -360,7 +359,15 @@ export function Header() {
                   className={({isActive}) => `${styles.navLink} ${isActive ? styles.active : ""}`}
                   onClick={handleNavLinkClick}
                 >
-                  {labelByKey(menuKey)}
+                  {(() => {
+                    switch (menuKey) {
+                      case "about": return dictionary.nav.about;
+                      case "mental": return dictionary.nav.mental;
+                      case "tests": return dictionary.nav.tests;
+                      case "biohacking": return dictionary.nav.biohacking;
+                      default: return "";
+                    }
+                  })()}
                 </NavLink>
               </li>
             ))}
@@ -369,7 +376,7 @@ export function Header() {
 
         <div className={styles.actions}>
           <NavLink
-            to={PATHS.PROFILE.PAGE}
+            to={profileTo}
             className={styles.iconBtn}
             aria-label={dictionary.nav.profile}
             onClick={handleNavLinkClick}
@@ -430,7 +437,7 @@ export function Header() {
             {dictionary.nav.sos}
           </NavLink>
 
-          <li className={styles.burgerWrap}>
+          <div className={styles.burgerWrap}>
             <button
               type="button"
               className={`${styles.burger} ${drawerOpen ? styles.burgerOpen : ""}`}
@@ -445,7 +452,7 @@ export function Header() {
                 <span />
               </span>
             </button>
-          </li>
+          </div>
         </div>
       </nav>
 
@@ -506,9 +513,9 @@ export function Header() {
                       <button
                         type="button"
                         className={`
-                          ${styles.drawerLink}
-                          ${styles.drawerLinkBtn}
-                          ${drawerActive === menuKey ? styles.drawerLinkOpen : ""}`}
+                        ${styles.drawerLink}
+                        ${styles.drawerLinkBtn}
+                        ${drawerActive === menuKey ? styles.drawerLinkOpen : ""}`}
                         onClick={() => toggleDrawerSection(menuKey)}
                         aria-expanded={drawerActive === menuKey}
                       >
@@ -630,8 +637,8 @@ export function Header() {
           </NavLink>
 
           <NavLink
-            to={PATHS.PROFILE.PAGE}
-            className={styles.langBtn}
+            to={profileTo}
+            className={styles.iconBtn}
             onClick={() => setDrawerOpen(false)}
             aria-label={dictionary.nav.profile}
           >

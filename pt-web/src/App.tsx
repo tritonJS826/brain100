@@ -6,9 +6,12 @@ import {ScrollToTop} from "src/components/ScrollToTop/ScrollToTop";
 import {AboutPage} from "src/pages/aboutUsPage/AboutUsPage";
 import {ArticleDetailPage} from "src/pages/articlesListPage/articles/ArticleDetailPage";
 import {ArticlesListPage} from "src/pages/articlesListPage/ArticlesListPage";
+import {AuthPage} from "src/pages/authPage/AuthPage";
 import {BiohackingDetailPage} from "src/pages/biohackingListPage/articles/BiohackingDetailPage";
 import {BiohackingListPage} from "src/pages/biohackingListPage/BiohackingListPage";
 import {HomePage} from "src/pages/homePage/Homepage";
+import {ProfilePage} from "src/pages/profilePage/ProfilePage";
+import {ConditionHistoryPage} from "src/pages/profilePage/сonditionHistoryPage/ConditionHistoryPage";
 import {SupportConsultationPage} from "src/pages/supportPage/SupportConsultationPage/SupportConsultationPage";
 import {SupportPage} from "src/pages/supportPage/SupportPage";
 import {Test} from "src/pages/testsListPage/tests/Test";
@@ -71,6 +74,18 @@ export function App() {
           <Route
             path={PATHS.SOS.CONSULTATION}
             element={<SupportConsultationPage />}
+          />
+          <Route
+            path={PATHS.AUTH.PAGE}
+            element={<AuthPage />}
+          />
+          <Route
+            path={PATHS.PROFILE.PAGE}
+            element={<ProfilePage />}
+          />
+          <Route
+            path={PATHS.PROFILE.CONDITION}
+            element={<ConditionHistoryPage />}
           />
         </Routes>
       </main>

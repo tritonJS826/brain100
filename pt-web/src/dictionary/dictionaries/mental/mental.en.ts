@@ -1,5 +1,5 @@
 export const mentalDict = {
-  title: "Articles",
+  title: "Conditions",
   subtitle: "Short and clear materials about mental health",
   searchPlaceholder: "Search articles",
   ariaSearchLabel: "Search articles",
