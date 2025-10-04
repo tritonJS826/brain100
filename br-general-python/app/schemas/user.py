@@ -1,4 +1,5 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
+from typing import Optional
 
 
 class UserCreate(BaseModel):
@@ -22,9 +23,13 @@ class UserOut(BaseModel):
 
 
 class Token(BaseModel):
-    access_token: str
-    refresh_token: str
-    token_type: str = "bearer"
+    access_token: str = Field(
+        ..., description="JWT access token for API authentication"
+    )
+    refresh_token: Optional[str] = Field(
+        None, description="JWT refresh token for renewing access"
+    )
+    token_type: str = Field("bearer", description="Type of authentication scheme")
 
 
 class RefreshTokenRequest(BaseModel):

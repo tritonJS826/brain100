@@ -3,14 +3,11 @@
 # [code_style]-[BEGIN]
 ruff==0.13.1
 
-# Pre-commit hook.
-# pre-commit==4.2.0
+# [test]-[BEGIN]
 
-# [code_style]-[END]
+pytest==8.4.2
+pytest-asyncio==1.2.0
+pytest-html==4.1.1
+pytest-cov==4.1.0
 
-# [debug]-[BEGIN]
-
-# pytest==8.3.5
-# pytest-asyncio==0.26.0
-
-# [debug]-[END]
+# [test]-[END]
