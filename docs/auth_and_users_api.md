@@ -222,7 +222,7 @@ Both tokens contain:
 * `sub`: User ID
 * `iat`: Issued-at timestamp
 * `exp`: Expiration timestamp
-* `jti`: Unique ID (helps prevent replay)
+* `jti`: Unique ID (enables replay protection only when combined with server-side tracking of used JTIs)
 * `type`: `access` or `refresh`
 
 ---
