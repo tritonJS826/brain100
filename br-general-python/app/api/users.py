@@ -64,7 +64,7 @@ async def get_current_user(
             "user_id": user_id,
             "tokens": {
                 "access_token": new_access,
-                "refresh_token": x_refresh_token or "",
+                "refresh_token": x_refresh_token,
                 "token_type": "bearer",
             },
         }

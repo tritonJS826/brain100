@@ -42,7 +42,9 @@ async def register(user_in: UserCreate):
     access_token = auth_service.create_access_token({"sub": str(user.id)})
     refresh_token = auth_service.create_refresh_token({"sub": str(user.id)})
 
-    user_out = UserOut(id=user.id, email=user.email, name=user.name, role=user.role)
+    user_out = UserOut(
+        id=str(user.id), email=user.email, name=user.name, role=user.role
+    )
 
     return UserWithTokens(
         user=user_out,
