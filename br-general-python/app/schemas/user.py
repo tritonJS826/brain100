@@ -18,7 +18,7 @@ class SubscriptionOut(BaseModel):
     id: str
     plan: Plan
     startedAt: datetime
-    expiresAt: Optional[datetime] = None
+    endsAt: Optional[datetime] = None
 
 
 class UserCreate(BaseModel):
@@ -69,10 +69,3 @@ class UserWithTokens(BaseModel):
 
 class LogoutResponse(BaseModel):
     message: str
-
-
-class UserRegister(BaseModel):
-    email: EmailStr
-    password: str
-    name: str
-    role: Role

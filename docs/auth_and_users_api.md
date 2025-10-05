@@ -204,7 +204,7 @@ Authorization: Bearer <access_token>
 
 ```json
 {
-  "detail": "Logged out successfully"
+  "message": "Logged out successfully"
 }
 ```
 
@@ -252,7 +252,7 @@ Both tokens contain:
 
 ```
 JWT_SECRET_KEY=<your_secret>
-ACCESS_TOKEN_EXPIRE_MINUTES=30
+ACCESS_TOKEN_EXPIRE_MINUTES=180 # 3 hours
 REFRESH_TOKEN_EXPIRE_MINUTES=10080  # 7 days
 JWT_ALGORITHM=HS256
 ```
@@ -271,4 +271,4 @@ JWT_ALGORITHM=HS256
 
 **Author:** API Team — br-general-python
 **Version:** v1.1.0
-**Last Updated:** 2025-10-04
+**Last Updated:** 2025-10-05

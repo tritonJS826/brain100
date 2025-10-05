@@ -69,3 +69,8 @@ pytest --html=report.html --self-contained-html
 - Always run tests with your local DB up (Docker or Prisma engine running).  
 - Use `pytest.ini` to set common options (async mode, path config).  
 - Keep each test isolated — pytest handles event loops and DB sessions automatically.
+
+
+**Author:** API Team — br-general-python
+**Version:** v1.1.0
+**Last Updated:** 2025-10-05
