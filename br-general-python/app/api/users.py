@@ -96,14 +96,14 @@ async def get_personal_info(current=Depends(get_current_user)):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    sub = user.subscriptions[0] if user.subscriptions else None
+    user_subscription = user.subscriptions[0]
 
     return {
         "email": user.email,
         "name": user.name,
         "role": user.role,
-        "plan": sub.plan if sub else "FREE",
-        "consultations_used": sub.consultationsUsed if sub else 0,
-        "consultations_included": sub.consultationsIncluded if sub else 0,
-        "days_to_end": ((sub.endsAt - sub.startedAt).days if sub else 0),
+        "plan": user_subscription.plan,
+        "consultations_used": user_subscription.consultationsUsed,
+        "consultations_included": user_subscription.consultationsIncluded,
+        "days_to_end": ((user_subscription.endsAt - user_subscription.startedAt).days),
     }

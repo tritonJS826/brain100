@@ -41,6 +41,11 @@ class Settings(BaseSettings):
     )
 
     @property
+    def base_url(self) -> str:
+        """Return base URL for local or test usage."""
+        return f"http://{self.webapp_domain}:{self.server_port}"
+
+    @property
     def flag_reload(self) -> bool:
         """Return true if in development mode, else false."""
         return self.env_type == "dev"
