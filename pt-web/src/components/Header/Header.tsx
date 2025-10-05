@@ -14,7 +14,6 @@ import {useDictionary} from "src/dictionary/useDictionary";
 import {buildPath, PATHS} from "src/routes/routes";
 import styles from "src/components/Header/Header.module.scss";
 
-const HALF = 2;
 const DROPDOWN_KEYS: MenuKey[] = ["mental", "tests", "biohacking"];
 
 export function Header() {
@@ -28,7 +27,6 @@ export function Header() {
   const [langOpenTop, setLangOpenTop] = useState(false);
   const [langOpenDrawer, setLangOpenDrawer] = useState(false);
 
-  const navRef = useRef<HTMLElement | null>(null);
   const langBtnTopRef = useRef<HTMLButtonElement | null>(null);
   const langMenuTopRef = useRef<HTMLDivElement | null>(null);
   const langBtnDrawerRef = useRef<HTMLButtonElement | null>(null);
@@ -62,7 +60,7 @@ export function Header() {
     }, TIMEOUT_MENU_MS) as unknown as number;
   };
 
-  const onEnterNav = (key: MenuKey, el: HTMLElement | null) => {
+  const onEnterNav = (key: MenuKey) => {
     if (!DROPDOWN_KEYS.includes(key)) {
       closeDock();
 
@@ -71,12 +69,6 @@ export function Header() {
     cancelClose();
     setActiveKey(key);
     setDockOpen(true);
-    if (el && navRef.current) {
-      const navBox = navRef.current.getBoundingClientRect();
-      const elBox = el.getBoundingClientRect();
-      const centerX = (elBox.left - navBox.left) + (elBox.width / HALF);
-      navRef.current.style.setProperty("--dock-x", `${centerX}px`);
-    }
     scheduleClose();
   };
 
@@ -315,7 +307,6 @@ export function Header() {
       role="banner"
     >
       <nav
-        ref={navRef}
         className={styles.nav}
         aria-label={dictionary.nav.ariaPrimary}
       >
@@ -342,7 +333,7 @@ export function Header() {
               <li
                 key={menuKey}
                 className={styles.navItem}
-                onMouseEnter={(e) => onEnterNav(menuKey, e.currentTarget as HTMLElement)}
+                onMouseEnter={() => onEnterNav(menuKey)}
                 aria-haspopup={DROPDOWN_KEYS.includes(menuKey)}
                 aria-expanded={dockOpen && activeKey === menuKey}
               >
@@ -359,15 +350,13 @@ export function Header() {
                   className={({isActive}) => `${styles.navLink} ${isActive ? styles.active : ""}`}
                   onClick={handleNavLinkClick}
                 >
-                  {(() => {
-                    switch (menuKey) {
-                      case "about": return dictionary.nav.about;
-                      case "mental": return dictionary.nav.mental;
-                      case "tests": return dictionary.nav.tests;
-                      case "biohacking": return dictionary.nav.biohacking;
-                      default: return "";
-                    }
-                  })()}
+                  {menuKey === "about"
+                    ? dictionary.nav.about :
+                    menuKey === "mental"
+                      ? dictionary.nav.mental :
+                      menuKey === "tests"
+                        ? dictionary.nav.tests :
+                        dictionary.nav.biohacking}
                 </NavLink>
               </li>
             ))}
@@ -512,8 +501,7 @@ export function Header() {
                     <>
                       <button
                         type="button"
-                        className={`
-                        ${styles.drawerLink}
+                        className={`${styles.drawerLink}
                         ${styles.drawerLinkBtn}
                         ${drawerActive === menuKey ? styles.drawerLinkOpen : ""}`}
                         onClick={() => toggleDrawerSection(menuKey)}
@@ -637,7 +625,7 @@ export function Header() {
           </NavLink>
 
           <NavLink
-            to={profileTo}
+            to={isAuthenticated ? PATHS.PROFILE.PAGE : PATHS.AUTH.PAGE}
             className={styles.iconBtn}
             onClick={() => setDrawerOpen(false)}
             aria-label={dictionary.nav.profile}

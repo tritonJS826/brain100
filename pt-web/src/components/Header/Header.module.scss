@@ -314,7 +314,7 @@
 .dockInner {
   border-top: 1px solid vars.$color-border;
   position: absolute;
-  left: var(--dock-x, 50%);
+  left: 50%;
   transform: translateX(-50%);
   width: 100%;
   background: vars.$color-bg;
