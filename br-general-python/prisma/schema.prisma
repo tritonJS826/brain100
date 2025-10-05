@@ -96,9 +96,12 @@ model EmailLog {
   id        String   @id @default(cuid())
   to        String
   subject   String
-  template  String? // optional: store raw body or rendered HTML
-  body      String? // e.g. "SENT", "FAILED"
-  status    String // error message if failed
+  // optional: store raw body or rendered HTML
+  template  String?
+  // e.g. "SENT", "FAILED"
+  body      String?
+  // error message if failed
+  status    String
   error     String?
   createdAt DateTime @default(now())
 }

@@ -15,11 +15,55 @@ BASE_URL = f"http://{settings.webapp_domain}:{settings.server_port}"
 auth_service = AuthService()
 
 
-@pytest.fixture(scope="function", autouse=True)
-async def setup_db():
-    await db.connect()
-    yield
-    await db.disconnect()
+async def perform_user_flow(client, email, password, name, role="PATIENT"):
+    # 1. Register user
+    user_data = {"email": email, "password": password, "name": name, "role": role}
+    r = await client.post("/br-general/auth/register", json=user_data)
+    assert r.status_code in (200, 400), r.text  # ok if already exists
+
+    # 2. Login
+    form_data = {"username": email, "password": password}
+    r = await client.post("/br-general/auth/login", data=form_data)
+    assert r.status_code == 200, r.text
+    tokens = r.json()["tokens"]
+
+    # 3. /me check
+    headers = {"Authorization": f"Bearer {tokens['access_token']}"}
+    r = await client.get("/br-general/users/me", headers=headers)
+    assert r.status_code == 200, r.text
+    me_data = r.json()
+    assert me_data["user"]["email"] == email
+
+    # 4. /refresh check
+    payload = {
+        "access_token": tokens["access_token"],
+        "refresh_token": tokens["refresh_token"],
+    }
+    r = await client.post("/br-general/auth/refresh", json=payload)
+    assert r.status_code == 200, r.text
+    new_tokens = r.json()["tokens"]
+    assert new_tokens["access_token"] != tokens["access_token"]
+    return new_tokens
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("index", range(1, 6))  # 5 users
+async def test_multiple_users(index):
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url=BASE_URL) as client:
+        email = f"multi_user_{index}@example.com"
+        password = f"StrongPass{index}!"
+        name = f"User {index}"
+
+        new_tokens = await perform_user_flow(client, email, password, name)
+
+        # Optional: test that tokens decode correctly
+        decoded = jwt.decode(
+            new_tokens["access_token"],
+            settings.jwt_secret_key,
+            algorithms=[settings.jwt_algorithm],
+        )
+        assert "sub" in decoded
 
 
 @pytest.mark.asyncio
@@ -27,7 +71,12 @@ async def test_register_and_login_and_me():
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url=BASE_URL) as client:
         # register user
-        user_data = {"email": "test_auth@example.com", "password": "strongpass123"}
+        user_data = {
+            "email": "test_expire@example.com",
+            "password": "strongpass123",
+            "name": "Expire Test",
+            "role": "PATIENT",
+        }
         r = await client.post("/br-general/auth/register", json=user_data)
         assert r.status_code in (200, 400)  # 400 if already exists
 
@@ -65,9 +114,14 @@ async def test_register_and_login_and_me():
 @pytest.mark.asyncio
 async def test_auto_refresh_on_expired_token():
     transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as client:
+    async with AsyncClient(transport=transport, base_url=BASE_URL) as client:
         # Register user (if not exists)
-        user_data = {"email": "test_expire@example.com", "password": "strongpass123"}
+        user_data = {
+            "email": "test_expire@example.com",
+            "password": "strongpass123",
+            "name": "Expire Test",
+            "role": "PATIENT",
+        }
         await client.post("/br-general/auth/register", json=user_data)
 
         # Login user
@@ -76,9 +130,16 @@ async def test_auto_refresh_on_expired_token():
         assert r.status_code == 200
         tokens = r.json()["tokens"]
 
-        # Create an expired access token manually (expired 10 min ago)
+        decoded = jwt.decode(
+            tokens["access_token"],
+            settings.jwt_secret_key,
+            algorithms=[settings.jwt_algorithm],
+        )
+        user_id = decoded["sub"]
+
+        # Create expired token for that user
         payload = {
-            "sub": "1",
+            "sub": user_id,
             "exp": datetime.now(timezone.utc) - timedelta(minutes=10),
             "type": "access",
         }
@@ -100,3 +161,13 @@ async def test_auto_refresh_on_expired_token():
         assert "tokens" in body
         assert body["tokens"]["access_token"] != expired_access
         assert body["tokens"]["refresh_token"] == tokens["refresh_token"]
+
+
+@pytest.fixture(scope="function", autouse=True)
+async def setup_db():
+    await db.connect()
+    yield
+    # cleanup test users
+    await db.user.delete_many(where={"email": {"contains": "multi_user_"}})
+    await db.user.delete_many(where={"email": {"contains": "test_expire@"}})
+    await db.disconnect()
