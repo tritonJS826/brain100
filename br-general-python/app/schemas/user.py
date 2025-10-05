@@ -1,15 +1,38 @@
 from pydantic import BaseModel, EmailStr, Field
+from datetime import datetime
+from enum import Enum
 from typing import Optional
 
 
+class Role(str, Enum):
+    PATIENT = "PATIENT"
+    DOCTOR = "DOCTOR"
+
+
+class Plan(str, Enum):
+    FREE = "FREE"
+    BASIC = "BASIC"
+
+
+class SubscriptionOut(BaseModel):
+    id: str
+    plan: Plan
+    startedAt: datetime
+    expiresAt: Optional[datetime] = None
+
+
 class UserCreate(BaseModel):
-    email: str
+    email: EmailStr
     password: str
+    name: str
+    role: Role
 
 
 class UserResponse(BaseModel):
-    id: int
-    email: str
+    id: str
+    email: EmailStr
+    name: str
+    role: Role
 
 
 class UserLogin(BaseModel):
@@ -18,8 +41,10 @@ class UserLogin(BaseModel):
 
 
 class UserOut(BaseModel):
-    id: int
+    id: str
     email: EmailStr
+    name: str
+    role: Role
 
 
 class Token(BaseModel):
@@ -44,3 +69,10 @@ class UserWithTokens(BaseModel):
 
 class LogoutResponse(BaseModel):
     message: str
+
+
+class UserRegister(BaseModel):
+    email: EmailStr
+    password: str
+    name: str
+    role: Role
