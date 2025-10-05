@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
-from app.schemas.user import UserCreate
+from datetime import datetime, timedelta, timezone
+
+from app.schemas.user import UserCreate, Plan
 from app.schemas.user import (
     Token,
     RefreshTokenRequest,
@@ -36,6 +38,19 @@ async def register(user_in: UserCreate):
         hashed_password=hashed_pw,
         name=user_in.name,
         role=user_in.role,
+    )
+
+    # Automatically create a FREE subscription on registration
+    await db.subscription.create(
+        data={
+            "user": {"connect": {"id": user.id}},
+            "plan": Plan.FREE,
+            "startedAt": datetime.now(timezone.utc),
+            "endsAt": datetime.now(timezone.utc)
+            + timedelta(days=30),  # free plan duration
+            "consultationsIncluded": 1,
+            "consultationsUsed": 0,
+        }
     )
 
     # create tokens for immediate login
