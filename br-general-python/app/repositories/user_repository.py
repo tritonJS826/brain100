@@ -16,3 +16,14 @@ class UserRepository:
                 "role": role,
             }
         )
+
+    async def get_personal_info(self, db, user_id: str):
+        return await db.user.find_unique(
+            where={"id": user_id},
+            include={
+                "subscriptions": {
+                    "orderBy": {"createdAt": "desc"},
+                    "take": 1,  # latest subscription
+                }
+            },
+        )
