@@ -65,7 +65,7 @@ async def test_register_and_login_and_me():
 @pytest.mark.asyncio
 async def test_auto_refresh_on_expired_token():
     transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as client:
+    async with AsyncClient(transport=transport, base_url=BASE_URL) as client:
         # Register user (if not exists)
         user_data = {"email": "test_expire@example.com", "password": "strongpass123"}
         await client.post("/br-general/auth/register", json=user_data)
