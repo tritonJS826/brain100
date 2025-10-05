@@ -2,9 +2,10 @@ from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
 
 
-class UserCreate(BaseModel):
+class UserCreate(BaseModel, EmailStr):
     email: str
     password: str
+    name: str | None = None
 
 
 class UserResponse(BaseModel):
