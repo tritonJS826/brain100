@@ -69,3 +69,13 @@ class UserWithTokens(BaseModel):
 
 class LogoutResponse(BaseModel):
     message: str
+
+
+class UserPersonalInfo(BaseModel):
+    email: EmailStr
+    name: str
+    role: Role
+    plan: str
+    consultations_used: int
+    consultations_included: int
+    days_to_end: int
