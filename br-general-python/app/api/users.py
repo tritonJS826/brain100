@@ -64,7 +64,7 @@ async def get_current_user(
             "user_id": user_id,
             "tokens": {
                 "access_token": new_access,
-                "refresh_token": x_refresh_token or "",
+                "refresh_token": x_refresh_token,
                 "token_type": "bearer",
             },
         }
@@ -77,10 +77,12 @@ async def read_users_me(
     current=Depends(get_current_user),
     x_refresh_token: str | None = Header(default=None),
 ):
-    user = await db.user.find_unique(where={"id": int(current["user_id"])})
+    user = await db.user.find_unique(where={"id": str(current["user_id"])})
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
-    user_out = UserOut(id=user.id, email=user.email)
+    user_out = UserOut(
+        id=str(user.id), email=user.email, name=user.name, role=user.role
+    )
 
     return UserWithTokens(user=user_out, tokens=current["tokens"])
