@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordBearer
 
 from jose import JWTError, ExpiredSignatureError, jwt
 
-from app.schemas.user import UserWithTokens, UserOut
+from app.schemas.user import UserWithTokens, UserOut, UserPersonalInfo
 from app.services.auth_service import AuthService
 from app.repositories.user_repository import UserRepository
 from app.db import db
@@ -86,3 +86,24 @@ async def read_users_me(
     )
 
     return UserWithTokens(user=user_out, tokens=current["tokens"])
+
+
+@router.get("/me/personal", response_model=UserPersonalInfo)
+async def get_personal_info(current=Depends(get_current_user)):
+    user_id = current["user_id"]
+    user = await user_repo.get_personal_info(db, user_id)
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    sub = user.subscriptions[0] if user.subscriptions else None
+
+    return {
+        "email": user.email,
+        "name": user.name,
+        "role": user.role,
+        "plan": sub.plan if sub else "FREE",
+        "consultations_used": sub.consultationsUsed if sub else 0,
+        "consultations_included": sub.consultationsIncluded if sub else 0,
+        "days_to_end": ((sub.endsAt - sub.startedAt).days if sub else 0),
+    }
