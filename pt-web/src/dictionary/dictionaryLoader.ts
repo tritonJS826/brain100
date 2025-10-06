@@ -1,5 +1,7 @@
 import {AboutDictEn} from "src/dictionary/dictionaries/about/about.en";
 import {AboutDictRu} from "src/dictionary/dictionaries/about/about.ru";
+import type {AuthDictEn} from "src/dictionary/dictionaries/auth/auth.en";
+import type {AuthDictRu} from "src/dictionary/dictionaries/auth/auth.ru";
 import type {BiohackingDictEn} from "src/dictionary/dictionaries/biohacking/biohacking.en";
 import type {BiohackingDictRu} from "src/dictionary/dictionaries/biohacking/biohacking.ru";
 import type {CommonDictEn} from "src/dictionary/dictionaries/common/common.en";
@@ -12,6 +14,10 @@ import type {HomeDictEn} from "src/dictionary/dictionaries/home/home.en";
 import type {HomeDictRu} from "src/dictionary/dictionaries/home/home.ru";
 import type {MentalDictEn} from "src/dictionary/dictionaries/mental/mental.en";
 import type {MentalDictRu} from "src/dictionary/dictionaries/mental/mental.ru";
+import type {ProfileDictEn} from "src/dictionary/dictionaries/profile/profile.en";
+import type {ProfileDictRu} from "src/dictionary/dictionaries/profile/profile.ru";
+import type {SupportDictEn} from "src/dictionary/dictionaries/support/support.en";
+import type {SupportDictRu} from "src/dictionary/dictionaries/support/support.ru";
 import type {TestsDictEn} from "src/dictionary/dictionaries/tests/tests.en";
 import type {TestsDictRu} from "src/dictionary/dictionaries/tests/tests.ru";
 
@@ -24,6 +30,9 @@ export enum DictionaryKey {
   ABOUT = "about",
   HEADER = "header",
   FOOTER = "footer",
+  SUPPORT = "support",
+  PROFILE = "profile",
+  AUTH = "auth",
 }
 
 export type Language = "en" | "ru";
@@ -37,6 +46,9 @@ export type DictionaryMap = {
   [DictionaryKey.ABOUT]: AboutDictEn | AboutDictRu;
   [DictionaryKey.HEADER]: HeaderDictEn | HeaderDictRu;
   [DictionaryKey.FOOTER]: FooterDictEn | FooterDictRu;
+  [DictionaryKey.SUPPORT]: SupportDictEn | SupportDictRu;
+  [DictionaryKey.PROFILE]: ProfileDictEn | ProfileDictRu;
+  [DictionaryKey.AUTH]: AuthDictEn | AuthDictRu;
 };
 
 const loaders: {
@@ -75,6 +87,21 @@ const loaders: {
   [DictionaryKey.FOOTER]: {
     en: async () => (await import("./dictionaries/footer/footer.en")).footer,
     ru: async () => (await import("./dictionaries/footer/footer.ru")).footer,
+  },
+  [DictionaryKey.SUPPORT]: {
+    en: async () => (await import("./dictionaries/support/support.en")).supportDict,
+    ru: async () => (await import("./dictionaries/support/support.ru")).supportDict,
+  },
+
+  // 🔧 ВОТ ЭТОТ БЛОК МЕНЯЕМ
+  [DictionaryKey.PROFILE]: {
+    en: async () => (await import("./dictionaries/profile/profile.en")).profileDictEn,
+    ru: async () => (await import("./dictionaries/profile/profile.ru")).profileDictRu,
+  },
+
+  [DictionaryKey.AUTH]: {
+    en: async () => (await import("./dictionaries/auth/auth.en")).authDict,
+    ru: async () => (await import("./dictionaries/auth/auth.ru")).authDict,
   },
 };
 
