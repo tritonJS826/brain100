@@ -32,14 +32,23 @@ model User {
   name            String
   role            Role     @default(PATIENT)
   createdAt       DateTime @default(now())
-
   sessions      TestSession[]
   subscriptions Subscription[]
+}
+
+
+model Topic {
+  id      String   @id @default(cuid())
+  title   String
+  tests   Test[]
+  createdAt DateTime @default(now())
 }
 
 model Test {
   id          String        @id @default(cuid())
   title       String
+  topicId   String
+  topic     Topic        @relation(fields: [topicId], references: [id], onDelete: Cascade)
   description String
   questions   Question[]
   sessions    TestSession[]
@@ -70,13 +79,18 @@ model AnswerOption {
 }
 
 model TestSession {
-  id         String        @id @default(cuid())
-  test       Test          @relation(fields: [testId], references: [id], onDelete: Cascade)
+  id         String   @id @default(cuid())
+  test       Test     @relation(fields: [testId], references: [id], onDelete: Cascade)
   testId     String
-  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId     String
-  createdAt  DateTime      @default(now())
+
+  // userId is now optional, anonymous sessions are supported
+  user       User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String?
+
+  createdAt  DateTime @default(now())
   finishedAt DateTime?
+  stats      Json? //store generic stats as JSON
+  isFinished Boolean  @default(false) //session auto-closes on bulk submit
   answers    GivenAnswer[]
 }
 
@@ -96,12 +110,9 @@ model EmailLog {
   id        String   @id @default(cuid())
   to        String
   subject   String
-  // optional: store raw body or rendered HTML
-  template  String?
-  // e.g. "SENT", "FAILED"
-  body      String?
-  // error message if failed
-  status    String
+  template  String? // optional: store raw body or rendered HTML
+  body      String? // e.g. "SENT", "FAILED"
+  status    String // error message if failed
   error     String?
   createdAt DateTime @default(now())
 }
