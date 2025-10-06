@@ -103,6 +103,12 @@ async def get_personal_info(current=Depends(get_current_user)):
         {"id": s.test.id, "title": s.test.title} for s in user.sessions if s.test
     ]
 
+    # remove duplicates
+    seen = set()
+    unique_topics = [
+        t for t in user_topics if not (t["id"] in seen or seen.add(t["id"]))
+    ]
+
     return {
         "email": user.email,
         "name": user.name,
@@ -110,9 +116,9 @@ async def get_personal_info(current=Depends(get_current_user)):
         "plan": user_subscription.plan,
         "consultations_used": user_subscription.consultationsUsed,
         "consultations_included": user_subscription.consultationsIncluded,
-        "days_to_end": ((user_subscription.endsAt - user_subscription.startedAt).days),
-        # add test titles
-        "test_topics": user_topics,
+        "days_to_end": (user_subscription.endsAt - user_subscription.startedAt).days,
+        # add uniq test titles
+        "test_topics": unique_topics,
     }
 
 
