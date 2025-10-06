@@ -71,6 +71,11 @@ class LogoutResponse(BaseModel):
     message: str
 
 
+class TestTopic(BaseModel):
+    id: str
+    title: str
+
+
 class UserPersonalInfo(BaseModel):
     email: EmailStr
     name: str
@@ -79,3 +84,5 @@ class UserPersonalInfo(BaseModel):
     consultations_used: int
     consultations_included: int
     days_to_end: int
+    # add id + title for each test topic
+    test_topics: list[TestTopic] = []

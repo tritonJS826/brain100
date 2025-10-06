@@ -40,3 +40,9 @@ curl -X POST http://localhost:8000/br-general/email/send \
 }
 
 ```
+
+---
+
+**Version:** 1.0.0  
+**Last Updated:** 2025-10-01
+**Author:** br-general-python API Team
