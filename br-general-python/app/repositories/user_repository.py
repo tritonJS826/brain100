@@ -21,9 +21,12 @@ class UserRepository:
         return await db.user.find_unique(
             where={"id": user_id},
             include={
-                "subscriptions": {
-                    "orderBy": {"createdAt": "desc"},
-                    "take": 1,  # latest subscription
-                }
+                "subscriptions": {"orderBy": {"createdAt": "desc"}, "take": 1},
+                "sessions": {
+                    "include": {
+                        # include test info for each session
+                        "test": True,
+                    }
+                },
             },
         )

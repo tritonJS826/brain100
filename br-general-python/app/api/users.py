@@ -98,6 +98,11 @@ async def get_personal_info(current=Depends(get_current_user)):
 
     user_subscription = user.subscriptions[0]
 
+    # collect unique test ids and titles from sessions
+    user_topics = [
+        {"id": s.test.id, "title": s.test.title} for s in user.sessions if s.test
+    ]
+
     return {
         "email": user.email,
         "name": user.name,
@@ -106,4 +111,57 @@ async def get_personal_info(current=Depends(get_current_user)):
         "consultations_used": user_subscription.consultationsUsed,
         "consultations_included": user_subscription.consultationsIncluded,
         "days_to_end": ((user_subscription.endsAt - user_subscription.startedAt).days),
+        # add test titles
+        "test_topics": user_topics,
+    }
+
+
+@router.get("/me/tests/{test_id}")
+async def get_user_test_results(test_id: str, current=Depends(get_current_user)):
+    user_id = current["user_id"]
+
+    # Fetch all user sessions for this test
+    sessions = await db.testsession.find_many(
+        where={"userId": user_id, "testId": test_id},
+        include={
+            "answers": {
+                "include": {
+                    "question": True,
+                    "answerOption": True,
+                }
+            },
+            # include test details (title, description)
+            "test": True,
+        },
+    )
+
+    if not sessions:
+        raise HTTPException(status_code=404, detail="No sessions found for this test")
+
+    # use the first session’s test info as metadata (same for all sessions)
+    test_info = sessions[0].test
+
+    results = []
+    for session in sessions:
+        results.append(
+            {
+                "session_id": session.id,
+                "created_at": session.createdAt,
+                "finished_at": session.finishedAt,
+                "answers": [
+                    {
+                        "question_id": a.questionId,
+                        "question_text": a.question.text,
+                        "answer": a.answerOption.text if a.answerOption else a.freeText,
+                    }
+                    for a in session.answers
+                ],
+            }
+        )
+
+    return {
+        "test_id": test_info.id,
+        "title": test_info.title,
+        "description": test_info.description,
+        "sessions": results,
     }
