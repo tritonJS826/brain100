@@ -92,7 +92,6 @@ const loaders: {
     en: async () => (await import("./dictionaries/support/support.en")).supportDict,
     ru: async () => (await import("./dictionaries/support/support.ru")).supportDict,
   },
-
   [DictionaryKey.PROFILE]: {
     en: async () => (await import("./dictionaries/profile/profile.en")).profileDictEn,
     ru: async () => (await import("./dictionaries/profile/profile.ru")).profileDictRu,
