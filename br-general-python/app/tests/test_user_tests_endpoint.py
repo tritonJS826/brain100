@@ -39,7 +39,7 @@ async def test_multiple_users_tests_results(index):
         )
         user_id = decoded["sub"]
 
-        # 2️⃣ create fake test and session for this user
+        # 2 create fake test and session for this user
         test = await db.test.create(
             data={
                 "title": f"TEST-{index} Focus Evaluation",
