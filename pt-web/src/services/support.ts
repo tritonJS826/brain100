@@ -31,14 +31,14 @@ export async function sendConsultationEmail(input: ConsultationEmailInput): Prom
     `Сообщение: ${input.message || "—"}`,
   ];
   const text = lines.join("\n");
-  await apiClient.post<SendEmailResponse>("/br-general/email/send", {
+
+  await apiClient.post<SendEmailResponse>("/email/send", {
     to: supportInbox,
     subject,
     text,
   });
-  const id = `${Date.now()}`;
 
-  return id;
+  return String(Date.now());
 }
 
 export async function sendEmergencyEmail(input: EmergencyEmailInput): Promise<string> {
@@ -49,12 +49,12 @@ export async function sendEmergencyEmail(input: EmergencyEmailInput): Promise<st
     `Экстренно: ${input.urgent ? "да" : "нет"}`,
   ];
   const text = lines.join("\n");
-  await apiClient.post<SendEmailResponse>("/br-general/email/send", {
+
+  await apiClient.post<SendEmailResponse>("/email/send", {
     to: supportInbox,
     subject,
     text,
   });
-  const id = `${Date.now()}`;
 
-  return id;
+  return String(Date.now());
 }

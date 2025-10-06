@@ -1,53 +1,56 @@
 import React, {createContext, useContext, useEffect, useState} from "react";
-import {loginByEmail, logoutUser, registerByEmail} from "src/services/auth";
-
-type UserOut = { id: number; email: string };
+import {
+  fetchCurrentUser,
+  getAccessToken,
+  getUserPersist,
+  loginByEmail,
+  logoutUser,
+  registerByEmail,
+  type User as ApiUser,
+} from "src/services/auth";
 
 type AuthState = {
-  user: UserOut | null;
+  user: ApiUser | null;
   loading: boolean;
   error: string | null;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, fullName?: string) => Promise<void>;
   logout: () => Promise<void>;
-  reload: () => void;
+  reload: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthState | null>(null);
 
-type AuthProviderProps = { children: React.ReactNode };
-
-export function AuthProvider({children}: AuthProviderProps) {
-  const [user, setUser] = useState<UserOut | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+export function AuthProvider({children}: { children: React.ReactNode }) {
+  const [user, setUser] = useState<ApiUser | null>(() => getUserPersist());
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const access = localStorage.getItem("accessToken");
-    const rawId = localStorage.getItem("userId");
-    const userId = rawId ? Number(rawId) : null;
-
-    if (access && userId) {
-      const storedEmail = localStorage.getItem("userEmail") || "";
-      setUser({id: userId, email: storedEmail});
-    } else {
-      setUser(null);
+    if (!user) {
+      const token = getAccessToken();
+      if (token) {
+        (async () => {
+          try {
+            setLoading(true);
+            const me = await fetchCurrentUser();
+            setUser(me);
+          } finally {
+            setLoading(false);
+          }
+        })();
+      }
     }
-    setLoading(false);
   }, []);
 
   const login = async (email: string, password: string) => {
     setError(null);
     setLoading(true);
     try {
-      await loginByEmail(email, password);
-      const rawId = localStorage.getItem("userId");
-      const userId = rawId ? Number(rawId) : null;
-      localStorage.setItem("userEmail", email);
-      setUser(userId ? {id: userId, email} : null);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Login failed";
-      setError(message);
+      const me = await loginByEmail(email, password);
+      setUser(me);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Login failed");
       setUser(null);
     } finally {
       setLoading(false);
@@ -58,16 +61,10 @@ export function AuthProvider({children}: AuthProviderProps) {
     setError(null);
     setLoading(true);
     try {
-      const fallbackName = localStorage.getItem("profileName") || undefined;
-      const {user: newUser} = await registerByEmail(email, password, fullName ?? fallbackName ?? "");
-      localStorage.setItem("userEmail", newUser.email || email);
-      if (fullName) {
-        localStorage.setItem("profileName", fullName);
-      }
-      setUser(newUser);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Register failed";
-      setError(message);
+      const me = await registerByEmail(email, password, fullName ?? "");
+      setUser(me);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Registration failed");
       setUser(null);
     } finally {
       setLoading(false);
@@ -77,10 +74,6 @@ export function AuthProvider({children}: AuthProviderProps) {
   const logout = async () => {
     setError(null);
     setUser(null);
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("tokenType");
-    localStorage.removeItem("userId");
     try {
       await logoutUser();
     } catch {
@@ -88,15 +81,13 @@ export function AuthProvider({children}: AuthProviderProps) {
     }
   };
 
-  const reload = () => {
-    const access = localStorage.getItem("accessToken");
-    const rawId = localStorage.getItem("userId");
-    const userId = rawId ? Number(rawId) : null;
-    if (access && userId) {
-      const storedEmail = localStorage.getItem("userEmail") || "";
-      setUser({id: userId, email: storedEmail});
-    } else {
-      setUser(null);
+  const reload = async () => {
+    setLoading(true);
+    try {
+      const me = await fetchCurrentUser();
+      setUser(me);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -108,10 +99,11 @@ export function AuthProvider({children}: AuthProviderProps) {
 }
 
 export function useAuth(): AuthState {
-  const ctx = useContext(AuthContext);
-  if (!ctx) {
-    throw new Error("useAuth must be used within AuthProvider");
+  const authContext = useContext(AuthContext);
+
+  if (!authContext) {
+    throw new Error("useAuth must be used within an AuthProvider");
   }
 
-  return ctx;
+  return authContext;
 }

@@ -2,20 +2,15 @@ import React from "react";
 import {PhoneCall} from "lucide-react";
 import {Button} from "src/components/Button/Button";
 import {PageHeader} from "src/components/PageHeader/PageHeader";
+import {useAuth} from "src/contexts/AuthContext";
 import {DictionaryKey} from "src/dictionary/dictionaryLoader";
 import {useDictionary} from "src/dictionary/useDictionary";
 import {PATHS} from "src/routes/routes";
 import styles from "src/pages/supportPage/SupportPage.module.scss";
 
-const hotlineNumber = import.meta.env.VITE_HOTLINE_PHONE as string | undefined;
+const hotlineNumber = import.meta.env.VITE_HOTLINE_PHONE;
 
-type SelfhelpItem = {
-  id: string;
-  link: string;
-  title: string;
-  desc: string;
-};
-
+type SelfhelpItem = { id: string; link: string; title: string; desc: string };
 type SupportDictionary = {
   page: { title: string; subtitle: string };
   emergency: { title: string; callNow: string; ariaLabel: string };
@@ -26,6 +21,7 @@ type SupportDictionary = {
 
 export function SupportPage() {
   const dictionary = useDictionary(DictionaryKey.SUPPORT) as SupportDictionary | null;
+  const {user} = useAuth();
 
   if (!dictionary) {
     return (
@@ -35,7 +31,7 @@ export function SupportPage() {
     );
   }
 
-  const isAuthenticated = Boolean(localStorage.getItem("accessToken"));
+  const isAuthenticated = Boolean(user);
   const telHref = hotlineNumber ? `tel:${hotlineNumber}` : undefined;
 
   return (
@@ -52,13 +48,10 @@ export function SupportPage() {
         <h2 className={styles.cardTitleHero}>
           {dictionary.emergency.title}
         </h2>
-
         <div className={styles.heroRow}>
           <a
             href={telHref}
-            className={`${styles.callNowBtn} ${
-              isAuthenticated ? styles.callNowOk : styles.callNowBad
-            }`}
+            className={`${styles.callNowBtn} ${isAuthenticated ? styles.callNowOk : styles.callNowBad}`}
             aria-label={dictionary.emergency.ariaLabel}
           >
             <PhoneCall
@@ -80,7 +73,6 @@ export function SupportPage() {
         <p className={styles.lead}>
           {dictionary.consultation.lead}
         </p>
-
         <Button to={PATHS.SOS.CONSULTATION}>
           {dictionary.consultation.cta}
         </Button>
@@ -96,18 +88,17 @@ export function SupportPage() {
         <p className={styles.lead}>
           {dictionary.selfhelp.lead}
         </p>
-
         <ul className={styles.topics}>
-          {dictionary.selfhelpItems.map((helpItem) => (
+          {dictionary.selfhelpItems.map((item) => (
             <li
-              key={helpItem.id}
+              key={item.id}
               className={styles.topic}
             >
-              <Button to={`${PATHS.MENTAL_HEALTH.LIST}${helpItem.link}`}>
-                {helpItem.title}
+              <Button to={`${PATHS.MENTAL_HEALTH.LIST}${item.link}`}>
+                {item.title}
               </Button>
               <p className={styles.topicDesc}>
-                {helpItem.desc}
+                {item.desc}
               </p>
             </li>
           ))}

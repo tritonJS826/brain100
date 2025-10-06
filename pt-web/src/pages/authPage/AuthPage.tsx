@@ -18,17 +18,17 @@ type AuthDictionary = {
 
 export function AuthPage() {
   const navigate = useNavigate();
-  const dict = useDictionary(DictionaryKey.AUTH) as AuthDictionary | null;
+  const dictionary = useDictionary(DictionaryKey.AUTH) as AuthDictionary | null;
 
   const [mode, setMode] = useState<"login" | "register">("register");
   const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState(localStorage.getItem("userEmail") || "");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  if (!dict) {
+  if (!dictionary) {
     return (
       <div>
         Loading...
@@ -38,8 +38,8 @@ export function AuthPage() {
 
   const isRegister = mode === "register";
 
-  const onSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
-    e.preventDefault();
+  const onSubmit: React.FormEventHandler<HTMLFormElement> = async (event) => {
+    event.preventDefault();
     if (loading) {
       return;
     }
@@ -48,12 +48,12 @@ export function AuthPage() {
 
     if (isRegister) {
       if (!fullName.trim()) {
-        setError(dict.errors.nameRequired);
+        setError(dictionary.errors.nameRequired);
 
         return;
       }
       if (password !== password2) {
-        setError(dict.errors.passwordsMismatch);
+        setError(dictionary.errors.passwordsMismatch);
 
         return;
       }
@@ -68,7 +68,7 @@ export function AuthPage() {
       }
       navigate(PATHS.PROFILE.PAGE, {replace: true});
     } catch (err) {
-      const message = err instanceof Error ? err.message : dict.errors.requestFailed;
+      const message = err instanceof Error ? err.message : dictionary.errors.requestFailed;
       setError(message);
     } finally {
       setLoading(false);
@@ -85,7 +85,7 @@ export function AuthPage() {
             onClick={() => setMode("login")}
             disabled={loading}
           >
-            {dict.tabs.login}
+            {dictionary.tabs.login}
           </button>
           <button
             type="button"
@@ -93,16 +93,16 @@ export function AuthPage() {
             onClick={() => setMode("register")}
             disabled={loading}
           >
-            {dict.tabs.register}
+            {dictionary.tabs.register}
           </button>
         </div>
 
         <header className={styles.head}>
           <h1 className={styles.title}>
-            {isRegister ? dict.title.register : dict.title.login}
+            {isRegister ? dictionary.title.register : dictionary.title.login}
           </h1>
           <p className={styles.subtitle}>
-            {isRegister ? dict.subtitle.register : dict.subtitle.login}
+            {isRegister ? dictionary.subtitle.register : dictionary.subtitle.login}
           </p>
         </header>
 
@@ -113,13 +113,13 @@ export function AuthPage() {
         >
           {isRegister && (
             <label className={styles.label}>
-              {dict.fields.fullName}
+              {dictionary.fields.fullName}
               <input
                 className={styles.input}
                 value={fullName}
                 onChange={(e) => setFullName(e.currentTarget.value)}
                 autoComplete="name"
-                placeholder={dict.placeholders.fullName}
+                placeholder={dictionary.placeholders.fullName}
                 minLength={2}
                 required
               />
@@ -127,27 +127,27 @@ export function AuthPage() {
           )}
 
           <label className={styles.label}>
-            {dict.fields.email}
+            {dictionary.fields.email}
             <input
               type="email"
               className={styles.input}
               value={email}
               onChange={(e) => setEmail(e.currentTarget.value)}
               autoComplete="email"
-              placeholder={dict.placeholders.email}
+              placeholder={dictionary.placeholders.email}
               required
             />
           </label>
 
           <label className={styles.label}>
-            {dict.fields.password}
+            {dictionary.fields.password}
             <input
               type="password"
               className={styles.input}
               value={password}
               onChange={(e) => setPassword(e.currentTarget.value)}
               autoComplete={isRegister ? "new-password" : "current-password"}
-              placeholder={dict.placeholders.password}
+              placeholder={dictionary.placeholders.password}
               minLength={6}
               required
             />
@@ -155,14 +155,14 @@ export function AuthPage() {
 
           {isRegister && (
             <label className={styles.label}>
-              {dict.fields.passwordRepeat}
+              {dictionary.fields.passwordRepeat}
               <input
                 type="password"
                 className={styles.input}
                 value={password2}
                 onChange={(e) => setPassword2(e.currentTarget.value)}
                 autoComplete="new-password"
-                placeholder={dict.placeholders.passwordRepeat}
+                placeholder={dictionary.placeholders.passwordRepeat}
                 minLength={6}
                 required
               />
@@ -179,10 +179,10 @@ export function AuthPage() {
             disabled={loading}
           >
             {loading
-              ? dict.buttons.loading
+              ? dictionary.buttons.loading
               : isRegister
-                ? dict.buttons.submitRegister
-                : dict.buttons.submitLogin}
+                ? dictionary.buttons.submitRegister
+                : dictionary.buttons.submitLogin}
           </button>
         </form>
       </div>

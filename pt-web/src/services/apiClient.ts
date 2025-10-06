@@ -1,4 +1,16 @@
+import {localStorageWorker, type Token as LSToken} from "src/globalServices/localStorageWorker";
+
 const DEFAULT_TIMEOUT = 10000;
+const NO_CONTENT_STATUS = 204;
+const API_BASE = "/br-general";
+
+function isObjectRecord(value: unknown): value is Record<string, unknown> {
+  const isNotNull = Boolean(value);
+  const isObjectType = typeof value === "object";
+  const isNotArray = !Array.isArray(value);
+
+  return isNotNull && isObjectType && isNotArray;
+}
 
 export class ApiClient {
 
@@ -29,9 +41,18 @@ export class ApiClient {
   }
 
   private getAuthHeaders(): Record<string, string> {
-    const token = localStorage.getItem("accessToken");
+    const accessObj = localStorageWorker.getItemByKey<LSToken>("accessToken");
+    const refreshObj = localStorageWorker.getItemByKey<LSToken>("refreshToken");
 
-    return token ? {Authorization: `Bearer ${token}`} : {};
+    const headers: Record<string, string> = {};
+    if (accessObj?.token) {
+      headers.Authorization = `Bearer ${accessObj.token}`;
+    }
+    if (refreshObj?.token) {
+      headers["x-refresh-token"] = refreshObj.token;
+    }
+
+    return headers;
   }
 
   private async request<T>(
@@ -61,15 +82,28 @@ export class ApiClient {
       if (!response.ok) {
         let message = response.statusText;
         try {
-          const errorData = await response.json();
-          message = errorData.detail || errorData.message || message;
+          const err = await response.json();
+          if (isObjectRecord(err)) {
+            const d = typeof err.detail === "string" ? err.detail : undefined;
+            const m = typeof err.message === "string" ? err.message : undefined;
+            message = d ?? m ?? message;
+          }
         } catch {
           // Ignore
         }
         throw new Error(message);
       }
 
-      return (await response.json()) as T;
+      let payload: unknown = null;
+      if (response.status !== NO_CONTENT_STATUS) {
+        try {
+          payload = await response.json();
+        } catch {
+          payload = null;
+        }
+      }
+
+      return payload as T;
     } catch (error) {
       clearTimeout(timeoutId);
       throw error;
@@ -78,6 +112,4 @@ export class ApiClient {
 
 }
 
-export const apiClient = new ApiClient(
-  import.meta.env.VITE_API_BASE_URL,
-);
+export const apiClient = new ApiClient(API_BASE);
