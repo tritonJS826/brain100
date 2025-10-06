@@ -269,6 +269,6 @@ JWT_ALGORITHM=HS256
 
 ---
 
-**Author:** API Team — br-general-python
-**Version:** v1.1.0
+**Version:** 1.1.0  
 **Last Updated:** 2025-10-05
+**Author:** br-general-python API Team
