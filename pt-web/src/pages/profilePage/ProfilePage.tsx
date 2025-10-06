@@ -6,8 +6,15 @@ import {PageHeader} from "src/components/PageHeader/PageHeader";
 import {useAuth} from "src/contexts/AuthContext";
 import {DictionaryKey} from "src/dictionary/dictionaryLoader";
 import {useDictionary} from "src/dictionary/useDictionary";
+import {localStorageWorker} from "src/globalServices/localStorageWorker";
 import {buildPath, PATHS} from "src/routes/routes";
 import styles from "src/pages/profilePage/ProfilePage.module.scss";
+
+const storage = localStorageWorker as unknown as {
+  getItemByKey: <U>(key: string) => U | null;
+  setItemByKey: (key: string, value: unknown) => void;
+  removeItemByKey: (key: string) => void;
+};
 
 const MS_IN_DAY = 86_400_000;
 const DEMO_PLAN_KEY = "demo_plan";
@@ -93,8 +100,27 @@ type ProfileDictionary = {
   recommendations: Record<ConditionKey, Record<StatusKey, string>>;
 };
 
+const getSafeStringFromStorage = (key: string): string | null => {
+  try {
+    const value = storage.getItemByKey<string>(key);
+
+    if (typeof value === "string") {
+      return value;
+    }
+
+    if (value === null) {
+      return null;
+    }
+
+    return String(value);
+  } catch {
+    // Ignore
+    return localStorage.getItem(key);
+  }
+};
+
 function useDemoPlanAndTests(): { plan: PlanDetails; tests: TestResult[]; memberSinceISO: string } {
-  const storedPlan = (localStorage.getItem(DEMO_PLAN_KEY) as PlanKind) || "free";
+  const storedPlan = storage.getItemByKey<PlanKind>(DEMO_PLAN_KEY) ?? "free";
 
   const memberSinceISO = new Date(Date.now() - (DAYS_AGO_120 * MS_IN_DAY)).toISOString();
   const expiresISO = new Date(Date.now() + (DAYS_AGO_14 * MS_IN_DAY)).toISOString();
@@ -102,13 +128,7 @@ function useDemoPlanAndTests(): { plan: PlanDetails; tests: TestResult[]; member
   const plan: PlanDetails =
     storedPlan === "free"
       ? {kind: "free", planTitle: "base", includedConsultations: 0, usedConsultations: 0}
-      : {
-        kind: "support",
-        planTitle: "support",
-        includedConsultations: 2,
-        usedConsultations: 1,
-        expiresISO,
-      };
+      : {kind: "support", planTitle: "support", includedConsultations: 2, usedConsultations: 1, expiresISO};
 
   const now = Date.now();
   const dateTest = (daysAgo: number) => new Date(now - (daysAgo * MS_IN_DAY)).toISOString();
@@ -134,9 +154,9 @@ export function ProfilePage() {
   const [upgradeHint, setUpgradeHint] = useState(false);
 
   const storedName =
-    localStorage.getItem("userName") ||
-    localStorage.getItem("profileName") ||
-    "—";
+  getSafeStringFromStorage("userName") ??
+  getSafeStringFromStorage("profileName") ??
+  "—";
 
   type Preferred = "phone" | "email";
 
@@ -368,11 +388,9 @@ export function ProfilePage() {
                 )}
             </div>
 
-            {!isSupport && upgradeHint && (
-              <div className={styles.hint}>
-                {dict.plan.hint}
-              </div>
-            )}
+            {!isSupport && upgradeHint && <div className={styles.hint}>
+              {dict.plan.hint}
+            </div>}
           </div>
         </div>
       </section>

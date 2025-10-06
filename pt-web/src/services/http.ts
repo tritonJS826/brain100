@@ -1,56 +1,48 @@
-const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "";
+import {localStorageWorker, type Token as LSToken} from "src/globalServices/localStorageWorker";
 
-export function getAccess() {
-  return localStorage.getItem("accessToken") ?? "";
-}
-export function getRefresh() {
-  return localStorage.getItem("refreshToken") ?? "";
-}
-export function getTokenType() {
-  return localStorage.getItem("tokenType") ?? "Bearer";
+export const API_BASE: string = "/br-general";
+
+export function getAccessToken(): string {
+  const token = localStorageWorker.getItemByKey<LSToken>("accessToken");
+
+  return token?.token ?? "";
 }
 
-export function saveTokens(tokens?: {
-  access_token?: string;
-  refresh_token?: string;
-  token_type?: string;
-}) {
+export function getRefreshToken(): string {
+  const token = localStorageWorker.getItemByKey<LSToken>("refreshToken");
+
+  return token?.token ?? "";
+}
+
+export function saveTokens(tokens?: { access_token?: string; refresh_token?: string }): void {
   if (!tokens) {
     return;
   }
   if (tokens.access_token) {
-    localStorage.setItem("accessToken", tokens.access_token);
+    localStorageWorker.setItemByKey("accessToken", {token: tokens.access_token});
   }
   if (tokens.refresh_token) {
-    localStorage.setItem("refreshToken", tokens.refresh_token);
-  }
-  if (tokens.token_type) {
-    localStorage.setItem("tokenType", tokens.token_type);
+    localStorageWorker.setItemByKey("refreshToken", {token: tokens.refresh_token});
   }
 }
 
-export function clearTokens() {
-  localStorage.removeItem("accessToken");
-  localStorage.removeItem("refreshToken");
-  localStorage.removeItem("tokenType");
+export function clearTokens(): void {
+  localStorageWorker.removeItemByKey("accessToken");
+  localStorageWorker.removeItemByKey("refreshToken");
 }
 
-export async function apiFetch(path: string, init: RequestInit = {}) {
-  const url = path.startsWith("http") ? path : `${API_BASE}${path}`;
-  const headers = new Headers(init.headers || {});
-  const access = getAccess();
-  const refresh = getRefresh();
+export async function apiFetch(path: string, init: RequestInit = {}): Promise<Response> {
+  const url = `${API_BASE}${path}`;
+  const headers = new Headers(init.headers);
+  const access = getAccessToken();
+  const refresh = getRefreshToken();
 
   if (access) {
-    headers.set("Authorization", `${getTokenType()} ${access}`);
+    headers.set("Authorization", `Bearer ${access}`);
   }
   if (refresh) {
     headers.set("x-refresh-token", refresh);
   }
 
-  return fetch(url, {
-    ...init,
-    headers,
-    credentials: "include",
-  });
+  return fetch(url, {...init, headers});
 }
