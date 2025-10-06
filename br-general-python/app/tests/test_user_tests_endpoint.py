@@ -1,3 +1,4 @@
+import random
 import pytest
 from httpx import AsyncClient, ASGITransport
 from jose import jwt
@@ -8,13 +9,14 @@ from app.db import db
 
 
 @pytest.mark.asyncio
-async def test_get_user_tests_results():
+@pytest.mark.parametrize("index", range(1, 6))  # 5 users
+async def test_multiple_users_tests_results(index):
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url=settings.base_url) as client:
         # 1 create user & login
-        email = "test_user_tests@example.com"
-        password = "StrongPass123!"
-        name = "User With Tests"
+        email = f"test_user_tests_{index}@example.com"
+        password = f"StrongPass{index}!"
+        name = f"User With Tests {index}"
         await client.post(
             "/br-general/auth/register",
             json={
@@ -37,29 +39,33 @@ async def test_get_user_tests_results():
         )
         user_id = decoded["sub"]
 
-        # 2 create fake test and session directly in DB
+        # 2️⃣ create fake test and session for this user
         test = await db.test.create(
             data={
-                "title": "Focus Evaluation",
-                "description": "Evaluates attention and response speed.",
+                "title": f"TEST-{index} Focus Evaluation",
+                "description": f"TEST-{index} Evaluates attention and response speed.",
             }
         )
 
-        session = await db.testsession.create(
-            data={
-                "user": {"connect": {"id": user_id}},
-                "test": {"connect": {"id": test.id}},
-                "createdAt": datetime.now(timezone.utc),
-                "finishedAt": datetime.now(timezone.utc),
-            }
-        )
+        # each user has 1–3 sessions
+        num_sessions = random.randint(1, 3)
+        sessions = []
+        for i in range(num_sessions):
+            s = await db.testsession.create(
+                data={
+                    "user": {"connect": {"id": user_id}},
+                    "test": {"connect": {"id": test.id}},
+                    "createdAt": datetime.now(timezone.utc),
+                    "finishedAt": datetime.now(timezone.utc),
+                }
+            )
+            sessions.append(s)
 
         # 3 call endpoint /me/tests/{test_id}
         headers = {"Authorization": f"Bearer {tokens['access_token']}"}
         url = f"/br-general/users/me/tests/{test.id}"
         response = await client.get(url, headers=headers)
         assert response.status_code == 200, response.text
-
         data = response.json()
 
         # 4 assertions
@@ -67,26 +73,27 @@ async def test_get_user_tests_results():
         assert data["title"] == test.title
         assert data["description"] == test.description
         assert "sessions" in data
-        assert len(data["sessions"]) >= 1
+        assert len(data["sessions"]) == num_sessions, (
+            f"Expected {num_sessions} sessions, got {len(data['sessions'])}"
+        )
 
-        s = data["sessions"][0]
-        assert s["session_id"] == session.id
-        assert s["created_at"]
-        assert s["finished_at"]
+        for s in data["sessions"]:
+            assert s["created_at"]
+            assert s["finished_at"]
+            assert "answers" in s
+            assert isinstance(s["answers"], list)
 
-        # Answers list should exist (empty if no answers)
-        assert "answers" in s
-        assert isinstance(s["answers"], list)
+        print(f"✅ User {index}: {email} — {len(data['sessions'])} session(s) OK")
 
 
 @pytest.fixture(scope="function", autouse=True)
 async def setup_db():
     await db.connect()
     yield
-    # cleanup test data
+    # cleanup all test data after run
     await db.testsession.delete_many(
-        where={"user": {"email": {"contains": "test_user_tests@"}}}
+        where={"user": {"email": {"contains": "test_user_tests_"}}}
     )
-    await db.test.delete_many(where={"title": {"contains": "Focus Evaluation"}})
-    await db.user.delete_many(where={"email": {"contains": "test_user_tests@"}})
+    await db.test.delete_many(where={"title": {"contains": "TEST-"}})
+    await db.user.delete_many(where={"email": {"contains": "test_user_tests_"}})
     await db.disconnect()

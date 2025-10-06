@@ -158,7 +158,7 @@ async def get_user_test_results(test_id: str, current=Depends(get_current_user))
                     {
                         "question_id": a.questionId,
                         "question_text": a.question.text,
-                        "answer": a.answerOption.text if a.answerOption else a.freeText,
+                        "answer": a.answerOption.text,
                     }
                     for a in session.answers
                 ],
