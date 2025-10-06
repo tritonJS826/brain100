@@ -1,13 +1,18 @@
-import React, {useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {NavLink, useNavigate} from "react-router-dom";
+import {useAtomValue, useSetAtom} from "jotai";
 import {CalendarClock, PhoneCall} from "lucide-react";
 import {Button} from "src/components/Button/Button";
 import {PageHeader} from "src/components/PageHeader/PageHeader";
-import {useAuth} from "src/contexts/AuthContext";
 import {DictionaryKey} from "src/dictionary/dictionaryLoader";
 import {useDictionary} from "src/dictionary/useDictionary";
 import {localStorageWorker} from "src/globalServices/localStorageWorker";
 import {buildPath, PATHS} from "src/routes/routes";
+import {logoutUser} from "src/services/auth";
+import {
+  accessTokenAtomWithPersistence,
+  clearTokensAtom,
+} from "src/state/authAtom";
 import styles from "src/pages/profilePage/ProfilePage.module.scss";
 
 const storage = localStorageWorker as unknown as {
@@ -27,7 +32,7 @@ const DAYS_AGO_2 = 2;
 const DAYS_AGO_5 = 5;
 const DAYS_AGO_9 = 9;
 const DAYS_AGO_14 = 14;
-const DAYS_AGO_18 = 18;
+const DAYS_AGО_18 = 18;
 const DAYS_AGO_23 = 23;
 
 type PlanKind = "free" | "support";
@@ -103,18 +108,15 @@ type ProfileDictionary = {
 const getSafeStringFromStorage = (key: string): string | null => {
   try {
     const value = storage.getItemByKey<string>(key);
-
     if (typeof value === "string") {
       return value;
     }
-
     if (value === null) {
       return null;
     }
 
     return String(value);
   } catch {
-    // Ignore
     return localStorage.getItem(key);
   }
 };
@@ -138,7 +140,7 @@ function useDemoPlanAndTests(): { plan: PlanDetails; tests: TestResult[]; member
     {id: "t9", conditionId: "depression", dateISO: dateTest(DAYS_AGO_5), status: "low"},
     {id: "t8", conditionId: "burnout", dateISO: dateTest(DAYS_AGO_9), status: "high"},
     {id: "t7", conditionId: "panic", dateISO: dateTest(DAYS_AGO_14), status: "low"},
-    {id: "t6", conditionId: "depression", dateISO: dateTest(DAYS_AGO_18), status: "moderate"},
+    {id: "t6", conditionId: "depression", dateISO: dateTest(DAYS_AGО_18), status: "moderate"},
     {id: "t5", conditionId: "panic", dateISO: dateTest(DAYS_AGO_23), status: "high"},
   ];
 
@@ -148,15 +150,28 @@ function useDemoPlanAndTests(): { plan: PlanDetails; tests: TestResult[]; member
 export function ProfilePage() {
   const dict = useDictionary(DictionaryKey.PROFILE) as ProfileDictionary | null;
   const navigate = useNavigate();
-  const {user: authUser, logout} = useAuth();
+
+  const access = useAtomValue(accessTokenAtomWithPersistence);
+  const isAuthenticated = Boolean(access?.token);
+  const clearTokens = useSetAtom(clearTokensAtom);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate(PATHS.AUTH.PAGE, {replace: true});
+    }
+  }, [isAuthenticated, navigate]);
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   const {plan, tests, memberSinceISO} = useDemoPlanAndTests();
   const [upgradeHint, setUpgradeHint] = useState(false);
 
   const storedName =
-  getSafeStringFromStorage("userName") ??
-  getSafeStringFromStorage("profileName") ??
-  "—";
+    getSafeStringFromStorage("userName") ??
+    getSafeStringFromStorage("profileName") ??
+    "—";
 
   type Preferred = "phone" | "email";
 
@@ -171,9 +186,9 @@ export function ProfilePage() {
     memberSinceISO: string;
     preferredContact: Preferred;
   } = {
-    id: String(authUser?.id ?? "—"),
+    id: "—",
     name: storedName,
-    email: authUser?.email ?? "—",
+    email: "—",
     city: "Dresden, Germany",
     phone: "+49 151 23456789",
     language: "Deutsch, English",
@@ -207,7 +222,8 @@ export function ProfilePage() {
   const planTitle = isSupport ? dict.plan.supportTitle : dict.plan.baseTitle;
 
   const onLogout = async () => {
-    await logout();
+    await logoutUser();
+    clearTokens();
     navigate(PATHS.HOME);
   };
 
@@ -248,26 +264,31 @@ export function ProfilePage() {
               <div>
                 {dict.user.city}
                 :
+                {" "}
                 {mergedUser.city}
               </div>
               <div>
                 {dict.user.phone}
                 :
+                {" "}
                 {mergedUser.phone}
               </div>
               <div>
                 {dict.user.language}
                 :
+                {" "}
                 {mergedUser.language}
               </div>
               <div>
                 {dict.user.timezone}
                 :
+                {" "}
                 {mergedUser.timezone}
               </div>
               <div>
                 {dict.user.memberSince}
                 :
+                {" "}
                 {toDate(mergedUser.memberSinceISO)}
               </div>
               <div>
@@ -280,6 +301,7 @@ export function ProfilePage() {
               <div>
                 {dict.user.id}
                 :
+                {" "}
                 {mergedUser.id}
               </div>
             </div>
@@ -308,7 +330,7 @@ export function ProfilePage() {
 
           <div className={styles.planHeader}>
             <div className={styles.planPrimaryActions}>
-              <Button to={PATHS.SOS?.CONSULTATION ?? "/support/consultation"}>
+              <Button to={PATHS.SOS.CONSULTATION}>
                 {dict.plan.scheduleBtn}
               </Button>
               {!isSupport && (

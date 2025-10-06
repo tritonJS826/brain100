@@ -1,14 +1,15 @@
 import React from "react";
+import {useAtomValue} from "jotai";
 import {PhoneCall} from "lucide-react";
 import {Button} from "src/components/Button/Button";
 import {PageHeader} from "src/components/PageHeader/PageHeader";
-import {useAuth} from "src/contexts/AuthContext";
 import {DictionaryKey} from "src/dictionary/dictionaryLoader";
 import {useDictionary} from "src/dictionary/useDictionary";
 import {PATHS} from "src/routes/routes";
+import {accessTokenAtomWithPersistence} from "src/state/authAtom";
 import styles from "src/pages/supportPage/SupportPage.module.scss";
 
-const hotlineNumber = import.meta.env.VITE_HOTLINE_PHONE;
+const hotlineNumber = import.meta.env.VITE_HOTLINE_PHONE as string | undefined;
 
 type SelfhelpItem = { id: string; link: string; title: string; desc: string };
 type SupportDictionary = {
@@ -21,7 +22,9 @@ type SupportDictionary = {
 
 export function SupportPage() {
   const dictionary = useDictionary(DictionaryKey.SUPPORT) as SupportDictionary | null;
-  const {user} = useAuth();
+
+  const access = useAtomValue(accessTokenAtomWithPersistence);
+  const isAuthenticated = Boolean(access?.token);
 
   if (!dictionary) {
     return (
@@ -31,7 +34,6 @@ export function SupportPage() {
     );
   }
 
-  const isAuthenticated = Boolean(user);
   const telHref = hotlineNumber ? `tel:${hotlineNumber}` : undefined;
 
   return (

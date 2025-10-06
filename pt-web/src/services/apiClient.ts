@@ -1,18 +1,9 @@
-import {localStorageWorker, type Token as LSToken} from "src/globalServices/localStorageWorker";
+import {localStorageWorker, Token as LSToken} from "src/globalServices/localStorageWorker";
+import {env} from "src/utils/env/env";
 
 const DEFAULT_TIMEOUT = 10000;
-const NO_CONTENT_STATUS = 204;
-const API_BASE = "/br-general";
 
-function isObjectRecord(value: unknown): value is Record<string, unknown> {
-  const isNotNull = Boolean(value);
-  const isObjectType = typeof value === "object";
-  const isNotArray = !Array.isArray(value);
-
-  return isNotNull && isObjectType && isNotArray;
-}
-
-export class ApiClient {
+class ApiClient {
 
   private baseUrl: string;
 
@@ -20,31 +11,31 @@ export class ApiClient {
     this.baseUrl = baseUrl;
   }
 
-  public get<T>(url: string, options?: RequestInit) {
-    return this.request<T>("GET", url, undefined, options);
+  public get<T>(url: string, init?: RequestInit) {
+    return this.request<T>("GET", url, undefined, init);
   }
 
-  public post<T>(url: string, body?: unknown, options?: RequestInit) {
-    return this.request<T>("POST", url, body, options);
+  public post<T>(url: string, body?: unknown, init?: RequestInit) {
+    return this.request<T>("POST", url, body, init);
   }
 
-  public put<T>(url: string, body?: unknown, options?: RequestInit) {
-    return this.request<T>("PUT", url, body, options);
+  public put<T>(url: string, body?: unknown, init?: RequestInit) {
+    return this.request<T>("PUT", url, body, init);
   }
 
-  public patch<T>(url: string, body?: unknown, options?: RequestInit) {
-    return this.request<T>("PATCH", url, body, options);
+  public patch<T>(url: string, body?: unknown, init?: RequestInit) {
+    return this.request<T>("PATCH", url, body, init);
   }
 
-  public delete<T>(url: string, options?: RequestInit) {
-    return this.request<T>("DELETE", url, undefined, options);
+  public delete<T>(url: string, init?: RequestInit) {
+    return this.request<T>("DELETE", url, undefined, init);
   }
 
-  private getAuthHeaders(): Record<string, string> {
+  private authHeaders(): Record<string, string> {
     const accessObj = localStorageWorker.getItemByKey<LSToken>("accessToken");
     const refreshObj = localStorageWorker.getItemByKey<LSToken>("refreshToken");
 
-    const headers: Record<string, string> = {};
+    const headers: Record<string, string> = {"Content-Type": "application/json"};
     if (accessObj?.token) {
       headers.Authorization = `Bearer ${accessObj.token}`;
     }
@@ -55,61 +46,23 @@ export class ApiClient {
     return headers;
   }
 
-  private async request<T>(
-    method: string,
-    url: string,
-    body?: unknown,
-    options?: RequestInit,
-  ): Promise<T> {
+  private async request<T>(method: string, url: string, body?: unknown, init?: RequestInit): Promise<T> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), DEFAULT_TIMEOUT);
 
-    try {
-      const response = await fetch(`${this.baseUrl}${url}`, {
-        method,
-        body: body ? JSON.stringify(body) : undefined,
-        headers: {
-          "Content-Type": "application/json",
-          ...this.getAuthHeaders(),
-          ...(options?.headers ?? {}),
-        },
-        signal: controller.signal,
-        ...options,
-      });
+    const res = await fetch(`${this.baseUrl}${url}`, {
+      method,
+      body: body ? JSON.stringify(body) : undefined,
+      headers: {...this.authHeaders(), ...(init?.headers ?? {})},
+      signal: controller.signal,
+      ...init,
+    });
 
-      clearTimeout(timeoutId);
+    clearTimeout(timeoutId);
 
-      if (!response.ok) {
-        let message = response.statusText;
-        try {
-          const err = await response.json();
-          if (isObjectRecord(err)) {
-            const d = typeof err.detail === "string" ? err.detail : undefined;
-            const m = typeof err.message === "string" ? err.message : undefined;
-            message = d ?? m ?? message;
-          }
-        } catch {
-          // Ignore
-        }
-        throw new Error(message);
-      }
-
-      let payload: unknown = null;
-      if (response.status !== NO_CONTENT_STATUS) {
-        try {
-          payload = await response.json();
-        } catch {
-          payload = null;
-        }
-      }
-
-      return payload as T;
-    } catch (error) {
-      clearTimeout(timeoutId);
-      throw error;
-    }
+    return (await res.json()) as T;
   }
 
 }
 
-export const apiClient = new ApiClient(API_BASE);
+export const apiClient = new ApiClient(env.API_BASE_PATH);

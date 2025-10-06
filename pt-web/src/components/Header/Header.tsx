@@ -1,17 +1,17 @@
 import React, {useEffect, useRef, useState} from "react";
 import {Link, NavLink} from "react-router-dom";
-import {useAtom} from "jotai";
+import {useAtom, useAtomValue} from "jotai";
 import {UserRound} from "lucide-react";
 import promoMental from "src/assets/1_consult.avif";
 import promoTests from "src/assets/2_register.avif";
 import promoBio from "src/assets/3_follow.avif";
 import logo from "src/assets/BRAIN100.webp";
 import {LEFT_LINK_KEYS, MenuKey, TIMEOUT_MENU_MS} from "src/components/Header/header.config";
-import {useAuth} from "src/contexts/AuthContext";
 import {languageAtomWithPersistence} from "src/dictionary/dictionaryAtom";
 import {DictionaryKey} from "src/dictionary/dictionaryLoader";
 import {useDictionary} from "src/dictionary/useDictionary";
 import {buildPath, PATHS} from "src/routes/routes";
+import {accessTokenAtomWithPersistence} from "src/state/authAtom";
 import styles from "src/components/Header/Header.module.scss";
 
 const DROPDOWN_KEYS: MenuKey[] = ["mental", "tests", "biohacking"];
@@ -33,8 +33,8 @@ export function Header() {
   const langMenuDrawerRef = useRef<HTMLDivElement | null>(null);
   const closeTimerRef = useRef<number | null>(null);
 
-  const {user} = useAuth();
-  const isAuthenticated = Boolean(user);
+  const access = useAtomValue(accessTokenAtomWithPersistence);
+  const isAuthenticated = Boolean(access?.token);
   const profileTo = isAuthenticated ? PATHS.PROFILE.PAGE : PATHS.AUTH.PAGE;
 
   const closeDock = () => {
@@ -351,12 +351,12 @@ export function Header() {
                   onClick={handleNavLinkClick}
                 >
                   {menuKey === "about"
-                    ? dictionary.nav.about :
-                    menuKey === "mental"
-                      ? dictionary.nav.mental :
-                      menuKey === "tests"
-                        ? dictionary.nav.tests :
-                        dictionary.nav.biohacking}
+                    ? dictionary.nav.about
+                    : menuKey === "mental"
+                      ? dictionary.nav.mental
+                      : menuKey === "tests"
+                        ? dictionary.nav.tests
+                        : dictionary.nav.biohacking}
                 </NavLink>
               </li>
             ))}
@@ -501,7 +501,8 @@ export function Header() {
                     <>
                       <button
                         type="button"
-                        className={`${styles.drawerLink}
+                        className={`
+                        ${styles.drawerLink}
                         ${styles.drawerLinkBtn}
                         ${drawerActive === menuKey ? styles.drawerLinkOpen : ""}`}
                         onClick={() => toggleDrawerSection(menuKey)}

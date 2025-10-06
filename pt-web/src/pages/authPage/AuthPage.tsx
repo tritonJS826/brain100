@@ -1,9 +1,15 @@
 import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
+import {useSetAtom} from "jotai";
 import {DictionaryKey} from "src/dictionary/dictionaryLoader";
 import {useDictionary} from "src/dictionary/useDictionary";
+import {localStorageWorker, type Token as LSToken} from "src/globalServices/localStorageWorker";
 import {PATHS} from "src/routes/routes";
 import {loginByEmail, registerByEmail} from "src/services/auth";
+import {
+  accessTokenAtomWithPersistence,
+  refreshTokenAtomWithPersistence,
+} from "src/state/authAtom";
 import styles from "src/pages/authPage/AuthPage.module.scss";
 
 type AuthDictionary = {
@@ -27,6 +33,9 @@ export function AuthPage() {
   const [password2, setPassword2] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const setAccess = useSetAtom(accessTokenAtomWithPersistence);
+  const setRefresh = useSetAtom(refreshTokenAtomWithPersistence);
 
   if (!dictionary) {
     return (
@@ -66,6 +75,13 @@ export function AuthPage() {
       } else {
         await loginByEmail(email, password);
       }
+
+      const access = localStorageWorker.getItemByKey<LSToken>("accessToken");
+      const refresh = localStorageWorker.getItemByKey<LSToken>("refreshToken");
+
+      setAccess(access ?? {token: null});
+      setRefresh(refresh ?? {token: null});
+
       navigate(PATHS.PROFILE.PAGE, {replace: true});
     } catch (err) {
       const message = err instanceof Error ? err.message : dictionary.errors.requestFailed;
