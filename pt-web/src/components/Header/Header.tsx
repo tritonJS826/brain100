@@ -14,16 +14,19 @@ import {buildPath, PATHS} from "src/routes/routes";
 import {accessTokenAtomWithPersistence} from "src/state/authAtom";
 import styles from "src/components/Header/Header.module.scss";
 
-const DROPDOWN_KEYS: MenuKey[] = ["mental", "tests", "biohacking"];
+const DROPDOWN_KEYS = ["mental", "tests", "biohacking"] as const;
+type DropdownKey = typeof DROPDOWN_KEYS[number];
+
+type LangCode = "ru" | "en";
 
 export function Header() {
   const dictionary = useDictionary(DictionaryKey.HEADER);
   const [lang, setLang] = useAtom(languageAtomWithPersistence);
 
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerActive, setDrawerActive] = useState<DropdownKey | null>(null);
   const [dockOpen, setDockOpen] = useState(false);
-  const [activeKey, setActiveKey] = useState<MenuKey | null>(null);
-  const [drawerActive, setDrawerActive] = useState<MenuKey | null>(null);
+  const [activeKey, setActiveKey] = useState<DropdownKey | null>(null);
   const [langOpenTop, setLangOpenTop] = useState(false);
   const [langOpenDrawer, setLangOpenDrawer] = useState(false);
 
@@ -37,46 +40,41 @@ export function Header() {
   const isAuthenticated = Boolean(access?.token);
   const profileTo = isAuthenticated ? PATHS.PROFILE.PAGE : PATHS.AUTH.PAGE;
 
-  const closeDock = () => {
+  const clearTimer = () => {
+    if (closeTimerRef.current !== null) {
+      window.clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+  };
+  const scheduleClose = () => {
+    clearTimer();
+    closeTimerRef.current = window.setTimeout(() => {
+      setDockOpen(false);
+      setActiveKey(null);
+    }, TIMEOUT_MENU_MS);
+  };
+  const handleEnter = (key: MenuKey) => {
+    const isDropdown = (DROPDOWN_KEYS as readonly string[]).includes(key);
+    if (isDropdown) {
+      setActiveKey(key as DropdownKey);
+      setDockOpen(true);
+      clearTimer();
+    } else {
+      setDockOpen(false);
+      setActiveKey(null);
+    }
+  };
+  const handleNavClick = () => {
     setDockOpen(false);
     setActiveKey(null);
-    if (closeTimerRef.current) {
-      window.clearTimeout(closeTimerRef.current);
-      closeTimerRef.current = null;
-    }
-  };
-
-  const cancelClose = () => {
-    if (closeTimerRef.current) {
-      window.clearTimeout(closeTimerRef.current);
-      closeTimerRef.current = null;
-    }
-  };
-
-  const scheduleClose = () => {
-    cancelClose();
-    closeTimerRef.current = window.setTimeout(() => {
-      closeDock();
-    }, TIMEOUT_MENU_MS) as unknown as number;
-  };
-
-  const onEnterNav = (key: MenuKey) => {
-    if (!DROPDOWN_KEYS.includes(key)) {
-      closeDock();
-
-      return;
-    }
-    cancelClose();
-    setActiveKey(key);
-    setDockOpen(true);
-    scheduleClose();
+    setDrawerOpen(false);
   };
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setDrawerOpen(false);
-        closeDock();
+        setDockOpen(false);
         setLangOpenTop(false);
         setLangOpenDrawer(false);
       }
@@ -87,35 +85,14 @@ export function Header() {
   }, []);
 
   useEffect(() => {
-    if (!dockOpen) {
-      return;
-    }
-    const onScroll = () => closeDock();
-    const onDown = (e: MouseEvent) => {
-      const el = e.target as HTMLElement;
-      if (!el.closest(`.${styles.dock}`) && !el.closest(`.${styles.nav}`)) {
-        closeDock();
-      }
-    };
-    window.addEventListener("scroll", onScroll, {passive: true});
-    document.addEventListener("mousedown", onDown);
-
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      document.removeEventListener("mousedown", onDown);
-    };
-  }, [dockOpen]);
-
-  useEffect(() => {
     if (!langOpenTop) {
       return;
     }
     const onDown = (e: MouseEvent) => {
       const t = e.target as Node;
-      if (
-        langMenuTopRef.current && !langMenuTopRef.current.contains(t) &&
-        langBtnTopRef.current && !langBtnTopRef.current.contains(t)
-      ) {
+      const insideMenu = langMenuTopRef.current?.contains(t);
+      const insideBtn = langBtnTopRef.current?.contains(t);
+      if (!insideMenu && !insideBtn) {
         setLangOpenTop(false);
       }
     };
@@ -130,10 +107,9 @@ export function Header() {
     }
     const onDown = (e: MouseEvent) => {
       const t = e.target as Node;
-      if (
-        langMenuDrawerRef.current && !langMenuDrawerRef.current.contains(t) &&
-        langBtnDrawerRef.current && !langBtnDrawerRef.current.contains(t)
-      ) {
+      const insideMenu = langMenuDrawerRef.current?.contains(t);
+      const insideBtn = langBtnDrawerRef.current?.contains(t);
+      if (!insideMenu && !insideBtn) {
         setLangOpenDrawer(false);
       }
     };
@@ -141,10 +117,6 @@ export function Header() {
 
     return () => document.removeEventListener("mousedown", onDown);
   }, [langOpenDrawer]);
-
-  const toggleDrawerSection = (key: MenuKey) => {
-    setDrawerActive(prev => (prev === key ? null : key));
-  };
 
   if (!dictionary) {
     return (
@@ -154,31 +126,35 @@ export function Header() {
     );
   }
 
-  const labelByKey = (key: MenuKey) => {
-    switch (key) {
-      case "about": return dictionary.nav.about;
-      case "mental": return dictionary.nav.mental;
-      case "tests": return dictionary.nav.tests;
-      case "biohacking": return dictionary.nav.biohacking;
-      default: return "";
-    }
+  const labelByKey: Record<MenuKey, string> = {
+    about: dictionary.nav.about,
+    mental: dictionary.nav.mental,
+    tests: dictionary.nav.tests,
+    biohacking: dictionary.nav.biohacking,
   };
+  const pathByKey: Record<MenuKey, string> = {
+    about: PATHS.ABOUT,
+    mental: PATHS.MENTAL_HEALTH.LIST,
+    tests: PATHS.TESTS.LIST,
+    biohacking: PATHS.BIOHACKING.LIST,
+  };
+  const toPairs = (menu: Record<string, string>) =>
+    Object.entries(menu).map(([id, label]) => ({id, label}));
+  const mentalItems = toPairs(dictionary.nav.menus.mental);
+  const testItems = toPairs(dictionary.nav.menus.tests);
+  const bioItems = toPairs(dictionary.nav.menus.biohacking);
 
-  const mentalMenuItems = Object.entries(dictionary.nav.menus.mental).map(
-    ([entryId, entryLabel]) => ({id: entryId, label: entryLabel}),
-  );
-  const testMenuItems = Object.entries(dictionary.nav.menus.tests).map(
-    ([entryId, entryLabel]) => ({id: entryId, label: entryLabel}),
-  );
-  const biohackingMenuItems = Object.entries(dictionary.nav.menus.biohacking).map(
-    ([entryId, entryLabel]) => ({id: entryId, label: entryLabel}),
-  );
+  const currentLangLabel = lang === "ru" ? dictionary.lang.ru : dictionary.lang.en;
+  const langOptions: { code: LangCode; label: string }[] = [
+    {code: "ru", label: dictionary.lang.ru},
+    {code: "en", label: dictionary.lang.en},
+  ];
 
-  const Promo = ({to, img, title}: { to: string; img: string; title: string }) => (
+  const Promo = ({to, img, title}: {to: string; img: string; title: string}) => (
     <Link
       to={to}
       className={styles.dockPromo}
-      onClick={closeDock}
+      onClick={handleNavClick}
     >
       <img
         src={img}
@@ -191,121 +167,97 @@ export function Header() {
     </Link>
   );
 
-  const renderDockContent = (key: MenuKey | null) => {
-    if (!key || !DROPDOWN_KEYS.includes(key)) {
+  const renderDock = (key: DropdownKey | null) => {
+    if (!key) {
       return null;
     }
 
-    if (key === "mental") {
-      return (
-        <div className={styles.dockLayout}>
-          <div className={styles.dockLists}>
-            <NavLink
-              to={PATHS.MENTAL_HEALTH.LIST}
-              className={styles.dockHeading}
-              onClick={closeDock}
-            >
-              {dictionary.dock.allStates}
-            </NavLink>
-            <ul className={`${styles.dockList} ${styles.dockListTwoCols}`}>
-              {mentalMenuItems.map(mentalItem => (
-                <li key={mentalItem.id}>
-                  <NavLink
-                    to={buildPath.mentalHealthDetail(mentalItem.id)}
-                    className={styles.dockLink}
-                    onClick={closeDock}
-                  >
-                    {mentalItem.label}
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <Promo
-            to={buildPath.supportConsultation()}
-            img={promoMental}
-            title={dictionary.promo.consultCta}
-          />
-        </div>
-      );
-    }
-
-    if (key === "tests") {
-      return (
-        <div className={styles.dockLayout}>
-          <div className={styles.dockLists}>
-            <NavLink
-              to={PATHS.TESTS.LIST}
-              className={styles.dockHeading}
-              onClick={closeDock}
-            >
-              {dictionary.dock.allTests}
-            </NavLink>
-            <ul className={`${styles.dockList} ${styles.dockListTwoCols}`}>
-              {testMenuItems.map(testItem => (
-                <li key={testItem.id}>
-                  <NavLink
-                    to={buildPath.testsDetail(testItem.id)}
-                    className={styles.dockLink}
-                    onClick={closeDock}
-                  >
-                    {testItem.label}
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
-          </div>
+    const menus: Record<
+      DropdownKey,
+      {
+        list: { id: string; label: string }[];
+        title: string;
+        promo: React.ReactElement;
+        buildLink: (id: string) => string;
+        listPath: string;
+      }
+    > = {
+      mental: {
+        list: mentalItems,
+        title: dictionary.dock.allStates,
+        promo: <Promo
+          to={buildPath.supportConsultation()}
+          img={promoMental}
+          title={dictionary.promo.consultCta}
+        />,
+        buildLink: (id) => buildPath.mentalHealthDetail(id),
+        listPath: PATHS.MENTAL_HEALTH.LIST,
+      },
+      tests: {
+        list: testItems,
+        title: dictionary.dock.allTests,
+        promo: (
           <Promo
             to={isAuthenticated ? PATHS.PROFILE.PAGE : buildPath.auth()}
             img={promoTests}
             title={dictionary.promo.registerCta}
           />
-        </div>
-      );
-    }
+        ),
+        buildLink: (id) => buildPath.testsDetail(id),
+        listPath: PATHS.TESTS.LIST,
+      },
+      biohacking: {
+        list: bioItems,
+        title: dictionary.dock.allArticles,
+        promo: (
+          <Promo
+            to={isAuthenticated ? PATHS.PROFILE.PAGE : buildPath.auth()}
+            img={promoBio}
+            title={dictionary.promo.subscribeCta}
+          />
+        ),
+        buildLink: (id) => buildPath.biohackingDetail(id),
+        listPath: PATHS.BIOHACKING.LIST,
+      },
+    };
+
+    const data = menus[key];
 
     return (
       <div className={styles.dockLayout}>
         <div className={styles.dockLists}>
           <NavLink
-            to={PATHS.BIOHACKING.LIST}
+            to={data.listPath}
             className={styles.dockHeading}
-            onClick={closeDock}
+            onClick={handleNavClick}
           >
-            {dictionary.dock.allArticles}
+            {data.title}
           </NavLink>
           <ul className={`${styles.dockList} ${styles.dockListTwoCols}`}>
-            {biohackingMenuItems.map(articleItem => (
-              <li key={articleItem.id}>
+            {data.list.map((item) => (
+              <li key={item.id}>
                 <NavLink
-                  to={buildPath.biohackingDetail(articleItem.id)}
+                  to={data.buildLink(item.id)}
                   className={styles.dockLink}
-                  onClick={closeDock}
+                  onClick={handleNavClick}
                 >
-                  {articleItem.label}
+                  {item.label}
                 </NavLink>
               </li>
             ))}
           </ul>
         </div>
-        <Promo
-          to={isAuthenticated ? PATHS.PROFILE.PAGE : buildPath.auth()}
-          img={promoBio}
-          title={dictionary.promo.subscribeCta}
-        />
+        {data.promo}
       </div>
     );
   };
 
-  const handleNavLinkClick = () => {
-    closeDock();
+  const toggleDrawerSection = (key: DropdownKey) => {
+    setDrawerActive(prev => (prev === key ? null : key));
   };
 
   return (
-    <header
-      className={styles.header}
-      role="banner"
-    >
+    <header className={styles.header}>
       <nav
         className={styles.nav}
         aria-label={dictionary.nav.ariaPrimary}
@@ -314,7 +266,7 @@ export function Header() {
           to={PATHS.HOME}
           className={styles.logo}
           aria-label={dictionary.nav.ariaHome}
-          onClick={handleNavLinkClick}
+          onClick={handleNavClick}
         >
           <img
             src={logo}
@@ -326,37 +278,22 @@ export function Header() {
         <div className={styles.navCenter}>
           <ul
             className={styles.navAll}
-            aria-label="Main sections"
             onMouseLeave={scheduleClose}
           >
-            {LEFT_LINK_KEYS.map(menuKey => (
+            {LEFT_LINK_KEYS.map((key) => (
               <li
-                key={menuKey}
+                key={key}
                 className={styles.navItem}
-                onMouseEnter={() => onEnterNav(menuKey)}
-                aria-haspopup={DROPDOWN_KEYS.includes(menuKey)}
-                aria-expanded={dockOpen && activeKey === menuKey}
+                onMouseEnter={() => handleEnter(key)}
+                aria-haspopup={(DROPDOWN_KEYS as readonly string[]).includes(key)}
+                aria-expanded={dockOpen && activeKey === key}
               >
                 <NavLink
-                  to={
-                    menuKey === "about"
-                      ? PATHS.ABOUT
-                      : menuKey === "mental"
-                        ? PATHS.MENTAL_HEALTH.LIST
-                        : menuKey === "tests"
-                          ? PATHS.TESTS.LIST
-                          : PATHS.BIOHACKING.LIST
-                  }
+                  to={pathByKey[key]}
                   className={({isActive}) => `${styles.navLink} ${isActive ? styles.active : ""}`}
-                  onClick={handleNavLinkClick}
+                  onClick={handleNavClick}
                 >
-                  {menuKey === "about"
-                    ? dictionary.nav.about
-                    : menuKey === "mental"
-                      ? dictionary.nav.mental
-                      : menuKey === "tests"
-                        ? dictionary.nav.tests
-                        : dictionary.nav.biohacking}
+                  {labelByKey[key]}
                 </NavLink>
               </li>
             ))}
@@ -368,7 +305,7 @@ export function Header() {
             to={profileTo}
             className={styles.iconBtn}
             aria-label={dictionary.nav.profile}
-            onClick={handleNavLinkClick}
+            onClick={handleNavClick}
           >
             <UserRound className={styles.icon} />
           </NavLink>
@@ -378,50 +315,39 @@ export function Header() {
               ref={langBtnTopRef}
               type="button"
               className={styles.langBtn}
-              onClick={() => setLangOpenTop(v => !v)}
+              onClick={() => setLangOpenTop(!langOpenTop)}
               aria-haspopup="true"
               aria-expanded={langOpenTop}
-              aria-controls="lang-menu-top"
             >
-              {lang === "ru" ? dictionary.lang.ru : dictionary.lang.en}
+              {currentLangLabel}
             </button>
             <div
-              id="lang-menu-top"
               ref={langMenuTopRef}
               className={`${styles.langMenu} ${langOpenTop ? styles.langMenuOpen : ""}`}
               role="menu"
             >
-              <button
-                type="button"
-                className={styles.langOption}
-                role="menuitem"
-                aria-current={lang === "ru"}
-                onClick={() => {
-                  setLang("ru");
-                  setLangOpenTop(false);
-                }}
-              >
-                {dictionary.lang.ru}
-              </button>
-              <button
-                type="button"
-                className={styles.langOption}
-                role="menuitem"
-                aria-current={lang === "en"}
-                onClick={() => {
-                  setLang("en");
-                  setLangOpenTop(false);
-                }}
-              >
-                {dictionary.lang.en}
-              </button>
+              {langOptions.map((opt) => (
+                <button
+                  key={opt.code}
+                  type="button"
+                  className={styles.langOption}
+                  role="menuitem"
+                  aria-current={lang === opt.code}
+                  onClick={() => {
+                    setLang(opt.code);
+                    setLangOpenTop(false);
+                  }}
+                >
+                  {opt.label}
+                </button>
+              ))}
             </div>
           </div>
 
           <NavLink
             to={buildPath.supportList()}
             className={styles.cta}
-            onClick={handleNavLinkClick}
+            onClick={handleNavClick}
           >
             {dictionary.nav.sos}
           </NavLink>
@@ -433,7 +359,7 @@ export function Header() {
               aria-label={dictionary.nav.ariaOpenMenu}
               aria-expanded={drawerOpen}
               aria-controls="mobile-drawer"
-              onClick={() => setDrawerOpen(v => !v)}
+              onClick={() => setDrawerOpen(!drawerOpen)}
             >
               <span className={styles.burgerInner}>
                 <span />
@@ -447,12 +373,12 @@ export function Header() {
 
       <aside
         className={`${styles.dock} ${dockOpen && activeKey ? styles.dockOpen : ""}`}
-        onMouseEnter={cancelClose}
+        onMouseEnter={clearTimer}
         onMouseLeave={scheduleClose}
         aria-hidden={!dockOpen}
       >
         <div className={styles.dockInner}>
-          {renderDockContent(activeKey)}
+          {renderDock(activeKey)}
         </div>
       </aside>
 
@@ -494,80 +420,108 @@ export function Header() {
 
         <div className={styles.drawerScroll}>
           <ul className={styles.drawerList}>
-            {LEFT_LINK_KEYS.map(menuKey => (
-              <li key={menuKey}>
-                {DROPDOWN_KEYS.includes(menuKey)
-                  ? (
-                    <>
-                      <button
-                        type="button"
-                        className={`
-                        ${styles.drawerLink}
-                        ${styles.drawerLinkBtn}
-                        ${drawerActive === menuKey ? styles.drawerLinkOpen : ""}`}
-                        onClick={() => toggleDrawerSection(menuKey)}
-                        aria-expanded={drawerActive === menuKey}
-                      >
-                        {labelByKey(menuKey)}
-                        <span
-                          className={`${styles.chevron} ${drawerActive === menuKey ? styles.chevronDown : styles.chevronRight}`}
-                          aria-hidden
-                        />
-                      </button>
-
-                      <ul className={`${styles.submenu} ${drawerActive === menuKey ? styles.submenuOpen : ""}`}>
-                        {menuKey === "mental" &&
-                        mentalMenuItems.map(mentalItem => (
-                          <li key={mentalItem.id}>
-                            <NavLink
-                              to={buildPath.mentalHealthDetail(mentalItem.id)}
-                              className={styles.submenuLink}
-                              onClick={() => setDrawerOpen(false)}
-                            >
-                              {mentalItem.label}
-                            </NavLink>
-                          </li>
-                        ))}
-
-                        {menuKey === "tests" &&
-                        testMenuItems.map(testItem => (
-                          <li key={testItem.id}>
-                            <NavLink
-                              to={buildPath.testsDetail(testItem.id)}
-                              className={styles.submenuLink}
-                              onClick={() => setDrawerOpen(false)}
-                            >
-                              {testItem.label}
-                            </NavLink>
-                          </li>
-                        ))}
-
-                        {menuKey === "biohacking" &&
-                        biohackingMenuItems.map(articleItem => (
-                          <li key={articleItem.id}>
-                            <NavLink
-                              to={buildPath.biohackingDetail(articleItem.id)}
-                              className={styles.submenuLink}
-                              onClick={() => setDrawerOpen(false)}
-                            >
-                              {articleItem.label}
-                            </NavLink>
-                          </li>
-                        ))}
-                      </ul>
-                    </>
-                  )
-                  : (
+            <li>
+              <button
+                type="button"
+                className={`
+                  ${styles.drawerLink}
+                  ${styles.drawerLinkBtn}
+                  ${drawerActive === "mental" ? styles.drawerLinkOpen : ""}`}
+                onClick={() => toggleDrawerSection("mental")}
+                aria-expanded={drawerActive === "mental"}
+              >
+                {dictionary.nav.mental}
+                <span
+                  className={`${styles.chevron} ${drawerActive === "mental" ? styles.chevronDown : styles.chevronRight}`}
+                  aria-hidden="true"
+                />
+              </button>
+              <ul className={`${styles.submenu} ${drawerActive === "mental" ? styles.submenuOpen : ""}`}>
+                {mentalItems.map((item) => (
+                  <li key={item.id}>
                     <NavLink
-                      to={menuKey === "about" ? PATHS.ABOUT : PATHS.HOME}
-                      className={styles.drawerLink}
+                      to={buildPath.mentalHealthDetail(item.id)}
+                      className={styles.submenuLink}
                       onClick={() => setDrawerOpen(false)}
                     >
-                      {labelByKey(menuKey)}
+                      {item.label}
                     </NavLink>
-                  )}
-              </li>
-            ))}
+                  </li>
+                ))}
+              </ul>
+            </li>
+
+            <li>
+              <button
+                type="button"
+                className={`
+                ${styles.drawerLink}
+                ${styles.drawerLinkBtn}
+                ${drawerActive === "tests" ? styles.drawerLinkOpen : ""}`}
+                onClick={() => toggleDrawerSection("tests")}
+                aria-expanded={drawerActive === "tests"}
+              >
+                {dictionary.nav.tests}
+                <span
+                  className={`${styles.chevron} ${drawerActive === "tests" ? styles.chevronDown : styles.chevronRight}`}
+                  aria-hidden="true"
+                />
+              </button>
+              <ul className={`${styles.submenu} ${drawerActive === "tests" ? styles.submenuOpen : ""}`}>
+                {testItems.map((item) => (
+                  <li key={item.id}>
+                    <NavLink
+                      to={buildPath.testsDetail(item.id)}
+                      className={styles.submenuLink}
+                      onClick={() => setDrawerOpen(false)}
+                    >
+                      {item.label}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            </li>
+
+            <li>
+              <button
+                type="button"
+                className={`
+                ${styles.drawerLink}
+                ${styles.drawerLinkBtn}
+                ${drawerActive === "biohacking" ? styles.drawerLinkOpen : ""}`}
+                onClick={() => toggleDrawerSection("biohacking")}
+                aria-expanded={drawerActive === "biohacking"}
+              >
+                {dictionary.nav.biohacking}
+                <span
+                  className={`${styles.chevron} ${drawerActive === "biohacking" ? styles.chevronDown : styles.chevronRight}`}
+                  aria-hidden="true"
+                />
+              </button>
+              <ul className={`${styles.submenu} ${drawerActive === "biohacking" ? styles.submenuOpen : ""}`}>
+                {bioItems.map((item) => (
+                  <li key={item.id}>
+                    <NavLink
+                      to={buildPath.biohackingDetail(item.id)}
+                      className={styles.submenuLink}
+                      onClick={() => setDrawerOpen(false)}
+                    >
+                      {item.label}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            </li>
+
+            <li>
+              <NavLink
+                to={PATHS.ABOUT}
+                className={styles.drawerLink}
+                onClick={() => setDrawerOpen(false)}
+              >
+                {dictionary.nav.about}
+              </NavLink>
+            </li>
           </ul>
         </div>
 
@@ -577,12 +531,12 @@ export function Header() {
               ref={langBtnDrawerRef}
               type="button"
               className={styles.langBtn}
-              onClick={() => setLangOpenDrawer(v => !v)}
+              onClick={() => setLangOpenDrawer(!langOpenDrawer)}
               aria-haspopup="true"
               aria-expanded={langOpenDrawer}
               aria-controls="lang-menu-drawer"
             >
-              {lang === "ru" ? dictionary.lang.ru : dictionary.lang.en}
+              {currentLangLabel}
             </button>
             <div
               id="lang-menu-drawer"
@@ -590,30 +544,21 @@ export function Header() {
               className={`${styles.langMenu} ${styles.langMenuSide} ${langOpenDrawer ? styles.langMenuOpen : ""}`}
               role="menu"
             >
-              <button
-                type="button"
-                className={styles.langOption}
-                role="menuitem"
-                aria-current={lang === "ru"}
-                onClick={() => {
-                  setLang("ru");
-                  setLangOpenDrawer(false);
-                }}
-              >
-                {dictionary.lang.ru}
-              </button>
-              <button
-                type="button"
-                className={styles.langOption}
-                role="menuitem"
-                aria-current={lang === "en"}
-                onClick={() => {
-                  setLang("en");
-                  setLangOpenDrawer(false);
-                }}
-              >
-                {dictionary.lang.en}
-              </button>
+              {langOptions.map((opt) => (
+                <button
+                  key={opt.code}
+                  type="button"
+                  className={styles.langOption}
+                  role="menuitem"
+                  aria-current={lang === opt.code}
+                  onClick={() => {
+                    setLang(opt.code);
+                    setLangOpenDrawer(false);
+                  }}
+                >
+                  {opt.label}
+                </button>
+              ))}
             </div>
           </div>
 
@@ -640,7 +585,7 @@ export function Header() {
         to={PATHS.SOS.LIST}
         className={styles.sosFloat}
         aria-label="Страница поддержки"
-        onClick={handleNavLinkClick}
+        onClick={handleNavClick}
       >
         SOS
       </NavLink>
