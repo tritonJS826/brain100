@@ -9,17 +9,58 @@ export type ApiError = { detail?: string; message?: string };
 const API_BASE = "/br-general";
 const USER_STORAGE_KEY = "currentUser";
 
+/* ---------- type guards ---------- */
+
 function isObjectRecord(value: unknown): value is Record<string, unknown> {
   return !!value && typeof value === "object" && !Array.isArray(value);
 }
 
-function isUserWithTokens(value: unknown): value is UserWithTokens {
-  return isObjectRecord(value) && "user" in value && "tokens" in value;
+function isUser(x: unknown): x is User {
+  if (!isObjectRecord(x)) {
+    return false;
+  }
+
+  return (
+    typeof x.id === "string" &&
+    typeof x.email === "string" &&
+    typeof x.name === "string" &&
+    (x.role === "PATIENT" || x.role === "DOCTOR")
+  );
 }
 
-function isApiError(value: unknown): value is ApiError {
-  return isObjectRecord(value) && ("detail" in value || "message" in value);
+function hasUserEnvelope(x: unknown): x is { user: User } {
+  if (!isObjectRecord(x)) {
+    return false;
+  }
+  const u = (x as Record<string, unknown>).user;
+
+  return isUser(u);
 }
+
+function isUserWithTokens(x: unknown): x is UserWithTokens {
+  if (!isObjectRecord(x)) {
+    return false;
+  }
+  const uOk = isUser((x as Record<string, unknown>).user);
+  const t = (x as Record<string, unknown>).tokens;
+  const tOk =
+    isObjectRecord(t) &&
+    typeof t.access_token === "string" &&
+    typeof t.refresh_token === "string" &&
+    typeof t.token_type === "string";
+
+  return uOk && tOk;
+}
+
+function isApiError(x: unknown): x is ApiError {
+  return (
+    isObjectRecord(x) &&
+    (typeof (x as Record<string, unknown>).detail === "string" ||
+      typeof (x as Record<string, unknown>).message === "string")
+  );
+}
+
+/* ---------- tokens ---------- */
 
 export function getAccessToken(): string {
   const stored = localStorageWorker.getItemByKey<LSToken>("accessToken");
@@ -47,6 +88,8 @@ export function clearTokens(): void {
   localStorageWorker.removeItemByKey("refreshToken");
 }
 
+/* ---------- user persist ---------- */
+
 function setUserPersist(user: User | null): void {
   if (user) {
     localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
@@ -65,6 +108,8 @@ export function getUserPersist(): User | null {
     return null;
   }
 }
+
+/* ---------- helpers ---------- */
 
 async function safeJson<T>(res: Response): Promise<T | null> {
   const text = await res.text();
@@ -98,16 +143,36 @@ export async function apiFetch(path: string, init: RequestInit = {}): Promise<Re
   return fetch(url, {...init, headers});
 }
 
+/* ---------- API ---------- */
+
 export async function fetchCurrentUser(): Promise<User> {
-  const res = await apiFetch("/auth/me");
-  const data = await safeJson<UserWithTokens | ApiError>(res);
-  if (!res.ok || !isUserWithTokens(data)) {
+  const res = await apiFetch("/users/me");
+  const data = await safeJson<unknown>(res);
+
+  if (!res.ok) {
     throw buildError(res, isApiError(data) ? data : null, "Failed to fetch user");
   }
-  const {user, tokens} = data;
-  if (tokens?.access_token) {
-    saveTokens({access_token: tokens.access_token, refresh_token: tokens.refresh_token});
+
+  const xAccess = res.headers.get("x-new-access-token");
+  const xRefresh = res.headers.get("x-new-refresh-token");
+  if (xAccess || xRefresh) {
+    saveTokens({
+      access_token: xAccess ?? undefined,
+      refresh_token: xRefresh ?? undefined,
+    });
   }
+
+  let user: User | null = null;
+  if (isUserWithTokens(data)) {
+    user = data.user;
+  } else if (hasUserEnvelope(data)) {
+    user = data.user;
+  }
+
+  if (!user) {
+    throw new Error("Malformed /users/me response");
+  }
+
   setUserPersist(user);
 
   return user;
@@ -120,15 +185,14 @@ export async function loginByEmail(email: string, password: string): Promise<Use
     headers: {"Content-Type": "application/x-www-form-urlencoded"},
     body,
   });
-  const data = await safeJson<UserWithTokens | ApiError>(res);
+  const data = await safeJson<unknown>(res);
   if (!res.ok || !isUserWithTokens(data)) {
     throw buildError(res, isApiError(data) ? data : null, "Login failed");
   }
-  const {user, tokens} = data;
-  saveTokens({access_token: tokens.access_token, refresh_token: tokens.refresh_token});
-  setUserPersist(user);
+  saveTokens({access_token: data.tokens.access_token, refresh_token: data.tokens.refresh_token});
+  setUserPersist(data.user);
 
-  return user;
+  return data.user;
 }
 
 export async function registerByEmail(email: string, password: string, fullName: string): Promise<User> {
@@ -137,15 +201,14 @@ export async function registerByEmail(email: string, password: string, fullName:
     headers: {"Content-Type": "application/json"},
     body: JSON.stringify({email, password, name: fullName, role: "PATIENT"}),
   });
-  const data = await safeJson<UserWithTokens | ApiError>(res);
+  const data = await safeJson<unknown>(res);
   if (!res.ok || !isUserWithTokens(data)) {
     throw buildError(res, isApiError(data) ? data : null, "Registration failed");
   }
-  const {user, tokens} = data;
-  saveTokens({access_token: tokens.access_token, refresh_token: tokens.refresh_token});
-  setUserPersist(user);
+  saveTokens({access_token: data.tokens.access_token, refresh_token: data.tokens.refresh_token});
+  setUserPersist(data.user);
 
-  return user;
+  return data.user;
 }
 
 export async function logoutUser(): Promise<void> {
