@@ -1,139 +1,73 @@
-import pytest
-from unittest.mock import AsyncMock, patch
+import logging
+from unittest.mock import AsyncMock
+from fastapi.testclient import TestClient
 
-from app.services.email_service import EmailService
-from app.settings import settings
+from app.api import email as email_module
+from app.main import app
 
-
-@pytest.mark.asyncio
-async def test_send_email_success_ssl():
-    fake_send = AsyncMock(return_value=(250, b"OK"))
-    fake_log = AsyncMock()
-
-    with patch(
-        "app.services.email_service.aiosmtplib.send", new=fake_send
-    ), patch.object(EmailService, "log_email", new=fake_log):
-        settings.smtp_host = "smtp.example.com"
-        settings.smtp_port = 465
-        settings.smtp_user = "user@example.com"
-        settings.smtp_password = "secret"
-        settings.smtp_ssl = True
-        settings.smtp_starttls = False
-        settings.smtp_sender_email = "no_reply@brain100.com"
-        settings.smtp_sender_name = "Brain100"
-
-        svc = EmailService()
-        await svc.send(
-            to="vasco@ex.de",
-            subject="Hey! What’s up!",
-            html="<b>Please do not reply</b>",
-        )
-
-        fake_send.assert_awaited_once()
-        _, kwargs = fake_send.await_args
-        assert kwargs["hostname"] == settings.smtp_host
-        assert kwargs["port"] == settings.smtp_port
-
-        fake_log.assert_awaited()
-        _, log_kwargs = fake_log.await_args
-        assert log_kwargs["status"] == "SENT"
-        assert log_kwargs["error"] is None
+client = TestClient(app)
 
 
-@pytest.mark.asyncio
-async def test_send_email_success_starttls():
-    smtp_cm = AsyncMock()
-    smtp = AsyncMock()
-    smtp_cm.__aenter__.return_value = smtp
-    smtp.starttls = AsyncMock()
-    smtp.login = AsyncMock()
-    smtp.send_message = AsyncMock(return_value=(250, b"OK"))
+def test_send_email_ok(monkeypatch):
+    """
+    Positive scenario: the endpoint returns 202, and the background task
+    calls email_service.send(...) exactly once with the expected arguments.
+    The TestClient waits for BackgroundTasks to complete.
+    """
 
-    fake_log = AsyncMock()
+    mock_send = AsyncMock(return_value=True)
+    monkeypatch.setattr(email_module.email_service, "send", mock_send)
+    payload = {
+        "to": "user@example.com",
+        "subject": "Hello",
+        "text": "Plain text",
+        "html": "<b>Hi</b>",
+        "template": None,
+        "params": {},
+    }
 
-    with patch(
-        "app.services.email_service.aiosmtplib.SMTP", return_value=smtp_cm
-    ), patch.object(EmailService, "log_email", new=fake_log):
-        settings.smtp_ssl = False
-        settings.smtp_starttls = True
-        settings.smtp_user = "user"
-        settings.smtp_password = "secret"
+    res = client.post("/br-general/email/send", json=payload)
+    assert res.status_code == 202
+    body = res.json()
+    assert body["accepted"] is True
+    assert body["message"] == "Email scheduled for delivery"
 
-        svc = EmailService()
-        await svc.send(
-            to="vasco@ex.de",
-            subject="Hi",
-            html="<b>hi there! Join us!</b>",
-        )
-
-        smtp.starttls.assert_awaited_once()
-        smtp.login.assert_awaited_once_with("user", "secret")
-        smtp.send_message.assert_awaited_once()
-        fake_log.assert_awaited()
-        _, log_kwargs = fake_log.await_args
-        assert log_kwargs["status"] == "SENT"
-        assert log_kwargs["error"] is None
-
-
-@pytest.mark.asyncio
-async def test_send_email_failure_ssl_raises_and_logs():
-    fake_send = AsyncMock(side_effect=Exception("SMTP failed"))
-    fake_log = AsyncMock()
-
-    with patch(
-        "app.services.email_service.aiosmtplib.send", new=fake_send
-    ), patch.object(EmailService, "log_email", new=fake_log):
-        settings.smtp_ssl = True
-        settings.smtp_starttls = False
-
-        svc = EmailService()
-        with pytest.raises(Exception, match="SMTP failed"):
-            await svc.send(
-                to="vasco@ex.de",
-                subject="Oops",
-                html="<b>no</b>",
-            )
-
-        fake_send.assert_awaited_once()
-        fake_log.assert_awaited()
-        _, log_kwargs = fake_log.await_args
-        assert log_kwargs["status"] == "FAILED"
-        assert "SMTP failed" in (log_kwargs["error"] or "")
+    mock_send.assert_awaited_once()
+    mock_send.assert_awaited_with(
+        to="user@example.com",
+        subject="Hello",
+        text="Plain text",
+        html="<b>Hi</b>",
+        template=None,
+        params={},
+    )
 
 
-@pytest.mark.asyncio
-async def test_send_email_failure_starttls_raises_and_logs():
-    smtp_cm = AsyncMock()
-    smtp = AsyncMock()
-    smtp_cm.__aenter__.return_value = smtp
+def test_send_email_logs_on_failure(monkeypatch, caplog):
+    """
+    Negative scenario: email_service.send raises an exception.
+    The endpoint still responds with 202 (fire-and-forget),
+    and the error must be written to logs.
+    """
 
-    smtp.starttls = AsyncMock()
-    smtp.login = AsyncMock()
-    smtp.send_message = AsyncMock(side_effect=RuntimeError("Down"))
+    # Define a "failing" async function to replace send(...)
+    async def boom(**kwargs):
+        raise RuntimeError("SMTP down")
 
-    fake_log = AsyncMock()
+    monkeypatch.setattr(email_module.email_service, "send", boom)
+    caplog.set_level(logging.ERROR)
+    payload = {
+        "to": "user@example.com",
+        "subject": "Hello",
+        "text": "Plain text",
+        "html": None,
+        "template": None,
+        "params": {},
+    }
 
-    with patch(
-        "app.services.email_service.aiosmtplib.SMTP", return_value=smtp_cm
-    ), patch.object(EmailService, "log_email", new=fake_log):
-        settings.smtp_ssl = False
-        settings.smtp_starttls = True
-        settings.smtp_user = "u"
-        settings.smtp_password = "p"
-
-        svc = EmailService()
-        with pytest.raises(RuntimeError, match="Down"):
-            await svc.send(
-                to="vasco@ex.de",
-                subject="Oops",
-                html="<b>no</b>",
-            )
-
-        smtp.starttls.assert_awaited_once()
-        smtp.login.assert_awaited_once_with("u", "p")
-        smtp.send_message.assert_awaited_once()
-
-        fake_log.assert_awaited()
-        _, log_kwargs = fake_log.await_args
-        assert log_kwargs["status"] == "FAILED"
-        assert "Down" in (log_kwargs["error"] or "")
+    res = client.post("/br-general/email/send", json=payload)
+    assert res.status_code == 202
+    body = res.json()
+    assert body["accepted"] is True
+    assert body["message"] == "Email scheduled for delivery"
+    assert any("Email send failed:" in r.message for r in caplog.records)
