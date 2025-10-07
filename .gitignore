@@ -56,3 +56,5 @@ __pycache__/
 *.pyc
 *.pyd
 *.pyo
+/gateway/certs/dev.crt
+/gateway/certs/dev.key
