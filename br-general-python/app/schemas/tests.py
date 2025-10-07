@@ -34,11 +34,11 @@ class BulkSaveAnswersRequest(BaseModel):
     answers: List[BulkAnswerItem]
     stats: Dict[str, int] = Field(
         default_factory=dict,
-        description="Generic stats computed on the frontend (integers)",
+        description="Generic stats computed on the frontend (int)",
     )
     session_id: Optional[str] = Field(
         default=None,
-        description="Optional; if provided, answers will be appended to this session.",
+        description="Optional; attach answers to an existing session. If not provided, the system will start a new one",
     )
     user_id: Optional[str] = Field(default=None, alias="userId")
 
@@ -50,7 +50,7 @@ class BulkSaveAnswersResponse(BaseModel):
 
 
 class UserTestResult(BaseModel):
-    """One finished test summary for a user within a topic."""
+    """One finished test summary for a user within a topic"""
 
     testTitle: str
     finishedAt: datetime

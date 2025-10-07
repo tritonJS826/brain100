@@ -1,10 +1,13 @@
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional
+import json
+from datetime import datetime, timezone
 from prisma import Prisma
+from fastapi import HTTPException, status
+from typing import Any, Dict, List, Optional
 
 
-# ---------- READ ----------
+# Read queries
 
 
 async def get_test_with_questions_repo(
@@ -12,18 +15,17 @@ async def get_test_with_questions_repo(
 ) -> Optional[Dict[str, Any]]:
     """
     Load test with topic, questions and options.
-    prisma-client-py: лучше использовать include, а поля доставать в сервисе через атрибуты.
     """
     return await db.test.find_unique(
         where={"id": test_id},
         include={
-            "topic": True,  # целиком topic
+            "topic": True,
             "questions": {
                 "orderBy": {"createdAt": "asc"},
                 "include": {
                     "options": {
                         "orderBy": {"createdAt": "asc"},
-                        "include": {},  # целиком option
+                        "include": {},
                     }
                 },
             },
@@ -48,10 +50,22 @@ async def fetch_finished_tests_repo(
         where=where,
         order={"finishedAt": "desc"},
         include={
-            "test": {"select": {"id": True, "title": True, "topicId": True}},
+            "test": True,
         },
     )
-    return sessions
+
+    out: List[Dict[str, Any]] = []
+    for s in sessions:
+        out.append(
+            {
+                "testTitle": getattr(s.test, "title", "Unknown test")
+                if s.test
+                else "Unknown test",
+                "finishedAt": s.finishedAt,
+                "stats": getattr(s, "stats", {}) or {},
+            }
+        )
+    return out
 
 
 async def fetch_finished_topics_repo(
@@ -59,7 +73,6 @@ async def fetch_finished_topics_repo(
 ) -> List[Dict[str, Any]]:
     """
     Topics where the user has at least one finished test, with last finished date.
-    (No sorting by design — the frontend will sort.)
     """
     sessions = await db.testsession.find_many(
         where={"userId": user_id, "finishedAt": {"not": None}},
@@ -67,7 +80,7 @@ async def fetch_finished_topics_repo(
         include={
             "test": {
                 "include": {
-                    "topic": True,  # вернёт объект Topic или None
+                    "topic": True,
                 }
             }
         },
@@ -81,7 +94,6 @@ async def fetch_finished_topics_repo(
         if not t:
             continue
         tid = t.topicId
-        # title из связанного topic (если его нет — "Unknown topic")
         topic_title[tid] = (
             t.topic.title if getattr(t, "topic", None) else "Unknown topic"
         )
@@ -101,7 +113,7 @@ async def fetch_finished_topics_repo(
     ]
 
 
-# ---------- WRITE ----------
+# Write queries
 
 
 async def ensure_or_create_session_repo(
@@ -136,7 +148,7 @@ async def save_answers_bulk_repo(
     answers: List[Dict[str, Any]],
 ) -> int:
     """
-    Persist all answers for a session. Returns number of saved rows.
+    Persist all answers for a session.
     """
     saved = 0
     for a in answers:
@@ -159,17 +171,21 @@ async def finish_session_with_stats_repo(
     db: Prisma,
     *,
     session_id: str,
-    stats_json: Dict[str, int],
+    stats_json: dict,
 ) -> None:
     """
     Attach computed stats and mark session as finished.
     """
-    from datetime import datetime, timezone
-
-    await db.testsession.update(
-        where={"id": session_id},
-        data={
-            "stats": stats_json,
-            "finishedAt": datetime.now(timezone.utc),
-        },
-    )
+    try:
+        await db.testsession.update(
+            where={"id": session_id},
+            data={
+                "stats": json.dumps(stats_json),
+                "finishedAt": datetime.now(timezone.utc),
+            },
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"DB_ERROR: {e}",
+        )

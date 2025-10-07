@@ -14,11 +14,11 @@ from app.repositories.tests_repo import (
 )
 
 
-# ---------- Queries ----------
+# Read queries
 
 
 async def get_test_questions_service(db: Prisma, test_id: str) -> Dict[str, Any]:
-    """Return test with topic and questions + options."""
+    """Return test with topic and questions."""
     test = await get_test_with_questions_repo(db, test_id)
     if not test:
         raise HTTPException(status_code=404, detail="TEST_NOT_FOUND")
@@ -44,7 +44,7 @@ async def get_test_questions_service(db: Prisma, test_id: str) -> Dict[str, Any]
     }
 
 
-# ---------- Commands ----------
+# Write queries
 
 
 async def save_bulk_answers_service(
@@ -58,15 +58,14 @@ async def save_bulk_answers_service(
 ) -> Dict[str, Any]:
     """
     Save answers in bulk for an authenticated user and auto-finish the session.
-
-    Business rule: anonymous users cannot save; they can only read questions.
+    Anonymous users cannot save, but they can read questions.
     """
     if not user_id:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="AUTH_REQUIRED"
         )
 
-    # validate test exists (repo will fail later on connect otherwise)
+    # validate test exists
     test = await get_test_with_questions_repo(db, test_id)
     if not test:
         raise HTTPException(status_code=404, detail="TEST_NOT_FOUND")
@@ -77,7 +76,7 @@ async def save_bulk_answers_service(
             db, test_id=test_id, user_id=user_id, session_id=session_id
         )
     except ValueError as ex:
-        # Map repo errors to HTTP codes
+        # Map repo errors
         code_map = {
             "SESSION_NOT_FOUND": status.HTTP_404_NOT_FOUND,
             "SESSION_ALREADY_FINISHED": status.HTTP_400_BAD_REQUEST,
@@ -86,34 +85,23 @@ async def save_bulk_answers_service(
         raise HTTPException(status_code=code_map.get(str(ex), 400), detail=str(ex))
 
     # persist answers
-    saved = await save_answers_bulk_repo(db, session_id=session["id"], answers=answers)
+    saved = await save_answers_bulk_repo(db, session_id=session.id, answers=answers)
 
-    # attach stats & finish
-    await finish_session_with_stats_repo(db, session_id=session["id"], stats_json=stats)
-
-    return {"sessionId": session["id"], "savedCount": saved, "isFinished": True}
+    await finish_session_with_stats_repo(db, session_id=session.id, stats_json=stats)
+    return {"sessionId": session.id, "savedCount": saved, "isFinished": True}
 
 
-# ---------- Reports ----------
+# Reports
 
 
 async def get_finished_tests_service(
     db: Prisma, *, user_id: str, topic_id: Optional[str]
 ) -> List[Dict[str, Any]]:
     """
-    All finished test attempts for the current user (optionally for a single topic).
+    All finished test attempts for the current user.
+    Repo already returns dicts: {testTitle, finishedAt, stats}.
     """
-    sessions = await fetch_finished_tests_repo(db, user_id=user_id, topic_id=topic_id)
-    out: List[Dict[str, Any]] = []
-    for s in sessions:
-        out.append(
-            {
-                "testTitle": s["test"]["title"],
-                "finishedAt": s["finishedAt"],
-                "stats": s.get("stats") or {},
-            }
-        )
-    return out
+    return await fetch_finished_tests_repo(db, user_id=user_id, topic_id=topic_id)
 
 
 async def get_finished_topics_service(
@@ -121,6 +109,5 @@ async def get_finished_topics_service(
 ) -> List[Dict[str, Any]]:
     """
     All topics where the user has at least one finished test with last finished date.
-    (Frontend is responsible for sorting/formatting.)
     """
     return await fetch_finished_topics_repo(db, user_id=user_id)
