@@ -35,6 +35,14 @@ model User {
 
   sessions      TestSession[]
   subscriptions Subscription[]
+
+  // Personal data fields
+  // e.g. "Dresden, Germany"
+  city     String?
+  // e.g. "+49 151 23456789"
+  phone    String?
+  // e.g. "Deutsch, English"
+  language String?
 }
 
 model Test {
