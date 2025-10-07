@@ -1,25 +1,24 @@
 export const PATHS = {
   HOME: "/",
   ABOUT: "/about",
-  MENTAL_HEALTH: {LIST: "/mental-health", DETAIL: "/mental-health/:id"},
+  CONDITIONS: {LIST: "/conditions", DETAIL: "/conditions/:id"},
   TESTS: {LIST: "/tests", DETAIL: "/tests/:id"},
   BIOHACKING: {LIST: "/biohacking", DETAIL: "/biohacking/:id"},
-  SOS: {LIST: "/support", DETAIL: "/support/:id", CONSULTATION: "/support/consultation"},
+  SOS: {PAGE: "/sos", CONSULTATION: "/sos/consultation"},
   PROFILE: {PAGE: "/profile", CONDITION: "/profile/condition/:id"},
   AUTH: {PAGE: "/auth"},
   NOT_FOUND: "*",
 } as const;
 
 export const buildPath = {
-  mentalHealthList: () => PATHS.MENTAL_HEALTH.LIST,
+  conditionsList: () => PATHS.CONDITIONS.LIST,
   testsList: () => PATHS.TESTS.LIST,
   biohackingList: () => PATHS.BIOHACKING.LIST,
-  supportList: () => PATHS.SOS.LIST,
+  sosList: () => PATHS.SOS.PAGE,
 
-  mentalHealthDetail: (id: string | number) => `/mental-health/${id}`,
+  conditionsDetail: (id: string | number) => `/conditions/${id}`,
   testsDetail: (id: string | number) => `/tests/${id}`,
   biohackingDetail: (id: string | number) => `/biohacking/${id}`,
-  supportDetail: (id: string | number) => `/support/${id}`,
 
   supportConsultation: () => PATHS.SOS.CONSULTATION,
   about: () => PATHS.ABOUT,

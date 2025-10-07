@@ -7,12 +7,12 @@ import {DictionaryKey} from "src/dictionary/dictionaryLoader";
 import {useDictionary} from "src/dictionary/useDictionary";
 import {PATHS} from "src/routes/routes";
 import {accessTokenAtomWithPersistence} from "src/state/authAtom";
-import styles from "src/pages/supportPage/SupportPage.module.scss";
+import styles from "src/pages/sosPage/SosPage.module.scss";
 
 const hotlineNumber = import.meta.env.VITE_HOTLINE_PHONE as string | undefined;
 
 type SelfhelpItem = { id: string; link: string; title: string; desc: string };
-type SupportDictionary = {
+type SosDictionary = {
   page: { title: string; subtitle: string };
   emergency: { title: string; callNow: string; ariaLabel: string };
   consultation: { title: string; lead: string; cta: string };
@@ -20,8 +20,8 @@ type SupportDictionary = {
   selfhelpItems: SelfhelpItem[];
 };
 
-export function SupportPage() {
-  const dictionary = useDictionary(DictionaryKey.SUPPORT) as SupportDictionary | null;
+export function SosPage() {
+  const dictionary = useDictionary(DictionaryKey.SOS) as SosDictionary | null;
 
   const access = useAtomValue(accessTokenAtomWithPersistence);
   const isAuthenticated = Boolean(access?.token);
@@ -96,7 +96,7 @@ export function SupportPage() {
               key={item.id}
               className={styles.topic}
             >
-              <Button to={`${PATHS.MENTAL_HEALTH.LIST}${item.link}`}>
+              <Button to={`${PATHS.CONDITIONS.LIST}${item.link}`}>
                 {item.title}
               </Button>
               <p className={styles.topicDesc}>

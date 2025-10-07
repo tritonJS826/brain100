@@ -22,7 +22,7 @@ export function Footer() {
     title: dictionary.sectionsTitle,
     links: [
       {label: dictionary.links.about, to: PATHS.ABOUT},
-      {label: dictionary.links.states, to: PATHS.MENTAL_HEALTH.LIST},
+      {label: dictionary.links.states, to: PATHS.CONDITIONS.LIST},
       {label: dictionary.links.tests, to: PATHS.TESTS.LIST},
     ],
   } as const;
@@ -30,7 +30,7 @@ export function Footer() {
   const COL_2 = {
     title: dictionary.resourcesTitle,
     links: [
-      {label: dictionary.links.statesCatalog, to: PATHS.MENTAL_HEALTH.LIST},
+      {label: dictionary.links.statesCatalog, to: PATHS.CONDITIONS.LIST},
       {label: dictionary.links.testsCatalog, to: PATHS.TESTS.LIST},
       {label: dictionary.links.biohackingCatalog, to: PATHS.BIOHACKING.LIST},
     ],

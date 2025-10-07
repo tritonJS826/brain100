@@ -4,9 +4,9 @@ import {DictionaryKey} from "src/dictionary/dictionaryLoader";
 import {useDictionary} from "src/dictionary/useDictionary";
 import {PATHS} from "src/routes/routes";
 import {sendConsultationEmail} from "src/services/support";
-import styles from "src/pages/supportPage/SupportConsultationPage/SupportConsultationPage.module.scss";
+import styles from "src/pages/sosPage/SosConsultationPage/SosConsultationPage.module.scss";
 
-type SupportFormDictionary = {
+type SosFormDictionary = {
   title: string;
   subtitle: string;
   labels: {
@@ -33,12 +33,12 @@ type SupportFormDictionary = {
   error: string;
 };
 
-type SupportDictionary = {
-  form: SupportFormDictionary;
+type SosDictionary = {
+  form: SosFormDictionary;
 };
 
-export function SupportConsultationPage() {
-  const dictionary = useDictionary(DictionaryKey.SUPPORT) as SupportDictionary | null;
+export function SosConsultationPage() {
+  const dictionary = useDictionary(DictionaryKey.SOS) as SosDictionary | null;
 
   const [sentId, setSentId] = useState<string | null>(null);
   const [sendError, setSendError] = useState<string | null>(null);

@@ -2,15 +2,15 @@ import {Link, useParams} from "react-router-dom";
 import {DictionaryKey} from "src/dictionary/dictionaryLoader";
 import {useDictionary} from "src/dictionary/useDictionary";
 import {PATHS} from "src/routes/routes";
-import styles from "src/pages/articlesListPage/articles/ArticleDetailPage.module.scss";
+import styles from "src/pages/conditionsListPage/conditionArticle/ConditionArticleDetailPage.module.scss";
 
 type ParagraphNode = { type: "paragraph"; text: string };
 type QuoteNode = { type: "quote"; text: string; author?: string };
 type ContentNode = ParagraphNode | QuoteNode;
 
-export function ArticleDetailPage() {
+export function ConditionArticleDetailPage() {
   const {id} = useParams<{ id: string }>();
-  const dictionary = useDictionary(DictionaryKey.MENTAL);
+  const dictionary = useDictionary(DictionaryKey.CONDITIONS);
 
   if (!dictionary) {
     return (
@@ -29,7 +29,7 @@ export function ArticleDetailPage() {
             {dictionary.notFound}
           </p>
           <Link
-            to={PATHS.MENTAL_HEALTH.LIST}
+            to={PATHS.CONDITIONS.LIST}
             className={styles.btn}
           >
             {dictionary.backToAll}
@@ -97,7 +97,7 @@ export function ArticleDetailPage() {
 
       <div className={styles.actions}>
         <Link
-          to={PATHS.MENTAL_HEALTH.LIST}
+          to={PATHS.CONDITIONS.LIST}
           className={styles.btn}
         >
           {dictionary.backToAll}

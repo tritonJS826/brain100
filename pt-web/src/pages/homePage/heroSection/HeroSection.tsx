@@ -27,9 +27,9 @@ export function Hero() {
     if (intent === OPTION_TEST_VALUE) {
       navigate(PATHS.TESTS.LIST);
     } else if (intent === OPTION_STATES_VALUE) {
-      navigate(PATHS.MENTAL_HEALTH.LIST);
+      navigate(PATHS.CONDITIONS.LIST);
     } else if (intent === OPTION_CONTACT_VALUE) {
-      navigate(PATHS.ABOUT);
+      navigate(PATHS.SOS.PAGE);
     }
   };
 

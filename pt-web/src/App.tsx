@@ -4,16 +4,16 @@ import {Footer} from "src/components/Footer/Footer";
 import {Header} from "src/components/Header/Header";
 import {ScrollToTop} from "src/components/ScrollToTop/ScrollToTop";
 import {AboutPage} from "src/pages/aboutUsPage/AboutUsPage";
-import {ArticleDetailPage} from "src/pages/articlesListPage/articles/ArticleDetailPage";
-import {ArticlesListPage} from "src/pages/articlesListPage/ArticlesListPage";
 import {AuthPage} from "src/pages/authPage/AuthPage";
 import {BiohackingDetailPage} from "src/pages/biohackingListPage/articles/BiohackingDetailPage";
 import {BiohackingListPage} from "src/pages/biohackingListPage/BiohackingListPage";
+import {ConditionArticleDetailPage} from "src/pages/conditionsListPage/conditionArticle/ConditionArticleDetailPage";
+import {ConditionsListPage} from "src/pages/conditionsListPage/ConditionsListPage";
 import {HomePage} from "src/pages/homePage/Homepage";
 import {ProfilePage} from "src/pages/profilePage/ProfilePage";
 import {ConditionHistoryPage} from "src/pages/profilePage/сonditionHistoryPage/ConditionHistoryPage";
-import {SupportConsultationPage} from "src/pages/supportPage/SupportConsultationPage/SupportConsultationPage";
-import {SupportPage} from "src/pages/supportPage/SupportPage";
+import {SosConsultationPage} from "src/pages/sosPage/SosConsultationPage/SosConsultationPage";
+import {SosPage} from "src/pages/sosPage/SosPage";
 import {Test} from "src/pages/testsListPage/tests/Test";
 import {TestsList} from "src/pages/testsListPage/TestsListPage";
 import {PATHS} from "src/routes/routes";
@@ -42,12 +42,12 @@ export function App() {
           />
 
           <Route
-            path={PATHS.MENTAL_HEALTH.LIST}
-            element={<ArticlesListPage />}
+            path={PATHS.CONDITIONS.LIST}
+            element={<ConditionsListPage />}
           />
           <Route
-            path={PATHS.MENTAL_HEALTH.DETAIL}
-            element={<ArticleDetailPage />}
+            path={PATHS.CONDITIONS.DETAIL}
+            element={<ConditionArticleDetailPage />}
           />
 
           <Route
@@ -68,12 +68,12 @@ export function App() {
             element={<BiohackingDetailPage />}
           />
           <Route
-            path={PATHS.SOS.LIST}
-            element={<SupportPage />}
+            path={PATHS.SOS.PAGE}
+            element={<SosPage />}
           />
           <Route
             path={PATHS.SOS.CONSULTATION}
-            element={<SupportConsultationPage />}
+            element={<SosConsultationPage />}
           />
           <Route
             path={PATHS.AUTH.PAGE}
