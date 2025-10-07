@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from app.db import db
 
 router = APIRouter()
@@ -6,11 +6,12 @@ router = APIRouter()
 
 @router.get("/")
 async def root():
-    users_count = await db.user.count()
-    return {
-        "status": "Backend with Prisma and FastAPI - working! (/)",
-        "users_in_db": users_count,
-    }
+    try:
+        users_count = await db.user.count()
+        return {"status": "ok", "users": users_count}
+    except Exception as e:
+        # 👇 this block is what your test needs to execute
+        raise HTTPException(status_code=500, detail=f"Health check failed: {e}")
 
 
 @router.get("/general")
