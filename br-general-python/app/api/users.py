@@ -3,6 +3,8 @@ from fastapi.security import OAuth2PasswordBearer
 
 from jose import JWTError, ExpiredSignatureError, jwt
 
+from prisma.errors import RecordNotFoundError
+
 from app.schemas.user import (
     UserWithTokens,
     UserOut,
@@ -197,31 +199,6 @@ async def get_user_profile(current=Depends(get_current_user)):
     }
 
 
-@router.put(
-    "/me/profile",
-    status_code=status.HTTP_204_NO_CONTENT,
-    summary="Update User Profile",
-    response_description="No content (update successful)",
-    tags=["users"],
-)
-async def update_user_profile(
-    data: UserProfileUpdate,
-    current=Depends(get_current_user),
-):
-    user_id = current["user_id"]
-
-    update_data = {k: v for k, v in data.model_dump().items() if v is not None}
-    if not update_data:
-        raise HTTPException(status_code=400, detail="No fields to update")
-
-    updated = await db.user.update(where={"id": user_id}, data=update_data)
-    if not updated:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    # Return no content, only 204 status
-    return Response(status_code=status.HTTP_204_NO_CONTENT)
-
-
 @router.patch(
     "/me/profile",
     status_code=status.HTTP_204_NO_CONTENT,
@@ -238,5 +215,9 @@ async def patch_user_profile(
     if not update_data:
         raise HTTPException(status_code=400, detail="No fields to update")
 
-    await db.user.update(where={"id": user_id}, data=update_data)
+    try:
+        await db.user.update(where={"id": user_id}, data=update_data)
+    except RecordNotFoundError:
+        raise HTTPException(status_code=404, detail="User not found")
+
     return Response(status_code=status.HTTP_204_NO_CONTENT)
