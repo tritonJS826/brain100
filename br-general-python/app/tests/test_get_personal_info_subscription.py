@@ -65,7 +65,7 @@ async def test_multiple_users_personal(index):
 
             await db.subscription.create(
                 data={
-                    "user": {"connect": {"id": user_id}},  # ✅ link by relation
+                    "user": {"connect": {"id": user_id}},  # link by relation
                     "plan": plan,
                     "startedAt": started_at,
                     "endsAt": ends_at,
