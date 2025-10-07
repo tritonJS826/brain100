@@ -50,7 +50,7 @@ async def test_multiple_users_profile_and_tests(index):
             "phone": f"+49 176 {random.randint(10000000, 99999999)}",
             "language": random.choice(["Deutsch", "English", "Deutsch, English"]),
         }
-        response = await client.put(
+        response = await client.patch(
             "/br-general/users/me/profile", json=update_data, headers=headers
         )
         assert response.status_code == 204, f"Unexpected status: {response.status_code}"
