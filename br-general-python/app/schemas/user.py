@@ -81,8 +81,17 @@ class UserPersonalInfo(BaseModel):
     name: str
     role: Role
     plan: str
+    city: Optional[str] = None
+    phone: Optional[str] = None
+    language: Optional[str] = None
     consultations_used: int
     consultations_included: int
     days_to_end: int
     # add id + title for each test topic
     test_topics: list[TestTopic] = []
+
+
+class UserProfileUpdate(BaseModel):
+    city: Optional[str] = None
+    phone: Optional[str] = None
+    language: Optional[str] = None

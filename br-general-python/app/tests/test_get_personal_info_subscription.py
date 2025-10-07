@@ -45,7 +45,6 @@ async def test_multiple_users_personal(index):
         )
         user_id = decoded["sub"]
 
-        # 3 create subscription record for the user
         # Check if user already has a subscription
         existing_sub = await db.subscription.find_first(where={"userId": user_id})
         if existing_sub:
@@ -94,6 +93,53 @@ async def test_multiple_users_personal(index):
             f"Expected {expected_days_to_end}, got {data['days_to_end']}"
         )
         assert 15 <= expected_days_to_end <= 90
+
+
+@pytest.mark.asyncio
+async def test_existing_subscription_branch():
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url=settings.base_url) as client:
+        email = "personal_existing@example.com"
+        password = "StrongPass!"
+        name = "Existing User"
+        role = Role.PATIENT
+
+        await client.post(
+            "/br-general/auth/register",
+            json={"email": email, "password": password, "name": name, "role": role},
+        )
+
+        form_data = {"username": email, "password": password}
+        response = await client.post("/br-general/auth/login", data=form_data)
+        tokens = response.json()["tokens"]
+        decoded = jwt.decode(
+            tokens["access_token"],
+            settings.jwt_secret_key,
+            algorithms=[settings.jwt_algorithm],
+        )
+        user_id = decoded["sub"]
+
+        # ✅ Pre-create subscription
+        await db.subscription.create(
+            data={
+                "user": {"connect": {"id": user_id}},
+                "plan": "FREE",
+                "startedAt": datetime(2025, 1, 1),
+                "endsAt": datetime(2025, 2, 1),
+                "consultationsIncluded": 3,
+                "consultationsUsed": 1,
+            }
+        )
+
+        # Now call /me/personal again (this triggers the "existing_sub" branch)
+        headers = {"Authorization": f"Bearer {tokens['access_token']}"}
+        response = await client.get("/br-general/users/me/personal", headers=headers)
+        assert response.status_code == 200
+        data = response.json()
+
+        assert data["plan"] == "FREE"
+        assert data["consultations_used"] == 1
+        assert data["consultations_included"] == 3
 
 
 @pytest.fixture(scope="function", autouse=True)

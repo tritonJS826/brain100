@@ -1,9 +1,16 @@
-from fastapi import APIRouter, Depends, HTTPException, Header
+from fastapi import APIRouter, Depends, HTTPException, Header, Response, status
 from fastapi.security import OAuth2PasswordBearer
 
 from jose import JWTError, ExpiredSignatureError, jwt
 
-from app.schemas.user import UserWithTokens, UserOut, UserPersonalInfo
+from prisma.errors import RecordNotFoundError
+
+from app.schemas.user import (
+    UserWithTokens,
+    UserOut,
+    UserPersonalInfo,
+    UserProfileUpdate,
+)
 from app.services.auth_service import AuthService
 from app.repositories.user_repository import UserRepository
 from app.db import db
@@ -114,6 +121,9 @@ async def get_personal_info(current=Depends(get_current_user)):
         "name": user.name,
         "role": user.role,
         "plan": user_subscription.plan,
+        "city": user.city,
+        "phone": user.phone,
+        "language": user.language,
         "consultations_used": user_subscription.consultationsUsed,
         "consultations_included": user_subscription.consultationsIncluded,
         "days_to_end": (user_subscription.endsAt - user_subscription.startedAt).days,
@@ -171,3 +181,43 @@ async def get_user_test_results(test_id: str, current=Depends(get_current_user))
         "description": test_info.description,
         "sessions": results,
     }
+
+
+@router.get("/me/profile")
+async def get_user_profile(current=Depends(get_current_user)):
+    user_id = current["user_id"]
+    user = await db.user.find_unique(where={"id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return {
+        "email": user.email,
+        "name": user.name,
+        "city": user.city,
+        "phone": user.phone,
+        "language": user.language,
+    }
+
+
+@router.patch(
+    "/me/profile",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Partially Update User Profile",
+    response_description="No content (partial update successful)",
+    tags=["users"],
+)
+async def patch_user_profile(
+    data: UserProfileUpdate,
+    current=Depends(get_current_user),
+):
+    user_id = current["user_id"]
+    update_data = {k: v for k, v in data.model_dump().items() if v is not None}
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No fields to update")
+
+    try:
+        await db.user.update(where={"id": user_id}, data=update_data)
+    except RecordNotFoundError:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
