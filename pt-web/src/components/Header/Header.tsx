@@ -14,8 +14,11 @@ import {buildPath, PATHS} from "src/routes/routes";
 import {accessTokenAtomWithPersistence} from "src/state/authAtom";
 import styles from "src/components/Header/Header.module.scss";
 
-const DROPDOWN_KEYS = ["mental", "tests", "biohacking"];
-type DropdownKey = typeof DROPDOWN_KEYS[number];
+type DropdownKey = "mental" | "tests" | "biohacking";
+
+function isDropdownKey(key: MenuKey): key is DropdownKey {
+  return key === "mental" || key === "tests" || key === "biohacking";
+}
 
 export function Header() {
   const dictionary = useDictionary(DictionaryKey.HEADER);
@@ -52,9 +55,8 @@ export function Header() {
     }, TIMEOUT_MENU_MS);
   };
   const handleMenuHover = (key: MenuKey) => {
-    const isDropdown = DROPDOWN_KEYS.includes(key);
-    if (isDropdown) {
-      setActiveKey(key as DropdownKey);
+    if (isDropdownKey(key)) {
+      setActiveKey(key);
       setDockOpen(true);
       clearTimer();
     } else {
@@ -82,6 +84,35 @@ export function Header() {
 
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
+
+  useEffect(() => {
+    const onDocumentClick = (e: MouseEvent) => {
+      if (!dockOpen) {
+        return;
+      }
+
+      const target = e.target as Node | null;
+      if (!target) {
+        return;
+      }
+
+      const dockEl = document.querySelector(`.${styles.dock}`);
+      const navEl = document.querySelector(`.${styles.navAll}`);
+
+      const clickInsideDock = dockEl ? dockEl.contains(target) : false;
+      const clickInsideNav = navEl ? navEl.contains(target) : false;
+
+      if (!clickInsideDock && !clickInsideNav) {
+        clearTimer();
+        setDockOpen(false);
+        setActiveKey(null);
+      }
+    };
+
+    document.addEventListener("mousedown", onDocumentClick);
+
+    return () => document.removeEventListener("mousedown", onDocumentClick);
+  }, [dockOpen]);
 
   useEffect(() => {
     if (!langOpenTop) {
@@ -299,7 +330,7 @@ export function Header() {
                 key={key}
                 className={styles.navItem}
                 onMouseEnter={() => handleMenuHover(key)}
-                aria-haspopup={DROPDOWN_KEYS.includes(key)}
+                aria-haspopup={isDropdownKey(key)}
                 aria-expanded={dockOpen && activeKey === key}
               >
                 <NavLink
