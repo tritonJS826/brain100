@@ -1,0 +1,92 @@
+services:
+  br-postgres-general:
+    build:
+      context: .
+      dockerfile: ./postgres/postgres-general.Dockerfile
+    ports:
+      - "5432:5432"
+    volumes:
+      - br-postgres-general:/var/lib/postgresql/data
+    env_file:
+      - ./br-general-python/.env
+    networks:
+      - app-network
+
+  br-general-python:
+    build:
+      context: .
+      dockerfile: br-general-python/Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - br-postgres-general
+    networks:
+      - app-network
+
+  br-web:
+    build:
+      context: .
+      dockerfile: ./pt-web/Dockerfile
+    ports:
+      - "5174:80"
+    networks:
+      - app-network
+
+  br-gateway:
+    image: nginx:1.24.0-alpine
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./gateway/certs:/etc/letsencrypt:ro
+      - ./gateway/html:/usr/share/nginx/html:ro
+      - ./gateway/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - app-network
+    depends_on:
+      - br-general-python
+      - br-web
+
+  certbot:
+    image: python:3.12-alpine
+    container_name: certbot
+    volumes:
+      - ./gateway/certs:/etc/letsencrypt
+      - ./gateway/html:/usr/share/nginx/html
+      - /var/run/docker.sock:/var/run/docker.sock
+    entrypoint: /bin/sh
+    command: >
+      -c "
+      set -e;
+      apk add --no-cache docker-cli;
+      pip install --no-cache-dir certbot;
+      echo 'Starting automatic SSL renewal loop...';
+      while :; do
+        echo $(date '+%Y-%m-%d %H:%M:%S') 'Renewing certificates...';
+        if certbot renew --quiet --no-random-sleep-on-renew; then
+          echo 'Renewal successful';
+        else
+          echo 'No certificates yet or renewal failed';
+        fi;
+        echo 'Reloading nginx...';
+        if docker ps --format '{{.Names}}' | grep -q 'nginx'; then
+          docker exec nginx nginx -s reload && echo 'Nginx reloaded successfully';
+        else
+          echo 'Nginx container not running, skipping reload';
+        fi
+        sleep 12h & wait $${!};
+      done"
+    healthcheck:
+      test: [ "CMD-SHELL", "certbot certificates --quiet | grep -q 'Certificate Name'" ]
+      interval: 1h
+      timeout: 30s
+      retries: 3
+      start_period: 2m
+
+volumes:
+  br-postgres-general:
+
+networks:
+  app-network:
+    driver: bridge
