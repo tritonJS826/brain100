@@ -4,8 +4,8 @@ import type {AuthDictEn} from "src/dictionary/dictionaries/auth/auth.en";
 import type {AuthDictRu} from "src/dictionary/dictionaries/auth/auth.ru";
 import type {BiohackingDictEn} from "src/dictionary/dictionaries/biohacking/biohacking.en";
 import type {BiohackingDictRu} from "src/dictionary/dictionaries/biohacking/biohacking.ru";
-import type {CommonDictEn} from "src/dictionary/dictionaries/common/common.en";
-import type {CommonDictRu} from "src/dictionary/dictionaries/common/common.ru";
+import type {CommonDictEn, NotFoundDictEn} from "src/dictionary/dictionaries/common/common.en";
+import type {CommonDictRu, NotFoundDictRu} from "src/dictionary/dictionaries/common/common.ru";
 import type {ConditionsDictEn} from "src/dictionary/dictionaries/conditions/conditions.en";
 import type {ConditionsDictRu} from "src/dictionary/dictionaries/conditions/conditions.ru";
 import type {FooterDictEn} from "src/dictionary/dictionaries/footer/footer.en";
@@ -33,6 +33,7 @@ export enum DictionaryKey {
   SOS = "sos",
   PROFILE = "profile",
   AUTH = "auth",
+  NOT_FOUND = "notFound",
 }
 
 export type Language = "en" | "ru";
@@ -49,6 +50,7 @@ export type DictionaryMap = {
   [DictionaryKey.SOS]: SosDictEn | SosDictRu;
   [DictionaryKey.PROFILE]: ProfileDictEn | ProfileDictRu;
   [DictionaryKey.AUTH]: AuthDictEn | AuthDictRu;
+  [DictionaryKey.NOT_FOUND]: NotFoundDictEn | NotFoundDictRu;
 };
 
 const loaders: {
@@ -99,6 +101,10 @@ const loaders: {
   [DictionaryKey.AUTH]: {
     en: async () => (await import("./dictionaries/auth/auth.en")).authDict,
     ru: async () => (await import("./dictionaries/auth/auth.ru")).authDict,
+  },
+  [DictionaryKey.NOT_FOUND]: {
+    en: async () => (await import("./dictionaries/common/common.en")).notFoundDict,
+    ru: async () => (await import("./dictionaries/common/common.ru")).notFoundDict,
   },
 };
 
