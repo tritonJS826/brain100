@@ -5,7 +5,7 @@ import {PageHeader} from "src/components/PageHeader/PageHeader";
 import {DictionaryKey} from "src/dictionary/dictionaryLoader";
 import {useDictionary} from "src/dictionary/useDictionary";
 import {buildPath} from "src/routes/routes";
-import styles from "src/pages/articlesListPage/ArticlesListPage.module.scss";
+import styles from "src/pages/conditionsListPage/ConditionsListPage.module.scss";
 
 type ArticleItem = {
   id: string;
@@ -24,8 +24,8 @@ type ArticlesDictionary = {
   articles: ArticleItem[];
 };
 
-export function ArticlesListPage() {
-  const dictionary = useDictionary(DictionaryKey.MENTAL) as ArticlesDictionary | null;
+export function ConditionsListPage() {
+  const dictionary = useDictionary(DictionaryKey.CONDITIONS) as ArticlesDictionary | null;
 
   if (!dictionary) {
     return (
@@ -56,7 +56,7 @@ export function ArticlesListPage() {
             <div className={styles.cardBody}>
               <h2 className={styles.cardTitle}>
                 <Link
-                  to={buildPath.mentalHealthDetail(item.id)}
+                  to={buildPath.conditionsDetail(item.id)}
                   className={styles.cardLink}
                 >
                   {item.title}
@@ -70,7 +70,7 @@ export function ArticlesListPage() {
               </p>}
             </div>
             <div className={styles.cardFoot}>
-              <Button to={buildPath.mentalHealthDetail(item.id)}>
+              <Button to={buildPath.conditionsDetail(item.id)}>
                 {dictionary.cta}
               </Button>
             </div>

@@ -1,4 +1,4 @@
-export const mentalDict = {
+export const conditionsDict = {
   title: "Conditions",
   subtitle: "Short and clear materials about mental health",
   searchPlaceholder: "Search articles",
@@ -67,4 +67,4 @@ export const mentalDict = {
   ],
 } as const;
 
-export type MentalDictEn = typeof mentalDict;
+export type ConditionsDictEn = typeof conditionsDict;

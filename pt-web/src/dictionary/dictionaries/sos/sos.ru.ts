@@ -1,4 +1,4 @@
-export const supportDict = {
+export const sosDict = {
   page: {
     title: "Поддержка",
     subtitle:
@@ -72,4 +72,4 @@ export const supportDict = {
   },
 } as const;
 
-export type SupportDictRu = typeof supportDict;
+export type SosDictRu = typeof sosDict;

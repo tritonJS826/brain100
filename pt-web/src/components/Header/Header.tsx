@@ -134,7 +134,7 @@ export function Header() {
   };
   const pathByKey: Record<MenuKey, string> = {
     about: PATHS.ABOUT,
-    mental: PATHS.MENTAL_HEALTH.LIST,
+    mental: PATHS.CONDITIONS.LIST,
     tests: PATHS.TESTS.LIST,
     biohacking: PATHS.BIOHACKING.LIST,
   };
@@ -190,8 +190,8 @@ export function Header() {
           img={promoMental}
           title={dictionary.promo.consultCta}
         />,
-        buildLink: (id) => buildPath.mentalHealthDetail(id),
-        listPath: PATHS.MENTAL_HEALTH.LIST,
+        buildLink: (id) => buildPath.conditionsDetail(id),
+        listPath: PATHS.CONDITIONS.LIST,
       },
       tests: {
         list: testItems,
@@ -345,7 +345,7 @@ export function Header() {
           </div>
 
           <NavLink
-            to={buildPath.supportList()}
+            to={buildPath.sosList()}
             className={styles.cta}
             onClick={handleNavClick}
           >
@@ -440,7 +440,7 @@ export function Header() {
                 {mentalItems.map((item) => (
                   <li key={item.id}>
                     <NavLink
-                      to={buildPath.mentalHealthDetail(item.id)}
+                      to={buildPath.conditionsDetail(item.id)}
                       className={styles.submenuLink}
                       onClick={() => setDrawerOpen(false)}
                     >
@@ -563,7 +563,7 @@ export function Header() {
           </div>
 
           <NavLink
-            to={buildPath.supportList()}
+            to={buildPath.sosList()}
             className={styles.cta}
             onClick={() => setDrawerOpen(false)}
           >
@@ -582,7 +582,7 @@ export function Header() {
       </aside>
 
       <NavLink
-        to={PATHS.SOS.LIST}
+        to={PATHS.SOS.PAGE}
         className={styles.sosFloat}
         aria-label="Страница поддержки"
         onClick={handleNavClick}
