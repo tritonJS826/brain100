@@ -211,3 +211,28 @@ docker compose up -d --build
 ```
 
 That’s it — Brain100 will run fully with HTTPS, renewal, and auto reload 🎯
+
+---
+
+## 🧠 Design Rationale for DevOps
+
+### 1️⃣ Why we use `python:3.12-alpine` instead of the official `certbot/certbot` image  
+The official Certbot image is heavier and doesn’t allow installing `docker-cli` or customizing reload logic easily.  
+By using a lightweight Alpine Python base, we ensure:
+- identical runtime to our backend (same Python 3.12 environment);
+- full control over Certbot version and dependencies;
+- the ability to execute `docker exec nginx nginx -s reload` safely inside the container.
+
+This approach provides reproducibility and avoids unexpected upstream image changes that could break CI/CD pipelines.
+
+---
+
+### 2️⃣ Why `/var/run/docker.sock` is mounted into the Certbot container  
+Yes, mounting the Docker socket gives the container access to the host’s Docker API — but it’s **restricted to one task only**: reloading Nginx after certificate renewal.  
+Additional safety measures:
+- the container runs in an isolated Docker bridge network, with no external exposure;
+- no interactive shell or remote access is allowed;
+- the reload operation is idempotent and limited to a known container (`nginx`).
+
+This pattern is widely used in production setups such as **Traefik** and **nginx-proxy**.  
+For environments with stricter security policies, you can replace the direct socket bind with a **Docker Socket Proxy** or run Certbot outside Docker with a host-level cron job.
