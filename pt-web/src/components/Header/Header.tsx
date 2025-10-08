@@ -14,7 +14,7 @@ import {buildPath, PATHS} from "src/routes/routes";
 import {accessTokenAtomWithPersistence} from "src/state/authAtom";
 import styles from "src/components/Header/Header.module.scss";
 
-const DROPDOWN_KEYS = ["mental", "tests", "biohacking"];
+const DROPDOWN_KEYS = ["mental", "tests", "biohacking"] as const;
 type DropdownKey = typeof DROPDOWN_KEYS[number];
 
 export function Header() {
@@ -44,6 +44,7 @@ export function Header() {
       closeTimerRef.current = null;
     }
   };
+
   const scheduleClose = () => {
     clearTimer();
     closeTimerRef.current = window.setTimeout(() => {
@@ -51,8 +52,9 @@ export function Header() {
       setActiveKey(null);
     }, TIMEOUT_MENU_MS);
   };
+
   const handleMenuHover = (key: MenuKey) => {
-    const isDropdown = DROPDOWN_KEYS.includes(key);
+    const isDropdown = (DROPDOWN_KEYS as readonly string[]).includes(key);
     if (isDropdown) {
       setActiveKey(key as DropdownKey);
       setDockOpen(true);
@@ -62,6 +64,7 @@ export function Header() {
       setActiveKey(null);
     }
   };
+
   const handleNavClick = () => {
     setDockOpen(false);
     setActiveKey(null);
@@ -77,31 +80,64 @@ export function Header() {
         setLangOpenDrawer(false);
       }
     };
-
     document.addEventListener("keydown", handleKeyDown);
 
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   useEffect(() => {
-    if (!langOpenTop) {
+    if (!dockOpen || !activeKey) {
+      return;
+    }
+    clearTimer();
+    closeTimerRef.current = window.setTimeout(() => {
+      setDockOpen(false);
+      setActiveKey(null);
+    }, TIMEOUT_MENU_MS);
+
+    return () => clearTimer();
+  }, [dockOpen, activeKey]);
+
+  useEffect(() => {
+    if (!dockOpen) {
       return;
     }
 
-    const handleMouseDownTop = (e: MouseEvent) => {
-      const eventTargetNode = e.target;
-      if (!(eventTargetNode instanceof Node)) {
+    const handleDocumentMouseDown = (e: MouseEvent) => {
+      const target = e.target;
+      if (!(target instanceof Element)) {
         return;
       }
 
-      const insideMenu = langMenuTopRef.current?.contains(eventTargetNode);
-      const insideBtn = langBtnTopRef.current?.contains(eventTargetNode);
+      const insideDock = target.closest(`.${styles.dock}`);
+      const insideNav = target.closest(`.${styles.navAll}`);
+      if (!insideDock && !insideNav) {
+        setDockOpen(false);
+        setActiveKey(null);
+        clearTimer();
+      }
+    };
 
+    document.addEventListener("mousedown", handleDocumentMouseDown);
+
+    return () => document.removeEventListener("mousedown", handleDocumentMouseDown);
+  }, [dockOpen]);
+
+  useEffect(() => {
+    if (!langOpenTop) {
+      return;
+    }
+    const handleMouseDownTop = (e: MouseEvent) => {
+      const target = e.target;
+      if (!(target instanceof Node)) {
+        return;
+      }
+      const insideMenu = langMenuTopRef.current?.contains(target);
+      const insideBtn = langBtnTopRef.current?.contains(target);
       if (!insideMenu && !insideBtn) {
         setLangOpenTop(false);
       }
     };
-
     document.addEventListener("mousedown", handleMouseDownTop);
 
     return () => document.removeEventListener("mousedown", handleMouseDownTop);
@@ -111,21 +147,17 @@ export function Header() {
     if (!langOpenDrawer) {
       return;
     }
-
     const handleMouseDownDrawer = (e: MouseEvent) => {
-      const eventTargetNode = e.target;
-      if (!(eventTargetNode instanceof Node)) {
+      const target = e.target;
+      if (!(target instanceof Node)) {
         return;
       }
-
-      const insideMenu = langMenuDrawerRef.current?.contains(eventTargetNode);
-      const insideBtn = langBtnDrawerRef.current?.contains(eventTargetNode);
-
+      const insideMenu = langMenuDrawerRef.current?.contains(target);
+      const insideBtn = langBtnDrawerRef.current?.contains(target);
       if (!insideMenu && !insideBtn) {
         setLangOpenDrawer(false);
       }
     };
-
     document.addEventListener("mousedown", handleMouseDownDrawer);
 
     return () => document.removeEventListener("mousedown", handleMouseDownDrawer);
@@ -145,20 +177,22 @@ export function Header() {
     tests: dictionary.nav.tests,
     biohacking: dictionary.nav.biohacking,
   };
+
   const pathByKey: Record<MenuKey, string> = {
     about: PATHS.ABOUT,
     mental: PATHS.CONDITIONS.LIST,
     tests: PATHS.TESTS.LIST,
     biohacking: PATHS.BIOHACKING.LIST,
   };
+
   const toPairs = (menu: Record<string, string>) =>
     Object.entries(menu).map(([id, label]) => ({id, label}));
+
   const mentalItems = toPairs(dictionary.nav.menus.mental);
   const testItems = toPairs(dictionary.nav.menus.tests);
   const bioItems = toPairs(dictionary.nav.menus.biohacking);
 
   const currentLangLabel = lang === "ru" ? dictionary.lang.ru : dictionary.lang.en;
-
   const langOptions: { code: Language; label: string }[] = [
     {code: "ru", label: dictionary.lang.ru},
     {code: "en", label: dictionary.lang.en},
@@ -199,11 +233,13 @@ export function Header() {
       mental: {
         list: mentalItems,
         title: dictionary.dock.allStates,
-        promo: <Promo
-          to={buildPath.supportConsultation()}
-          img={promoMental}
-          title={dictionary.promo.consultCta}
-        />,
+        promo: (
+          <Promo
+            to={buildPath.supportConsultation()}
+            img={promoMental}
+            title={dictionary.promo.consultCta}
+          />
+        ),
         buildLink: (id) => buildPath.conditionsDetail(id),
         listPath: PATHS.CONDITIONS.LIST,
       },
@@ -267,7 +303,7 @@ export function Header() {
   };
 
   const toggleDrawerSection = (key: DropdownKey) => {
-    setDrawerActive(prev => (prev === key ? null : key));
+    setDrawerActive((prev) => (prev === key ? null : key));
   };
 
   return (
@@ -299,7 +335,7 @@ export function Header() {
                 key={key}
                 className={styles.navItem}
                 onMouseEnter={() => handleMenuHover(key)}
-                aria-haspopup={DROPDOWN_KEYS.includes(key)}
+                aria-haspopup={(DROPDOWN_KEYS as readonly string[]).includes(key)}
                 aria-expanded={dockOpen && activeKey === key}
               >
                 <NavLink
@@ -437,10 +473,9 @@ export function Header() {
             <li>
               <button
                 type="button"
-                className={`
-                  ${styles.drawerLink}
-                  ${styles.drawerLinkBtn}
-                  ${drawerActive === "mental" ? styles.drawerLinkOpen : ""}`}
+                className={`${styles.drawerLink}
+                ${styles.drawerLinkBtn}
+                ${drawerActive === "mental" ? styles.drawerLinkOpen : ""}`}
                 onClick={() => toggleDrawerSection("mental")}
                 aria-expanded={drawerActive === "mental"}
               >
@@ -468,8 +503,7 @@ export function Header() {
             <li>
               <button
                 type="button"
-                className={`
-                ${styles.drawerLink}
+                className={`${styles.drawerLink}
                 ${styles.drawerLinkBtn}
                 ${drawerActive === "tests" ? styles.drawerLinkOpen : ""}`}
                 onClick={() => toggleDrawerSection("tests")}
@@ -499,8 +533,7 @@ export function Header() {
             <li>
               <button
                 type="button"
-                className={`
-                ${styles.drawerLink}
+                className={`${styles.drawerLink}
                 ${styles.drawerLinkBtn}
                 ${drawerActive === "biohacking" ? styles.drawerLinkOpen : ""}`}
                 onClick={() => toggleDrawerSection("biohacking")}
