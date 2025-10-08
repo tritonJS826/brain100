@@ -10,7 +10,7 @@ type NotFoundDictionary = {
   };
 
 export function NotFoundPage() {
-  const dictionary = useDictionary(DictionaryKey.NOT_FOUND) as NotFoundDictionary | null; // ← ИЗМЕНЕНО
+  const dictionary = useDictionary(DictionaryKey.NOT_FOUND) as NotFoundDictionary | null;
 
   if (!dictionary) {
     return (
