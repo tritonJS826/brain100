@@ -8,16 +8,14 @@ import promoBio from "src/assets/3_follow.avif";
 import logo from "src/assets/BRAIN100.webp";
 import {LEFT_LINK_KEYS, MenuKey, TIMEOUT_MENU_MS} from "src/components/Header/header.config";
 import {languageAtomWithPersistence} from "src/dictionary/dictionaryAtom";
-import {DictionaryKey} from "src/dictionary/dictionaryLoader";
+import {DictionaryKey, Language} from "src/dictionary/dictionaryLoader";
 import {useDictionary} from "src/dictionary/useDictionary";
 import {buildPath, PATHS} from "src/routes/routes";
 import {accessTokenAtomWithPersistence} from "src/state/authAtom";
 import styles from "src/components/Header/Header.module.scss";
 
-const DROPDOWN_KEYS = ["mental", "tests", "biohacking"] as const;
+const DROPDOWN_KEYS = ["mental", "tests", "biohacking"];
 type DropdownKey = typeof DROPDOWN_KEYS[number];
-
-type LangCode = "ru" | "en";
 
 export function Header() {
   const dictionary = useDictionary(DictionaryKey.HEADER);
@@ -53,8 +51,8 @@ export function Header() {
       setActiveKey(null);
     }, TIMEOUT_MENU_MS);
   };
-  const handleEnter = (key: MenuKey) => {
-    const isDropdown = (DROPDOWN_KEYS as readonly string[]).includes(key);
+  const handleMenuHover = (key: MenuKey) => {
+    const isDropdown = DROPDOWN_KEYS.includes(key);
     if (isDropdown) {
       setActiveKey(key as DropdownKey);
       setDockOpen(true);
@@ -71,7 +69,7 @@ export function Header() {
   };
 
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setDrawerOpen(false);
         setDockOpen(false);
@@ -79,43 +77,58 @@ export function Header() {
         setLangOpenDrawer(false);
       }
     };
-    document.addEventListener("keydown", onKey);
 
-    return () => document.removeEventListener("keydown", onKey);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   useEffect(() => {
     if (!langOpenTop) {
       return;
     }
-    const onDown = (e: MouseEvent) => {
-      const t = e.target as Node;
-      const insideMenu = langMenuTopRef.current?.contains(t);
-      const insideBtn = langBtnTopRef.current?.contains(t);
+
+    const handleMouseDownTop = (e: MouseEvent) => {
+      const eventTargetNode = e.target;
+      if (!(eventTargetNode instanceof Node)) {
+        return;
+      }
+
+      const insideMenu = langMenuTopRef.current?.contains(eventTargetNode);
+      const insideBtn = langBtnTopRef.current?.contains(eventTargetNode);
+
       if (!insideMenu && !insideBtn) {
         setLangOpenTop(false);
       }
     };
-    document.addEventListener("mousedown", onDown);
 
-    return () => document.removeEventListener("mousedown", onDown);
+    document.addEventListener("mousedown", handleMouseDownTop);
+
+    return () => document.removeEventListener("mousedown", handleMouseDownTop);
   }, [langOpenTop]);
 
   useEffect(() => {
     if (!langOpenDrawer) {
       return;
     }
-    const onDown = (e: MouseEvent) => {
-      const t = e.target as Node;
-      const insideMenu = langMenuDrawerRef.current?.contains(t);
-      const insideBtn = langBtnDrawerRef.current?.contains(t);
+
+    const handleMouseDownDrawer = (e: MouseEvent) => {
+      const eventTargetNode = e.target;
+      if (!(eventTargetNode instanceof Node)) {
+        return;
+      }
+
+      const insideMenu = langMenuDrawerRef.current?.contains(eventTargetNode);
+      const insideBtn = langBtnDrawerRef.current?.contains(eventTargetNode);
+
       if (!insideMenu && !insideBtn) {
         setLangOpenDrawer(false);
       }
     };
-    document.addEventListener("mousedown", onDown);
 
-    return () => document.removeEventListener("mousedown", onDown);
+    document.addEventListener("mousedown", handleMouseDownDrawer);
+
+    return () => document.removeEventListener("mousedown", handleMouseDownDrawer);
   }, [langOpenDrawer]);
 
   if (!dictionary) {
@@ -145,7 +158,8 @@ export function Header() {
   const bioItems = toPairs(dictionary.nav.menus.biohacking);
 
   const currentLangLabel = lang === "ru" ? dictionary.lang.ru : dictionary.lang.en;
-  const langOptions: { code: LangCode; label: string }[] = [
+
+  const langOptions: { code: Language; label: string }[] = [
     {code: "ru", label: dictionary.lang.ru},
     {code: "en", label: dictionary.lang.en},
   ];
@@ -284,8 +298,8 @@ export function Header() {
               <li
                 key={key}
                 className={styles.navItem}
-                onMouseEnter={() => handleEnter(key)}
-                aria-haspopup={(DROPDOWN_KEYS as readonly string[]).includes(key)}
+                onMouseEnter={() => handleMenuHover(key)}
+                aria-haspopup={DROPDOWN_KEYS.includes(key)}
                 aria-expanded={dockOpen && activeKey === key}
               >
                 <NavLink
@@ -592,4 +606,3 @@ export function Header() {
     </header>
   );
 }
-
