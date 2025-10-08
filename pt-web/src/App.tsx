@@ -10,6 +10,7 @@ import {BiohackingListPage} from "src/pages/biohackingListPage/BiohackingListPag
 import {ConditionArticleDetailPage} from "src/pages/conditionsListPage/conditionArticle/ConditionArticleDetailPage";
 import {ConditionsListPage} from "src/pages/conditionsListPage/ConditionsListPage";
 import {HomePage} from "src/pages/homePage/Homepage";
+import {NotFoundPage} from "src/pages/notFoundPage/NotFoundPage";
 import {ProfilePage} from "src/pages/profilePage/ProfilePage";
 import {ConditionHistoryPage} from "src/pages/profilePage/сonditionHistoryPage/ConditionHistoryPage";
 import {SosConsultationPage} from "src/pages/sosPage/SosConsultationPage/SosConsultationPage";
@@ -86,6 +87,10 @@ export function App() {
           <Route
             path={PATHS.PROFILE.CONDITION}
             element={<ConditionHistoryPage />}
+          />
+          <Route
+            path={PATHS.NOT_FOUND}
+            element={<NotFoundPage />}
           />
         </Routes>
       </main>
