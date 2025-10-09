@@ -89,9 +89,9 @@ async def test_multiple_users_personal(index):
         assert sub.consultationsIncluded == consultations_included
 
         expected_days_to_end = (sub.endsAt - sub.startedAt).days
-        assert data["days_to_end"] == expected_days_to_end, (
-            f"Expected {expected_days_to_end}, got {data['days_to_end']}"
-        )
+        assert (
+            data["days_to_end"] == expected_days_to_end
+        ), f"Expected {expected_days_to_end}, got {data['days_to_end']}"
         assert 15 <= expected_days_to_end <= 90
 
 
