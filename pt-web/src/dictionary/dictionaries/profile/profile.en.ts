@@ -15,15 +15,17 @@ export const profileDictEn = {
   },
   plan: {
     title: "Subscription",
-    baseTitle: "Base plan",
+    baseTitle: "Basic plan",
     supportTitle: "Paid subscription",
     buyBtn: "Buy subscription",
     scheduleBtn: "Schedule a consultation",
     statsIncluded: "Consultations in plan",
     statsDaysLeft: "Days left",
     descActivePrefix: "Subscription is active.",
-    descActiveSuffix: "Priority booking and emergency call are available.",
-    descInactive: "Purchase a subscription to get priority booking and emergency calls.",
+    descActiveSuffix:
+      "Priority booking and emergency call are available.",
+    descInactive:
+      "Purchase a subscription to get priority booking and emergency calls.",
     priorityBooking: "Priority booking",
     emergencyCall: "Emergency call",
     hint: "Support Plan purchase will be available soon.",
@@ -36,6 +38,19 @@ export const profileDictEn = {
   actions: {
     save: "Save",
     cancel: "Cancel",
+  },
+  history: {
+    titlePrefix: "History:",
+    emptyTitle: "Test history",
+    emptySubtitle: "No data for the selected test",
+    date: "Date",
+    name: "Session",
+    status: "Status",
+    recommendation: "Recommendation",
+    finished: "Finished",
+    inProgress: "In progress",
+    question: "Question",
+    answer: "Answer",
   },
   conditions: {
     panic: "Panic attack",
@@ -50,18 +65,23 @@ export const profileDictEn = {
   recommendations: {
     panic: {
       low: "Continue breathing techniques, add short daily walks.",
-      moderate: "Practice grounding, track triggers, 4–6 breathing for 5 minutes.",
-      high: "Avoid excess caffeine, 4–6 breathing, plan to reduce avoidance.",
+      moderate:
+        "Practice grounding, track triggers, 4–6 breathing for 5 minutes.",
+      high:
+        "Avoid excess caffeine, 4–6 breathing, plan to reduce avoidance.",
     },
     depression: {
       low: "7–8 hours of sleep, light activity 20–30 minutes, keep social contacts.",
-      moderate: "Structure your day, activity journal, soft weekly goals.",
+      moderate:
+        "Structure your day, keep an activity journal, set gentle weekly goals.",
       high: "Consult a professional, reduce workload.",
     },
     burnout: {
       low: "Take short breaks, balance rest and work.",
-      moderate: "Plan recovery windows, delegate tasks where possible.",
-      high: "Redistribute workload, schedule recovery windows, micro-breaks every hour.",
+      moderate:
+        "Plan recovery windows, delegate tasks where possible.",
+      high:
+        "Redistribute workload, schedule recovery windows, take micro-breaks every hour.",
     },
   },
 } as const;
