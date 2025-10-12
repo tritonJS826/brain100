@@ -14,8 +14,11 @@ import {buildPath, PATHS} from "src/routes/routes";
 import {accessTokenAtomWithPersistence} from "src/state/authAtom";
 import styles from "src/components/Header/Header.module.scss";
 
-const DROPDOWN_KEYS = ["mental", "tests", "biohacking"];
-type DropdownKey = typeof DROPDOWN_KEYS[number];
+type DropdownKey = "mental" | "tests" | "biohacking";
+
+function isDropdownKey(key: MenuKey): key is DropdownKey {
+  return key === "mental" || key === "tests" || key === "biohacking";
+}
 
 export function Header() {
   const dictionary = useDictionary(DictionaryKey.HEADER);
@@ -32,29 +35,34 @@ export function Header() {
   const langMenuTopRef = useRef<HTMLDivElement | null>(null);
   const langBtnDrawerRef = useRef<HTMLButtonElement | null>(null);
   const langMenuDrawerRef = useRef<HTMLDivElement | null>(null);
-  const closeTimerRef = useRef<number | null>(null);
+
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const access = useAtomValue(accessTokenAtomWithPersistence);
   const isAuthenticated = Boolean(access?.token);
   const profileTo = isAuthenticated ? PATHS.PROFILE.PAGE : PATHS.AUTH.PAGE;
 
+  const dockRef = useRef<HTMLDivElement | null>(null);
+  const navRef = useRef<HTMLUListElement | null>(null);
+
   const clearTimer = () => {
     if (closeTimerRef.current !== null) {
-      window.clearTimeout(closeTimerRef.current);
+      clearTimeout(closeTimerRef.current);
       closeTimerRef.current = null;
     }
   };
+
   const scheduleClose = () => {
     clearTimer();
-    closeTimerRef.current = window.setTimeout(() => {
+    closeTimerRef.current = setTimeout(() => {
       setDockOpen(false);
       setActiveKey(null);
     }, TIMEOUT_MENU_MS);
   };
+
   const handleMenuHover = (key: MenuKey) => {
-    const isDropdown = DROPDOWN_KEYS.includes(key);
-    if (isDropdown) {
-      setActiveKey(key as DropdownKey);
+    if (isDropdownKey(key)) {
+      setActiveKey(key);
       setDockOpen(true);
       clearTimer();
     } else {
@@ -62,6 +70,7 @@ export function Header() {
       setActiveKey(null);
     }
   };
+
   const handleNavClick = () => {
     setDockOpen(false);
     setActiveKey(null);
@@ -84,20 +93,46 @@ export function Header() {
   }, []);
 
   useEffect(() => {
+    if (!dockOpen) {
+      return;
+    }
+
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target;
+      if (!(target instanceof Node)) {
+        return;
+      }
+
+      const isInsideDock = dockRef.current?.contains(target) ?? false;
+      const isInsideNav = navRef.current?.contains(target) ?? false;
+
+      if (!isInsideDock && !isInsideNav) {
+        clearTimer();
+        setDockOpen(false);
+        setActiveKey(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [dockOpen]);
+
+  useEffect(() => {
     if (!langOpenTop) {
       return;
     }
 
-    const handleMouseDownTop = (e: MouseEvent) => {
-      const eventTargetNode = e.target;
+    const handleMouseDownTop = (event: MouseEvent) => {
+      const eventTargetNode = event.target;
       if (!(eventTargetNode instanceof Node)) {
         return;
       }
 
-      const insideMenu = langMenuTopRef.current?.contains(eventTargetNode);
-      const insideBtn = langBtnTopRef.current?.contains(eventTargetNode);
+      const isInsideMenu = langMenuTopRef.current?.contains(eventTargetNode);
+      const isInsideButton = langBtnTopRef.current?.contains(eventTargetNode);
 
-      if (!insideMenu && !insideBtn) {
+      if (!isInsideMenu && !isInsideButton) {
         setLangOpenTop(false);
       }
     };
@@ -112,16 +147,16 @@ export function Header() {
       return;
     }
 
-    const handleMouseDownDrawer = (e: MouseEvent) => {
-      const eventTargetNode = e.target;
+    const handleMouseDownDrawer = (event: MouseEvent) => {
+      const eventTargetNode = event.target;
       if (!(eventTargetNode instanceof Node)) {
         return;
       }
 
-      const insideMenu = langMenuDrawerRef.current?.contains(eventTargetNode);
-      const insideBtn = langBtnDrawerRef.current?.contains(eventTargetNode);
+      const isInsideMenu = langMenuDrawerRef.current?.contains(eventTargetNode);
+      const isInsideButton = langBtnDrawerRef.current?.contains(eventTargetNode);
 
-      if (!insideMenu && !insideBtn) {
+      if (!isInsideMenu && !isInsideButton) {
         setLangOpenDrawer(false);
       }
     };
@@ -210,26 +245,22 @@ export function Header() {
       tests: {
         list: testItems,
         title: dictionary.dock.allTests,
-        promo: (
-          <Promo
-            to={isAuthenticated ? PATHS.PROFILE.PAGE : buildPath.auth()}
-            img={promoTests}
-            title={dictionary.promo.registerCta}
-          />
-        ),
+        promo: <Promo
+          to={isAuthenticated ? PATHS.PROFILE.PAGE : buildPath.auth()}
+          img={promoTests}
+          title={dictionary.promo.registerCta}
+        />,
         buildLink: (id) => buildPath.testsDetail(id),
         listPath: PATHS.TESTS.LIST,
       },
       biohacking: {
         list: bioItems,
         title: dictionary.dock.allArticles,
-        promo: (
-          <Promo
-            to={isAuthenticated ? PATHS.PROFILE.PAGE : buildPath.auth()}
-            img={promoBio}
-            title={dictionary.promo.subscribeCta}
-          />
-        ),
+        promo: <Promo
+          to={isAuthenticated ? PATHS.PROFILE.PAGE : buildPath.auth()}
+          img={promoBio}
+          title={dictionary.promo.subscribeCta}
+        />,
         buildLink: (id) => buildPath.biohackingDetail(id),
         listPath: PATHS.BIOHACKING.LIST,
       },
@@ -292,6 +323,7 @@ export function Header() {
         <div className={styles.navCenter}>
           <ul
             className={styles.navAll}
+            ref={navRef}
             onMouseLeave={scheduleClose}
           >
             {LEFT_LINK_KEYS.map((key) => (
@@ -299,7 +331,7 @@ export function Header() {
                 key={key}
                 className={styles.navItem}
                 onMouseEnter={() => handleMenuHover(key)}
-                aria-haspopup={DROPDOWN_KEYS.includes(key)}
+                aria-haspopup={isDropdownKey(key)}
                 aria-expanded={dockOpen && activeKey === key}
               >
                 <NavLink
@@ -386,6 +418,7 @@ export function Header() {
       </nav>
 
       <aside
+        ref={dockRef}
         className={`${styles.dock} ${dockOpen && activeKey ? styles.dockOpen : ""}`}
         onMouseEnter={clearTimer}
         onMouseLeave={scheduleClose}
