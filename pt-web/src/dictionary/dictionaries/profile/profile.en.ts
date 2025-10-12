@@ -2,51 +2,55 @@ export const profileDictEn = {
   page: {
     title: "Profile",
     subtitle: "Your data and subscription status.",
-    logoutBtn: "Sign out",
+    logoutBtn: "Log out",
   },
   user: {
     title: "User data",
+    name: "Name",
+    preferredContactEmail: "Email",
     city: "City",
     phone: "Phone",
     language: "Language",
-    timezone: "Time zone",
-    memberSince: "Member since",
-    preferredContact: "Preferred contact",
     preferredContactPhone: "Phone",
-    preferredContactEmail: "E-mail",
-    id: "ID",
   },
   plan: {
     title: "Subscription",
     baseTitle: "Basic plan",
-    supportTitle: "Support plan",
+    supportTitle: "Paid subscription",
     buyBtn: "Buy subscription",
-    scheduleBtn: "Schedule consultation",
+    scheduleBtn: "Schedule a consultation",
     statsIncluded: "Consultations in plan",
     statsDaysLeft: "Days left",
-    descActivePrefix: "Subscription is active until",
-    descActiveSuffix: "Priority booking and emergency call are available.",
-    descInactive: "Get the Support plan to access priority booking and the emergency call.",
+    descActivePrefix: "Subscription is active.",
+    descActiveSuffix:
+      "Priority booking and emergency call are available.",
+    descInactive:
+      "Purchase a subscription to get priority booking and emergency calls.",
     priorityBooking: "Priority booking",
     emergencyCall: "Emergency call",
-    hint: "Support plan purchase will be available soon.",
+    hint: "Support Plan purchase will be available soon.",
   },
   tests: {
     title: "Test results",
-    subtitle: "The last run is shown first",
-    date: "Date",
+    subtitle: "The latest test completion is shown first",
     name: "Name",
-    status: "Status",
-    recommendation: "Recommendation",
+  },
+  actions: {
+    save: "Save",
+    cancel: "Cancel",
   },
   history: {
     titlePrefix: "History:",
     emptyTitle: "Test history",
-    emptySubtitle: "No data for the selected condition",
+    emptySubtitle: "No data for the selected test",
     date: "Date",
-    name: "Name",
+    name: "Session",
     status: "Status",
     recommendation: "Recommendation",
+    finished: "Finished",
+    inProgress: "In progress",
+    question: "Question",
+    answer: "Answer",
   },
   conditions: {
     panic: "Panic attack",
@@ -61,18 +65,23 @@ export const profileDictEn = {
   recommendations: {
     panic: {
       low: "Continue breathing techniques, add short daily walks.",
-      moderate: "Practice grounding, track triggers, do 4–6 breathing for 5 minutes.",
-      high: "Avoid excess caffeine, use 4–6 breathing, create an avoidance reduction plan.",
+      moderate:
+        "Practice grounding, track triggers, 4–6 breathing for 5 minutes.",
+      high:
+        "Avoid excess caffeine, 4–6 breathing, plan to reduce avoidance.",
     },
     depression: {
-      low: "Sleep 7–8 hours, light activity 20–30 minutes, maintain social contacts.",
-      moderate: "Structure your day, keep an activity diary, set soft weekly goals.",
-      high: "Consult a specialist, reduce workload.",
+      low: "7–8 hours of sleep, light activity 20–30 minutes, keep social contacts.",
+      moderate:
+        "Structure your day, keep an activity journal, set gentle weekly goals.",
+      high: "Consult a professional, reduce workload.",
     },
     burnout: {
-      low: "Take short breaks, balance work and rest.",
-      moderate: "Plan recovery windows, delegate tasks where possible.",
-      high: "Redistribute workload, schedule recovery, take a micro-break every hour.",
+      low: "Take short breaks, balance rest and work.",
+      moderate:
+        "Plan recovery windows, delegate tasks where possible.",
+      high:
+        "Redistribute workload, schedule recovery windows, take micro-breaks every hour.",
     },
   },
 } as const;
