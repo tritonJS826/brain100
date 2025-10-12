@@ -13,6 +13,10 @@ export const biohackingDict = {
   back: "Back to list",
   listDefaultLabel: "List",
 
+  paywallTitle: "Available with subscription",
+  paywallText: "Get a subscription to read the full article.",
+  buyBtn: "Buy subscription",
+
   articlesItems: [
     {
       id: "1",
@@ -21,6 +25,7 @@ export const biohackingDict = {
       excerpt:
         "Sleep is the foundation of recovery. A few stable habits improve sleep depth and daily performance.",
       img: "",
+      isPaid: true,
     },
   ],
 
@@ -32,6 +37,8 @@ export const biohackingDict = {
       subtitle: "Simple steps for quality sleep",
       excerpt:
         "Sleep is the foundation of recovery. A few stable habits improve sleep depth and daily performance.",
+      isPaid: true,
+      paywallAtIndex: 3,
       content: [
         {
           type: "paragraph",
