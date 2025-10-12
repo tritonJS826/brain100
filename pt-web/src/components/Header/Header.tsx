@@ -123,16 +123,16 @@ export function Header() {
       return;
     }
 
-    const handleMouseDownTop = (e: MouseEvent) => {
-      const t = e.target;
-      if (!(t instanceof Node)) {
+    const handleMouseDownTop = (event: MouseEvent) => {
+      const eventTargetNode = event.target;
+      if (!(eventTargetNode instanceof Node)) {
         return;
       }
 
-      const insideMenu = langMenuTopRef.current?.contains(t);
-      const insideBtn = langBtnTopRef.current?.contains(t);
+      const isInsideMenu = langMenuTopRef.current?.contains(eventTargetNode);
+      const isInsideButton = langBtnTopRef.current?.contains(eventTargetNode);
 
-      if (!insideMenu && !insideBtn) {
+      if (!isInsideMenu && !isInsideButton) {
         setLangOpenTop(false);
       }
     };
@@ -147,16 +147,16 @@ export function Header() {
       return;
     }
 
-    const handleMouseDownDrawer = (e: MouseEvent) => {
-      const t = e.target;
-      if (!(t instanceof Node)) {
+    const handleMouseDownDrawer = (event: MouseEvent) => {
+      const eventTargetNode = event.target;
+      if (!(eventTargetNode instanceof Node)) {
         return;
       }
 
-      const insideMenu = langMenuDrawerRef.current?.contains(t);
-      const insideBtn = langBtnDrawerRef.current?.contains(t);
+      const isInsideMenu = langMenuDrawerRef.current?.contains(eventTargetNode);
+      const isInsideButton = langBtnDrawerRef.current?.contains(eventTargetNode);
 
-      if (!insideMenu && !insideBtn) {
+      if (!isInsideMenu && !isInsideButton) {
         setLangOpenDrawer(false);
       }
     };
