@@ -8,6 +8,7 @@ export const sosDict = {
     title: "Экстренная помощь",
     callNow: "Позвонить на горячую линию",
     ariaLabel: "Позвонить на горячую линию",
+    busyText: "К сожалению, сейчас все линии заняты. Попробуйте позже.",
   },
   consultation: {
     title: "Консультация со специалистом",
@@ -19,30 +20,13 @@ export const sosDict = {
     lead: "Ознакомьтесь с короткими рекомендациями, чтобы помочь себе в моменте.",
   },
   selfhelpItems: [
-    {
-      id: "panic",
-      link: "#panic-attack",
-      title: "Паническая атака",
-      desc: "Как распознать приступ и что делать прямо сейчас.",
-    },
-    {
-      id: "anxiety",
-      link: "#anxiety",
-      title: "Тревога",
-      desc: "Способы снизить напряжение и вернуть контроль.",
-    },
-    {
-      id: "depression",
-      link: "#depression",
-      title: "Депрессия",
-      desc: "Когда обращаться за помощью и базовые шаги поддержки.",
-    },
+    {id: "panic", link: "#panic-attack", title: "Паническая атака", desc: "Как распознать приступ и что делать прямо сейчас."},
+    {id: "anxiety", link: "#anxiety", title: "Тревога", desc: "Способы снизить напряжение и вернуть контроль."},
+    {id: "depression", link: "#depression", title: "Депрессия", desc: "Когда обращаться за помощью и базовые шаги поддержки."},
   ],
-
   form: {
     title: "Заявка на консультацию",
     subtitle: "Заполните форму ниже. Мы свяжемся с вами и подберём удобное время.",
-
     labels: {
       name: "Имя*",
       email: "Email*",
@@ -51,25 +35,20 @@ export const sosDict = {
       preferredAt: "Предпочтительное время",
       message: "Сообщение",
     },
-
     placeholders: {
       phone: "По желанию",
       topic: "Например: тревога, паническая атака…",
       preferredAt: "Например: после 18:00 или в выходные",
       message: "Коротко опишите запрос или задачу",
     },
-
     submit: "Отправить заявку",
     backToSupport: "Назад к поддержке",
-
     sentTitle: "Заявка отправлена",
     sentTextPrefix: "Номер заявки:",
     sentTextSuffix: "Мы свяжемся с вами.",
     goHome: "На главную",
     goSupport: "В поддержку",
-
     error: "Не удалось отправить заявку. Попробуйте снова.",
   },
 } as const;
-
 export type SosDictRu = typeof sosDict;
