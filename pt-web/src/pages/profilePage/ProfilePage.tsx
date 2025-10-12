@@ -286,7 +286,7 @@ export function ProfilePage() {
 
       {!isLoading && pageError && (
         <section className={styles.card}>
-          <div style={{color: "crimson"}}>
+          <div className={styles.errorMessage}>
             {pageError}
           </div>
         </section>
