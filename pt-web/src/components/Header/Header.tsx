@@ -35,25 +35,31 @@ export function Header() {
   const langMenuTopRef = useRef<HTMLDivElement | null>(null);
   const langBtnDrawerRef = useRef<HTMLButtonElement | null>(null);
   const langMenuDrawerRef = useRef<HTMLDivElement | null>(null);
-  const closeTimerRef = useRef<number | null>(null);
+
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const access = useAtomValue(accessTokenAtomWithPersistence);
   const isAuthenticated = Boolean(access?.token);
   const profileTo = isAuthenticated ? PATHS.PROFILE.PAGE : PATHS.AUTH.PAGE;
 
+  const dockRef = useRef<HTMLDivElement | null>(null);
+  const navRef = useRef<HTMLUListElement | null>(null);
+
   const clearTimer = () => {
     if (closeTimerRef.current !== null) {
-      window.clearTimeout(closeTimerRef.current);
+      clearTimeout(closeTimerRef.current);
       closeTimerRef.current = null;
     }
   };
+
   const scheduleClose = () => {
     clearTimer();
-    closeTimerRef.current = window.setTimeout(() => {
+    closeTimerRef.current = setTimeout(() => {
       setDockOpen(false);
       setActiveKey(null);
     }, TIMEOUT_MENU_MS);
   };
+
   const handleMenuHover = (key: MenuKey) => {
     if (isDropdownKey(key)) {
       setActiveKey(key);
@@ -64,6 +70,7 @@ export function Header() {
       setActiveKey(null);
     }
   };
+
   const handleNavClick = () => {
     setDockOpen(false);
     setActiveKey(null);
@@ -86,32 +93,29 @@ export function Header() {
   }, []);
 
   useEffect(() => {
-    const onDocumentClick = (e: MouseEvent) => {
-      if (!dockOpen) {
+    if (!dockOpen) {
+      return;
+    }
+
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target;
+      if (!(target instanceof Node)) {
         return;
       }
 
-      const target = e.target as Node | null;
-      if (!target) {
-        return;
-      }
+      const isInsideDock = dockRef.current?.contains(target) ?? false;
+      const isInsideNav = navRef.current?.contains(target) ?? false;
 
-      const dockEl = document.querySelector(`.${styles.dock}`);
-      const navEl = document.querySelector(`.${styles.navAll}`);
-
-      const clickInsideDock = dockEl ? dockEl.contains(target) : false;
-      const clickInsideNav = navEl ? navEl.contains(target) : false;
-
-      if (!clickInsideDock && !clickInsideNav) {
+      if (!isInsideDock && !isInsideNav) {
         clearTimer();
         setDockOpen(false);
         setActiveKey(null);
       }
     };
 
-    document.addEventListener("mousedown", onDocumentClick);
+    document.addEventListener("mousedown", handleClickOutside);
 
-    return () => document.removeEventListener("mousedown", onDocumentClick);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [dockOpen]);
 
   useEffect(() => {
@@ -120,13 +124,13 @@ export function Header() {
     }
 
     const handleMouseDownTop = (e: MouseEvent) => {
-      const eventTargetNode = e.target;
-      if (!(eventTargetNode instanceof Node)) {
+      const t = e.target;
+      if (!(t instanceof Node)) {
         return;
       }
 
-      const insideMenu = langMenuTopRef.current?.contains(eventTargetNode);
-      const insideBtn = langBtnTopRef.current?.contains(eventTargetNode);
+      const insideMenu = langMenuTopRef.current?.contains(t);
+      const insideBtn = langBtnTopRef.current?.contains(t);
 
       if (!insideMenu && !insideBtn) {
         setLangOpenTop(false);
@@ -144,13 +148,13 @@ export function Header() {
     }
 
     const handleMouseDownDrawer = (e: MouseEvent) => {
-      const eventTargetNode = e.target;
-      if (!(eventTargetNode instanceof Node)) {
+      const t = e.target;
+      if (!(t instanceof Node)) {
         return;
       }
 
-      const insideMenu = langMenuDrawerRef.current?.contains(eventTargetNode);
-      const insideBtn = langBtnDrawerRef.current?.contains(eventTargetNode);
+      const insideMenu = langMenuDrawerRef.current?.contains(t);
+      const insideBtn = langBtnDrawerRef.current?.contains(t);
 
       if (!insideMenu && !insideBtn) {
         setLangOpenDrawer(false);
@@ -241,26 +245,22 @@ export function Header() {
       tests: {
         list: testItems,
         title: dictionary.dock.allTests,
-        promo: (
-          <Promo
-            to={isAuthenticated ? PATHS.PROFILE.PAGE : buildPath.auth()}
-            img={promoTests}
-            title={dictionary.promo.registerCta}
-          />
-        ),
+        promo: <Promo
+          to={isAuthenticated ? PATHS.PROFILE.PAGE : buildPath.auth()}
+          img={promoTests}
+          title={dictionary.promo.registerCta}
+        />,
         buildLink: (id) => buildPath.testsDetail(id),
         listPath: PATHS.TESTS.LIST,
       },
       biohacking: {
         list: bioItems,
         title: dictionary.dock.allArticles,
-        promo: (
-          <Promo
-            to={isAuthenticated ? PATHS.PROFILE.PAGE : buildPath.auth()}
-            img={promoBio}
-            title={dictionary.promo.subscribeCta}
-          />
-        ),
+        promo: <Promo
+          to={isAuthenticated ? PATHS.PROFILE.PAGE : buildPath.auth()}
+          img={promoBio}
+          title={dictionary.promo.subscribeCta}
+        />,
         buildLink: (id) => buildPath.biohackingDetail(id),
         listPath: PATHS.BIOHACKING.LIST,
       },
@@ -323,6 +323,7 @@ export function Header() {
         <div className={styles.navCenter}>
           <ul
             className={styles.navAll}
+            ref={navRef}
             onMouseLeave={scheduleClose}
           >
             {LEFT_LINK_KEYS.map((key) => (
@@ -417,6 +418,7 @@ export function Header() {
       </nav>
 
       <aside
+        ref={dockRef}
         className={`${styles.dock} ${dockOpen && activeKey ? styles.dockOpen : ""}`}
         onMouseEnter={clearTimer}
         onMouseLeave={scheduleClose}
