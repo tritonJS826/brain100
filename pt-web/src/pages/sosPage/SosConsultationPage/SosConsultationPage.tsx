@@ -54,38 +54,30 @@ export function SosConsultationPage() {
 
   const onSubmit: React.FormEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault();
-    if (isSubmitting) {
-      return;
-    }
 
-    setSendError(null);
-    setIsSubmitting(true);
+    if (!isSubmitting) {
+      setSendError(null);
+      setIsSubmitting(true);
 
-    const form = event.currentTarget;
-    const data = new FormData(form);
+      const form = event.currentTarget;
+      const data = new FormData(form);
 
-    const name = String(data.get("name") ?? "");
-    const email = String(data.get("email") ?? "");
-    const phone = String(data.get("phone") ?? "");
-    const topic = String(data.get("topic") ?? "");
-    const preferredAt = String(data.get("preferredAt") ?? "");
-    const message = String(data.get("message") ?? "");
+      const name = String(data.get("name") ?? "");
+      const email = String(data.get("email") ?? "");
+      const phone = String(data.get("phone") ?? "");
+      const topic = String(data.get("topic") ?? "");
+      const preferredAt = String(data.get("preferredAt") ?? "");
+      const message = String(data.get("message") ?? "");
 
-    try {
-      const id = await sendConsultationEmail({
-        name,
-        email,
-        phone,
-        topic,
-        preferredAt,
-        message,
-      });
-      setSentId(id);
-      form.reset();
-    } catch {
-      setSendError(dictionary.form.error);
-    } finally {
-      setIsSubmitting(false);
+      try {
+        const id = await sendConsultationEmail({name, email, phone, topic, preferredAt, message});
+        setSentId(id);
+        form.reset();
+      } catch {
+        setSendError(dictionary.form.error);
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -233,3 +225,4 @@ export function SosConsultationPage() {
     </div>
   );
 }
+
