@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {useAtomValue} from "jotai";
 import {PhoneCall} from "lucide-react";
 import {Button} from "src/components/Button/Button";
@@ -6,25 +6,84 @@ import {PageHeader} from "src/components/PageHeader/PageHeader";
 import {DictionaryKey} from "src/dictionary/dictionaryLoader";
 import {useDictionary} from "src/dictionary/useDictionary";
 import {PATHS} from "src/routes/routes";
+import {getUserPersonal, type UserPersonal} from "src/services/profile";
+import {getDoctorAvailability} from "src/services/support";
 import {accessTokenAtomWithPersistence} from "src/state/authAtom";
 import styles from "src/pages/sosPage/SosPage.module.scss";
 
-const hotlineNumber = import.meta.env.VITE_HOTLINE_PHONE as string | undefined;
+type SelfhelpItem = {
+  id: string;
+  link: string;
+  title: string;
+  desc: string;
+};
 
-type SelfhelpItem = { id: string; link: string; title: string; desc: string };
 type SosDictionary = {
   page: { title: string; subtitle: string };
-  emergency: { title: string; callNow: string; ariaLabel: string };
+  emergency: { title: string; callNow: string; ariaLabel: string; busyText: string };
   consultation: { title: string; lead: string; cta: string };
   selfhelp: { title: string; lead: string };
   selfhelpItems: SelfhelpItem[];
 };
 
+const HOTLINE_PHONE = (import.meta.env.VITE_HOTLINE_PHONE as string | undefined) || "";
+const PAYMENT_URL = (import.meta.env.VITE_PAYMENT_URL as string | undefined) || "";
+
 export function SosPage() {
   const dictionary = useDictionary(DictionaryKey.SOS) as SosDictionary | null;
 
-  const access = useAtomValue(accessTokenAtomWithPersistence);
-  const isAuthenticated = Boolean(access?.token);
+  const accessTokens = useAtomValue(accessTokenAtomWithPersistence);
+  const isAuthenticated = Boolean(accessTokens?.token);
+
+  const [userPersonal, setUserPersonal] = useState<UserPersonal | null>(null);
+  const [availableDoctors, setAvailableDoctors] = useState<number>(0);
+  const [noticeMessage, setNoticeMessage] = useState<string>("");
+
+  const isPaidSupportPlan = (userPersonal?.plan ?? "FREE") !== "FREE";
+  const telHref = HOTLINE_PHONE ? `tel:${HOTLINE_PHONE}` : undefined;
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function load(): Promise<void> {
+      try {
+        if (isAuthenticated) {
+          const personal = await getUserPersonal();
+          if (!mounted) {
+            return;
+          }
+          setUserPersonal(personal);
+        } else {
+          setUserPersonal(null);
+        }
+      } catch {
+        setUserPersonal(null);
+      }
+
+      try {
+        const count = await getDoctorAvailability();
+        if (!mounted) {
+          return;
+        }
+        setAvailableDoctors(count);
+      } catch {
+        setAvailableDoctors(0);
+      }
+    }
+
+    load();
+
+    return () => {
+      mounted = false;
+    };
+  }, [isAuthenticated]);
+
+  const onUnavailableClick = useCallback((): void => {
+    if (!dictionary) {
+      return;
+    }
+    setNoticeMessage(dictionary.emergency.busyText);
+  }, [dictionary]);
 
   if (!dictionary) {
     return (
@@ -33,8 +92,6 @@ export function SosPage() {
       </div>
     );
   }
-
-  const telHref = hotlineNumber ? `tel:${hotlineNumber}` : undefined;
 
   return (
     <div className={styles.page}>
@@ -50,19 +107,55 @@ export function SosPage() {
         <h2 className={styles.cardTitleHero}>
           {dictionary.emergency.title}
         </h2>
+
         <div className={styles.heroRow}>
-          <a
-            href={telHref}
-            className={`${styles.callNowBtn} ${isAuthenticated ? styles.callNowOk : styles.callNowBad}`}
-            aria-label={dictionary.emergency.ariaLabel}
-          >
-            <PhoneCall
-              className={styles.callNowIcon}
-              aria-hidden="true"
-            />
-            {dictionary.emergency.callNow}
-          </a>
+          {!isPaidSupportPlan && PAYMENT_URL && (
+            <a
+              href={PAYMENT_URL}
+              className={`${styles.callNowBtn} ${styles.callNowBad}`}
+              aria-label={dictionary.emergency.ariaLabel}
+            >
+              <PhoneCall
+                className={styles.callNowIcon}
+                aria-hidden="true"
+              />
+              {dictionary.emergency.callNow}
+            </a>
+          )}
+
+          {isPaidSupportPlan && availableDoctors > 0 && telHref && (
+            <a
+              href={telHref}
+              className={`${styles.callNowBtn} ${styles.callNowOk}`}
+              aria-label={dictionary.emergency.ariaLabel}
+            >
+              <PhoneCall
+                className={styles.callNowIcon}
+                aria-hidden="true"
+              />
+              {dictionary.emergency.callNow}
+            </a>
+          )}
+
+          {isPaidSupportPlan && availableDoctors <= 0 && (
+            <button
+              type="button"
+              className={`${styles.callNowBtn} ${styles.callNowBad}`}
+              aria-label={dictionary.emergency.ariaLabel}
+              onClick={onUnavailableClick}
+            >
+              <PhoneCall
+                className={styles.callNowIcon}
+                aria-hidden="true"
+              />
+              {dictionary.emergency.callNow}
+            </button>
+          )}
         </div>
+
+        {noticeMessage && <p className={styles.notice}>
+          {noticeMessage}
+        </p>}
       </section>
 
       <section

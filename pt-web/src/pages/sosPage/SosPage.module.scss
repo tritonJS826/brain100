@@ -162,6 +162,13 @@
   font-size: vars.$font-sm;
 }
 
+.notice {
+  margin: 8px 0 0;
+  color: vars.$color-error;
+  font-weight: 700;
+  text-align: center;
+}
+
 @media (width >= 720px) {
   .heroRow {
     grid-auto-flow: column;

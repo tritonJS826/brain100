@@ -13,6 +13,10 @@ export const biohackingDict = {
   back: "К списку",
   listDefaultLabel: "Список",
 
+  paywallTitle: "Доступно по подписке",
+  paywallText: "Оформите подписку, чтобы читать материал целиком.",
+  buyBtn: "Купить подписку",
+
   articlesItems: [
     {
       id: "1",
@@ -21,6 +25,7 @@ export const biohackingDict = {
       excerpt:
         "Сон — фундамент восстановления. Несколько стабильных привычек улучшают глубину сна и дневную работоспособность.",
       img: "",
+      isPaid: true,
     },
   ],
 
@@ -32,6 +37,8 @@ export const biohackingDict = {
       subtitle: "Простые шаги для качественного сна",
       excerpt:
         "Сон — фундамент восстановления. Несколько стабильных привычек улучшают глубину сна и дневную работоспособность.",
+      isPaid: true,
+      paywallAtIndex: 3,
       content: [
         {
           type: "paragraph",
