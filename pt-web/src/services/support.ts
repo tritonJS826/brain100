@@ -2,11 +2,6 @@ import {apiClient} from "src/services/apiClient";
 
 type SendEmailResponse = { accepted: boolean };
 
-const inboxEnvKey = import.meta.env.VITE_SUPPORT_INBOX;
-const fallbackInbox = "support@example.com";
-const supportInbox =
-  inboxEnvKey && inboxEnvKey.trim() !== "" ? inboxEnvKey : fallbackInbox;
-
 type ConsultationEmailInput = {
   name: string;
   email: string;
@@ -30,7 +25,6 @@ export async function sendConsultationEmail(
   const text = lines.join("\n");
 
   await apiClient.post<SendEmailResponse>("/email/send", {
-    to: supportInbox,
     subject,
     text,
   });
