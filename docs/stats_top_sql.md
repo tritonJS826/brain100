@@ -1,6 +1,7 @@
-# Stats API — Top SQL (v1.1)
+# Stats API — Top SQL (v1.2)
 
-## Endpoint: `/br-general/stats/top-sql`
+## Endpoint
+`GET /br-general/stats/top-sql`
 
 ### Method
 `GET`
@@ -11,18 +12,24 @@ No — this is a **public technical endpoint**
 ---
 
 ### Description
-Returns the **top N heaviest SQL queries** recorded by PostgreSQL using the `pg_stat_statements` extension.  
-Useful for database performance monitoring and profiling.
+Returns the **top N most time-consuming SQL statements** recorded by PostgreSQL via the `pg_stat_statements` extension. Useful for database performance monitoring and profiling.
+
+>   Requirements:
+> - PostgreSQL must have `shared_preload_libraries = 'pg_stat_statements'` enabled.
+> - The target database must have the extension installed: `CREATE EXTENSION IF NOT EXISTS pg_stat_statements;`.
+> - The endpoint queries `pg_stat_statements` directly (no caching/aggregation layer).
 
 ---
 
 ### Query Parameters
 
-| Parameter | Type | Default | Range | Description |
-|------------|------|----------|--------|--------------|
-| `limit` | int | 20 | 1–100 | Number of queries to return |
-| `sort_by` | str | `"total"` | — | Sort by: `total` (total exec time), `mean` (average exec time), `io` (I/O time), or `calls` (number of calls) |
-| `min_calls` | int | 1 | 1–1000 | Minimum number of calls required to include a query (filters out noise) |
+| Parameter   | Type | Default | Range   | Description                                                                 |
+|-------------|------|---------|---------|-----------------------------------------------------------------------------|
+| `limit`     | int  | 20      | 1–100   | How many queries to return                                                  |
+| `sort_by`   | str  | `"total"` | —     | Sort field: `total` (total exec time), `mean` (avg exec time), `io` (I/O time), `calls` (total calls) |
+| `min_calls` | int  | 5       | 1–1000  | Minimum number of calls to include a query (filters rare/noisy statements)  |
+
+> Version note: newer PostgreSQL versions expose `total_exec_time` and `mean_exec_time`. The endpoint accounts for this.
 
 ---
 
