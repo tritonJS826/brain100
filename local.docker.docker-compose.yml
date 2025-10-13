@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: ./postgres/postgres-general.Dockerfile
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - br-postgres-general:/var/lib/postgresql/data
     env_file:
@@ -17,7 +17,7 @@ services:
       context: .
       dockerfile: br-general-python/Dockerfile
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     depends_on:
       - br-postgres-general
     networks:
@@ -28,7 +28,7 @@ services:
       context: .
       dockerfile: ./pt-web/Dockerfile
     ports:
-      - "5174:80"
+      - "127.0.0.1:5174:80"
     networks:
       - app-network
 
