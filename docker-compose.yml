@@ -64,7 +64,7 @@ services:
       echo 'Starting automatic SSL renewal loop...';
       while :; do
         echo $(date '+%Y-%m-%d %H:%M:%S') 'Renewing certificates...';
-        if certbot renew --quiet --no-random-sleep-on-renew; then
+        if certbot renew --quiet --staging --no-random-sleep-on-renew; then
           echo 'Renewal successful';
         else
           echo 'No certificates yet or renewal failed';
