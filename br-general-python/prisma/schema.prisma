@@ -45,9 +45,18 @@ model User {
   language String?
 }
 
+model Topic {
+  id      String   @id @default(cuid())
+  title   String
+  tests   Test[]
+  createdAt DateTime @default(now())
+}
+
 model Test {
   id          String        @id @default(cuid())
   title       String
+  topicId   String
+  topic     Topic        @relation(fields: [topicId], references: [id], onDelete: Cascade)
   description String
   questions   Question[]
   sessions    TestSession[]
@@ -85,7 +94,20 @@ model TestSession {
   userId     String
   createdAt  DateTime      @default(now())
   finishedAt DateTime?
+  isFinished Boolean  @default(false) //session auto-closes on bulk submit
   answers    GivenAnswer[]
+  stats      SessionStat[]
+}
+
+model SessionStat {
+  id        String       @id @default(cuid())
+  session   TestSession  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionId String
+  key       String
+  value     Int
+  createdAt DateTime     @default(now())
+
+  @@unique([sessionId, key]) // One metric = one row per session
 }
 
 model GivenAnswer {
