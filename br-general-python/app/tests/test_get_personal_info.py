@@ -7,6 +7,8 @@ from app.settings import settings
 
 from app.db import db
 
+pytestmark = pytest.mark.asyncio(loop_scope="session")
+
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("index", range(1, 6))  # 5 users
@@ -39,10 +41,9 @@ async def test_multiple_users_personal(index):
         assert data["role"] == role
 
 
-@pytest.fixture(scope="function", autouse=True)
-async def setup_db():
-    await db.connect()
+@pytest.fixture(autouse=True)
+async def cleanup_users():
+    """Cleans up test users after each test file."""
     yield
     # cleanup after test
     await db.user.delete_many(where={"email": {"contains": "personal_user_"}})
-    await db.disconnect()
