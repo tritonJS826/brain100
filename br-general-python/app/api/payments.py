@@ -19,7 +19,7 @@ from app.settings import settings
 router = APIRouter()
 
 # in smallest currency unit, e.g. kopecks for RUB
-base_prise = 1000
+base_price = str(1000)
 # or 'USD', 'EUR', etc.
 base_currency = "RUB"
 
@@ -34,13 +34,13 @@ async def create_payment(current_user=Depends(get_current_user)):
     payment_id = str(uuid.uuid4())
 
     payload = {
-        "amount": {"value": base_prise, "currency": base_currency},
+        "amount": {"value": base_price, "currency": base_currency},
         "confirmation": {
             "type": "redirect",
             "return_url": f"{settings.frontend_url}/payment/success",
         },
         "capture": True,
-        "description": "30 day subscription",
+        "description": "1-Month subscription",
         "metadata": {"user_id": user_id},
     }
 
