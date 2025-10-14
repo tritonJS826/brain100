@@ -183,7 +183,7 @@ export function SosConsultationPage() {
                 </button>
 
                 <Link
-                  to={PATHS.SOS.CONSULTATION}
+                  to={PATHS.SOS.PAGE}
                   className={styles.secondary}
                 >
                   {dictionary.form.backToSupport}

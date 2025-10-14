@@ -26,8 +26,8 @@ type SosDictionary = {
   selfhelpItems: SelfhelpItem[];
 };
 
-const HOTLINE_PHONE = (import.meta.env.VITE_HOTLINE_PHONE as string | undefined) || "";
-const PAYMENT_URL = (import.meta.env.VITE_PAYMENT_URL as string | undefined) || "";
+const PAYMENT_URL = "http://localhost:8000/pay";
+const NOTICE_TIMEOUT = 5000;
 
 export function SosPage() {
   const dictionary = useDictionary(DictionaryKey.SOS) as SosDictionary | null;
@@ -40,7 +40,6 @@ export function SosPage() {
   const [noticeMessage, setNoticeMessage] = useState<string>("");
 
   const isPaidSupportPlan = (userPersonal?.plan ?? "FREE") !== "FREE";
-  const telHref = HOTLINE_PHONE ? `tel:${HOTLINE_PHONE}` : undefined;
 
   useEffect(() => {
     let mounted = true;
@@ -78,12 +77,26 @@ export function SosPage() {
     };
   }, [isAuthenticated]);
 
+  useEffect(() => {
+    if (!noticeMessage) {
+      return;
+    }
+    const messageTime = setTimeout(() => setNoticeMessage(""), NOTICE_TIMEOUT);
+
+    return () => clearTimeout(messageTime);
+  }, [noticeMessage]);
+
   const onUnavailableClick = useCallback((): void => {
     if (!dictionary) {
       return;
     }
     setNoticeMessage(dictionary.emergency.busyText);
   }, [dictionary]);
+
+  const onInternetCallClick = useCallback((): void => {
+    setNoticeMessage("Internet call will be available soon.");
+    // TODO: real data
+  }, []);
 
   if (!dictionary) {
     return (
@@ -123,18 +136,19 @@ export function SosPage() {
             </a>
           )}
 
-          {isPaidSupportPlan && availableDoctors > 0 && telHref && (
-            <a
-              href={telHref}
+          {isPaidSupportPlan && availableDoctors > 0 && (
+            <button
+              type="button"
               className={`${styles.callNowBtn} ${styles.callNowOk}`}
               aria-label={dictionary.emergency.ariaLabel}
+              onClick={onInternetCallClick}
             >
               <PhoneCall
                 className={styles.callNowIcon}
                 aria-hidden="true"
               />
               {dictionary.emergency.callNow}
-            </a>
+            </button>
           )}
 
           {isPaidSupportPlan && availableDoctors <= 0 && (

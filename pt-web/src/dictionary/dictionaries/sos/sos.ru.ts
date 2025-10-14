@@ -29,7 +29,7 @@ export const sosDict = {
     subtitle: "Заполните форму ниже. Мы свяжемся с вами и подберём удобное время.",
     labels: {
       name: "Имя*",
-      email: "Email*",
+      email: "Емейл*",
       phone: "Телефон",
       topic: "Тема запроса*",
       preferredAt: "Предпочтительное время",
