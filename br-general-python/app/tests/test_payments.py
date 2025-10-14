@@ -31,7 +31,7 @@ async def test_payment_create_with_real_user(mock_post):
         "amount": {"value": "499.00", "currency": "RUB"},
         "confirmation": {"confirmation_url": "https://test.yookassa.ru/pay/123"},
         "description": "1-month subscription",
-        "metadata": {"user_id": None},  # will update later
+        "metadata": {"user_id": None},  # will be update latter
     }
 
     async with AsyncClient(transport=transport, base_url="http://test") as client:

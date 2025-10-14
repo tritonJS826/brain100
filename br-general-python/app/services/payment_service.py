@@ -27,7 +27,7 @@ class PaymentService:
             print(f"No user_id found in payment metadata for {payment_id}")
             return None
 
-        start = datetime.now()
+        start = datetime.now(timezone.utc)
         end = start + timedelta(days=30)
 
         subscription = await db.subscription.create(
