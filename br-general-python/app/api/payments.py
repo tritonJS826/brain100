@@ -15,7 +15,6 @@ from app.schemas.payment import PaymentCreateResponse
 
 from app.settings import settings
 
-
 router = APIRouter()
 
 # in smallest currency unit, e.g. kopecks for RUB
@@ -89,7 +88,6 @@ async def yookassa_webhook(request: Request):
         return {"status": "ignored"}
 
     except Exception as e:
-        print("Webhook error:", e)
         raise HTTPException(status_code=500, detail=str(e))
 
 
