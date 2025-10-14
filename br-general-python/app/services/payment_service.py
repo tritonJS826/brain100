@@ -20,6 +20,7 @@ class PaymentService:
         """Create or extend subscription when YooKassa confirms success."""
         payment_id = payment_data.get("id")
         user_id = payment_data.get("metadata", {}).get("user_id")
+        # For future use, if needed:
         # amount = float(payment_data["amount"]["value"])
 
         if not user_id:
