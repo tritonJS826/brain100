@@ -42,6 +42,7 @@ export function SosConsultationPage() {
 
   const [sentId, setSentId] = useState<string | null>(null);
   const [sendError, setSendError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!dictionary) {
     return (
@@ -53,31 +54,30 @@ export function SosConsultationPage() {
 
   const onSubmit: React.FormEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault();
-    setSendError(null);
 
-    const form = event.currentTarget;
-    const data = new FormData(form);
+    if (!isSubmitting) {
+      setSendError(null);
+      setIsSubmitting(true);
 
-    const name = String(data.get("name") ?? "");
-    const email = String(data.get("email") ?? "");
-    const phone = String(data.get("phone") ?? "");
-    const topic = String(data.get("topic") ?? "");
-    const preferredAt = String(data.get("preferredAt") ?? "");
-    const message = String(data.get("message") ?? "");
+      const form = event.currentTarget;
+      const data = new FormData(form);
 
-    try {
-      const id = await sendConsultationEmail({
-        name,
-        email,
-        phone,
-        topic,
-        preferredAt,
-        message,
-      });
-      setSentId(id);
-      form.reset();
-    } catch {
-      setSendError(dictionary.form.error);
+      const name = String(data.get("name") ?? "");
+      const email = String(data.get("email") ?? "");
+      const phone = String(data.get("phone") ?? "");
+      const topic = String(data.get("topic") ?? "");
+      const preferredAt = String(data.get("preferredAt") ?? "");
+      const message = String(data.get("message") ?? "");
+
+      try {
+        const id = await sendConsultationEmail({name, email, phone, topic, preferredAt, message});
+        setSentId(id);
+        form.reset();
+      } catch {
+        setSendError(dictionary.form.error);
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -166,16 +166,20 @@ export function SosConsultationPage() {
                 />
               </label>
 
-              {sendError && <div className={styles.err}>
-                {sendError}
-              </div>}
+              {sendError && (
+                <div className={styles.err}>
+                  {sendError}
+                </div>
+              )}
 
               <div className={styles.actions}>
                 <button
                   className={styles.submit}
                   type="submit"
+                  disabled={isSubmitting}
+                  aria-disabled={isSubmitting}
                 >
-                  {dictionary.form.submit}
+                  {isSubmitting ? "…" : dictionary.form.submit}
                 </button>
 
                 <Link
