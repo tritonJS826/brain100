@@ -25,8 +25,8 @@ RUN pip install --upgrade pip && \
 COPY br-general-python .
 
 # Generate Prisma client(s)
-RUN npx prisma generate --schema=prisma/schema.prisma
-RUN prisma py fetch
+# RUN prisma py fetch
+RUN prisma generate --schema=prisma/schema.prisma
 
 
 # -------- Stage 2: Runtime --------
