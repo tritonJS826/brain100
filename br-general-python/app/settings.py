@@ -34,6 +34,11 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = Field(..., alias="ACCESS_TOKEN_EXPIRE_MINUTES")
     refresh_token_expire_minutes: int = Field(..., alias="REFRESH_TOKEN_EXPIRE_MINUTES")
 
+    # payments settings
+    yookassa_shop_id: str = Field(..., alias="YOOKASSA_SHOP_ID")
+    yookassa_secret: str = Field(..., alias="YOOKASSA_SECRET")
+    frontend_url: str = Field(..., alias="FRONTEND_URL")
+
     model_config = SettingsConfigDict(
         env_file=ENV_PATH,
         env_file_encoding="utf-8",

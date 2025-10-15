@@ -4,6 +4,8 @@ from app.main import app
 from app.settings import settings
 from app.db import db
 
+pytestmark = pytest.mark.asyncio(loop_scope="session")
+
 
 @pytest.mark.asyncio
 async def test_health_check():
@@ -31,9 +33,7 @@ async def test_health_check_failure(monkeypatch):
         assert response.status_code >= 500
 
 
-@pytest.fixture(scope="function", autouse=True)
-async def setup_db():
-    await db.connect()
+@pytest.fixture(autouse=True)
+async def cleanup_users():
+    """Cleans up test users after each test file."""
     yield
-
-    await db.disconnect()

@@ -13,6 +13,8 @@ from app.schemas.user import Plan, Role
 
 from app.db import db
 
+pytestmark = pytest.mark.asyncio(loop_scope="session")
+
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("index", range(1, 6))  # 5 users
@@ -120,10 +122,11 @@ async def test_existing_subscription_branch():
         user_id = decoded["sub"]
 
         # ✅ Pre-create subscription
+        plan = random.choice([Plan.FREE, Plan.BASIC])
         await db.subscription.create(
             data={
                 "user": {"connect": {"id": user_id}},
-                "plan": "FREE",
+                "plan": plan,
                 "startedAt": datetime(2025, 1, 1),
                 "endsAt": datetime(2025, 2, 1),
                 "consultationsIncluded": 3,
@@ -137,15 +140,14 @@ async def test_existing_subscription_branch():
         assert response.status_code == 200
         data = response.json()
 
-        assert data["plan"] == "FREE"
+        assert data["plan"] == plan
         assert data["consultations_used"] == 1
         assert data["consultations_included"] == 3
 
 
-@pytest.fixture(scope="function", autouse=True)
-async def setup_db():
-    await db.connect()
+@pytest.fixture(autouse=True)
+async def cleanup_users():
+    """Cleans up test users after each test file."""
     yield
     # cleanup after test
     await db.user.delete_many(where={"email": {"contains": "personal_user_"}})
-    await db.disconnect()
