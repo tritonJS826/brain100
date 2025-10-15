@@ -28,3 +28,7 @@ python-multipart==0.0.20
 python-jose[cryptography]==3.5.0
 passlib[argon2]==1.7.4
 
+# Payment processing
+yookassa==2.5.0
+
+

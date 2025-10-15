@@ -15,11 +15,16 @@
     "py:format": ".venv/bin/ruff format br-general-python",
     "type-check": ".venv/bin/mypy br-general-python"
   },
-  "keywords": ["python", "fastapi", "prisma", "backend"],
+  "keywords": [
+    "python",
+    "fastapi",
+    "prisma",
+    "backend"
+  ],
   "author": "",
   "license": "ISC",
-  "dependencies": {},
   "devDependencies": {
+    "prisma": "^5.17.0",
     "ruff": "1.5.4"
   }
 }

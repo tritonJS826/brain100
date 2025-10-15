@@ -7,6 +7,8 @@ from app.main import app
 from app.settings import settings
 from app.db import db
 
+pytestmark = pytest.mark.asyncio(loop_scope="session")
+
 
 @pytest.mark.asyncio
 async def test_login_wrong_password():
@@ -95,10 +97,9 @@ async def test_access_expired_token_with_refresh():
         assert "tokens" in body or "user" in body
 
 
-@pytest.fixture(scope="function", autouse=True)
-async def setup_db():
-    await db.connect()
+@pytest.fixture(autouse=True)
+async def cleanup_users():
+    """Cleans up test users after each test file."""
     yield
     await db.user.delete_many(where={"email": {"contains": "auth_error@"}})
     await db.user.delete_many(where={"email": {"contains": "expired_token_user@"}})
-    await db.disconnect()

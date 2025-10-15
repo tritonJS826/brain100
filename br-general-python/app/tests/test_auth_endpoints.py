@@ -11,6 +11,8 @@ from app.services.auth_service import AuthService
 
 auth_service = AuthService()
 
+pytestmark = pytest.mark.asyncio(loop_scope="session")
+
 
 async def perform_user_flow(client, email, password, name, role="PATIENT"):
     # 1. Register user
@@ -160,11 +162,9 @@ async def test_auto_refresh_on_expired_token():
         assert body["tokens"]["refresh_token"] == tokens["refresh_token"]
 
 
-@pytest.fixture(scope="function", autouse=True)
-async def setup_db():
-    await db.connect()
+@pytest.fixture(autouse=True)
+async def cleanup_users():
+    """Cleans up test users after each test file."""
     yield
-    # cleanup test users
     await db.user.delete_many(where={"email": {"contains": "multi_user_"}})
     await db.user.delete_many(where={"email": {"contains": "test_expire@"}})
-    await db.disconnect()
