@@ -1,31 +1,3 @@
-"""
- How to run this test locally (no .env.test required)
-
-1. Start Postgres:
-   docker start brain100-pg 2>/dev/null || \
-   docker run --name brain100-pg -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d \
-     postgres:16 -c shared_preload_libraries=pg_stat_statements
-
-2. Create test DB and enable extension:
-   docker exec -it brain100-pg psql -U postgres -c "CREATE DATABASE brain100_test;" || true
-   docker exec -it brain100-pg psql -U postgres -d brain100_test \
-     -c "CREATE EXTENSION IF NOT EXISTS pg_stat_statements;"
-
-3. Set env vars (temporary for this shell):
-   export DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/brain100_test
-   export PRISMA_DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/brain100_test
-   export BASE_URL=http://testserver
-
-4. Sync Prisma schema (optional):
-   prisma generate && prisma db push
-
-5. Run the test:
-   pytest -q app/tests/test_stats_top_sql.py::test_stats_top_sql_works
-
- Works without .env.test.
-If pg_stat_statements is not installed, the test will be skipped automatically.
-"""
-
 import pytest
 
 from httpx import AsyncClient, ASGITransport
