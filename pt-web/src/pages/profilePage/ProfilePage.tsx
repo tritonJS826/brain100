@@ -247,7 +247,7 @@ export function ProfilePage() {
   const isPaidSupportPlan = (userPersonal?.plan ?? "FREE") !== "FREE";
   const planTitle =
     isPaidSupportPlan ? (dictionary?.plan.supportTitle ?? "Paid") : (dictionary?.plan.baseTitle ?? "Base");
-  const hotlineNumber = import.meta.env.VITE_HOTLINE_PHONE as string | undefined;
+  const hotlineNumber = "+49 123 4567890";
   const PAYMENT_URL = "http://localhost:8000/pay";
 
   const handleLogout = async (): Promise<void> => {
