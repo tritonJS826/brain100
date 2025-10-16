@@ -238,7 +238,7 @@ export function Header() {
           to={buildPath.supportConsultation()}
           img={promoMental}
           title={dictionary.promo.consultCta}
-               />,
+        />,
         buildLink: (id) => buildPath.conditionsDetail(id),
         listPath: PATHS.CONDITIONS.LIST,
       },
@@ -249,7 +249,7 @@ export function Header() {
           to={isAuthenticated ? PATHS.PROFILE.PAGE : buildPath.auth()}
           img={promoTests}
           title={dictionary.promo.registerCta}
-               />,
+        />,
         buildLink: (id) => buildPath.testsDetail(id),
         listPath: PATHS.TESTS.LIST,
       },
@@ -260,7 +260,7 @@ export function Header() {
           to={isAuthenticated ? PATHS.PROFILE.PAGE : buildPath.auth()}
           img={promoBio}
           title={dictionary.promo.subscribeCta}
-               />,
+        />,
         buildLink: (id) => buildPath.biohackingDetail(id),
         listPath: PATHS.BIOHACKING.LIST,
       },
