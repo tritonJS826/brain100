@@ -248,7 +248,7 @@ export function ProfilePage() {
   const planTitle =
     isPaidSupportPlan ? (dictionary?.plan.supportTitle ?? "Paid") : (dictionary?.plan.baseTitle ?? "Base");
   const hotlineNumber = import.meta.env.VITE_HOTLINE_PHONE as string | undefined;
-  const paymentUrl = import.meta.env.VITE_PAYMENT_URL as string | undefined;
+  const PAYMENT_URL = "http://localhost:8000/pay";
 
   const handleLogout = async (): Promise<void> => {
     await logoutUser();
@@ -385,7 +385,7 @@ export function ProfilePage() {
                   {!isPaidSupportPlan && (
                     <a
                       className={styles.upgradeBtn}
-                      href={paymentUrl}
+                      href={PAYMENT_URL}
                       target="_blank"
                       rel="noreferrer"
                     >

@@ -31,7 +31,7 @@ class ApiClient {
     this.timeoutMs = timeoutMs;
   }
 
-  public get<T>(url: string, init?: RequestInit): Promise<T> {
+  public get<T>(url: string, init?: RequestInit & { signal?: AbortSignal }): Promise<T> {
     return this.request<T>("GET", url, undefined, init);
   }
 

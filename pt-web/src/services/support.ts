@@ -32,12 +32,11 @@ export async function sendConsultationEmail(
   return String(Date.now());
 }
 
-export async function getDoctorAvailability(): Promise<number> {
-  try {
-    const response = await apiClient.get<{ doctors: number }>("/sos/availability");
-
-    return typeof response?.doctors === "number" ? response.doctors : 0;
-  } catch {
-    return 0;
+export async function getDoctorAvailability(init?: { signal?: AbortSignal }): Promise<number> {
+  const response = await apiClient.get<{ doctors: number }>("/sos/availability", init);
+  if (typeof response?.doctors !== "number") {
+    throw new Error("Invalid response format");
   }
+
+  return response.doctors;
 }

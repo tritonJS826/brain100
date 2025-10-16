@@ -39,18 +39,16 @@ export function SosPage() {
   const [availableDoctors, setAvailableDoctors] = useState<number>(0);
   const [noticeMessage, setNoticeMessage] = useState<string>("");
 
-  const isPaidSupportPlan = (userPersonal?.plan ?? "FREE") !== "FREE";
+  const freeSupportPlan = "FREE";
+  const isPaidSupportPlan = (userPersonal?.plan ?? freeSupportPlan) !== freeSupportPlan;
 
   useEffect(() => {
-    let mounted = true;
+    const controller = new AbortController();
 
     async function load(): Promise<void> {
       try {
         if (isAuthenticated) {
-          const personal = await getUserPersonal();
-          if (!mounted) {
-            return;
-          }
+          const personal = await getUserPersonal({signal: controller.signal});
           setUserPersonal(personal);
         } else {
           setUserPersonal(null);
@@ -60,10 +58,7 @@ export function SosPage() {
       }
 
       try {
-        const count = await getDoctorAvailability();
-        if (!mounted) {
-          return;
-        }
+        const count = await getDoctorAvailability({signal: controller.signal});
         setAvailableDoctors(count);
       } catch {
         setAvailableDoctors(0);
@@ -73,7 +68,7 @@ export function SosPage() {
     load();
 
     return () => {
-      mounted = false;
+      controller.abort();
     };
   }, [isAuthenticated]);
 
