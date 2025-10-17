@@ -32,11 +32,8 @@ export async function sendConsultationEmail(
   return String(Date.now());
 }
 
-export async function getDoctorAvailability(init?: { signal?: AbortSignal }): Promise<number> {
+export async function getDoctorAvailability(init?: { signal?: AbortSignal }) {
   const response = await apiClient.get<{ doctors: number }>("/sos/availability", init);
-  if (typeof response?.doctors !== "number") {
-    throw new Error("Invalid response format");
-  }
 
   return response.doctors;
 }
