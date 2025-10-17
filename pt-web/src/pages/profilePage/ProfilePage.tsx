@@ -8,6 +8,7 @@ import {DictionaryKey} from "src/dictionary/dictionaryLoader";
 import {useDictionary} from "src/dictionary/useDictionary";
 import {buildPath, PATHS} from "src/routes/routes";
 import {logoutUser} from "src/services/auth";
+import {getPaymentLink} from "src/services/payment";
 import {
   getUserPersonal,
   getUserProfile,
@@ -248,7 +249,12 @@ export function ProfilePage() {
   const planTitle =
     isPaidSupportPlan ? (dictionary?.plan.supportTitle ?? "Paid") : (dictionary?.plan.baseTitle ?? "Base");
   const hotlineNumber = "+49 123 4567890";
-  const PAYMENT_URL = "http://localhost:8000/pay";
+  const [paymentLink, setPaymentLink] = useState<string | null>(null);
+
+  useEffect(() => {
+    const link = getPaymentLink();
+    setPaymentLink(link);
+  }, []);
 
   const handleLogout = async (): Promise<void> => {
     await logoutUser();
@@ -382,10 +388,10 @@ export function ProfilePage() {
                     {dictionary.plan.scheduleBtn}
                   </Button>
 
-                  {!isPaidSupportPlan && (
+                  {!isPaidSupportPlan && typeof paymentLink === "string" && (
                     <a
                       className={styles.upgradeBtn}
-                      href={PAYMENT_URL}
+                      href={paymentLink}
                       target="_blank"
                       rel="noreferrer"
                     >

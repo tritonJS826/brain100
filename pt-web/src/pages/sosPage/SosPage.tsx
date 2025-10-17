@@ -6,6 +6,7 @@ import {PageHeader} from "src/components/PageHeader/PageHeader";
 import {DictionaryKey} from "src/dictionary/dictionaryLoader";
 import {useDictionary} from "src/dictionary/useDictionary";
 import {PATHS} from "src/routes/routes";
+import {getPaymentLink} from "src/services/payment";
 import {getUserPersonal, type UserPersonal} from "src/services/profile";
 import {getDoctorAvailability} from "src/services/support";
 import {accessTokenAtomWithPersistence} from "src/state/authAtom";
@@ -26,11 +27,17 @@ type SosDictionary = {
   selfhelpItems: SelfhelpItem[];
 };
 
-const PAYMENT_URL = "http://localhost:8000/pay";
 const NOTICE_TIMEOUT = 5000;
 
 export function SosPage() {
   const dictionary = useDictionary(DictionaryKey.SOS) as SosDictionary | null;
+
+  const [paymentLink, setPaymentLink] = useState<string | null>(null);
+
+  useEffect(() => {
+    const link = getPaymentLink();
+    setPaymentLink(link);
+  }, []);
 
   const accessTokens = useAtomValue(accessTokenAtomWithPersistence);
   const isAuthenticated = Boolean(accessTokens?.token);
@@ -117,9 +124,9 @@ export function SosPage() {
         </h2>
 
         <div className={styles.heroRow}>
-          {!isPaidSupportPlan && PAYMENT_URL && (
+          {!isPaidSupportPlan && paymentLink && (
             <a
-              href={PAYMENT_URL}
+              href={paymentLink}
               className={`${styles.callNowBtn} ${styles.callNowBad}`}
               aria-label={dictionary.emergency.ariaLabel}
             >
