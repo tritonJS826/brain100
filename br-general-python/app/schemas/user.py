@@ -1,7 +1,7 @@
 from pydantic import BaseModel, EmailStr, Field
 from datetime import datetime
 from enum import Enum
-from typing import Optional
+from typing import Optional, List
 
 
 class Role(str, Enum):
@@ -95,3 +95,20 @@ class UserProfileUpdate(BaseModel):
     city: Optional[str] = None
     phone: Optional[str] = None
     language: Optional[str] = None
+
+
+class OnlineDoctor(BaseModel):
+    id: str
+    name: str
+    city: Optional[str] = None
+    language: Optional[str] = None
+
+
+class IsSomeDoctorOnline(BaseModel):
+    online: bool
+    doctors: List[OnlineDoctor] = []
+
+
+class IsSomeDoctorOnlineOut(BaseModel):
+    online: bool
+    doctors: list[OnlineDoctor] = []
