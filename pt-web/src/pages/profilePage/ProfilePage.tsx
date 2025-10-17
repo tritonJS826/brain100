@@ -4,6 +4,7 @@ import {useAtomValue, useSetAtom} from "jotai";
 import {Pencil, PhoneCall} from "lucide-react";
 import {Button} from "src/components/Button/Button";
 import {PageHeader} from "src/components/PageHeader/PageHeader";
+import {SupportPlan} from "src/constants/userPlans";
 import {DictionaryKey} from "src/dictionary/dictionaryLoader";
 import {useDictionary} from "src/dictionary/useDictionary";
 import {buildPath, PATHS} from "src/routes/routes";
@@ -245,7 +246,7 @@ export function ProfilePage() {
     return null;
   }
 
-  const isPaidSupportPlan = (userPersonal?.plan ?? "FREE") !== "FREE";
+  const isPaidSupportPlan = (userPersonal?.plan ?? SupportPlan.FREE) !== SupportPlan.FREE;
   const planTitle =
     isPaidSupportPlan ? (dictionary?.plan.supportTitle ?? "Paid") : (dictionary?.plan.baseTitle ?? "Base");
   const hotlineNumber = "+49 123 4567890";

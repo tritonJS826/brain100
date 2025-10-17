@@ -3,6 +3,7 @@ import {useAtomValue} from "jotai";
 import {PhoneCall} from "lucide-react";
 import {Button} from "src/components/Button/Button";
 import {PageHeader} from "src/components/PageHeader/PageHeader";
+import {SupportPlan} from "src/constants/userPlans";
 import {DictionaryKey} from "src/dictionary/dictionaryLoader";
 import {useDictionary} from "src/dictionary/useDictionary";
 import {PATHS} from "src/routes/routes";
@@ -46,8 +47,7 @@ export function SosPage() {
   const [availableDoctors, setAvailableDoctors] = useState<number>(0);
   const [noticeMessage, setNoticeMessage] = useState<string>("");
 
-  const freeSupportPlan = "FREE";
-  const isPaidSupportPlan = (userPersonal?.plan ?? freeSupportPlan) !== freeSupportPlan;
+  const isPaidSupportPlan = (userPersonal?.plan ?? SupportPlan.FREE) !== SupportPlan.FREE;
 
   useEffect(() => {
     const controller = new AbortController();
