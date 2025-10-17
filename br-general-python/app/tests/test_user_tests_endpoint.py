@@ -82,9 +82,9 @@ async def test_multiple_users_tests_results(index):
         assert data["title"] == test.title
         assert data["description"] == test.description
         assert "sessions" in data
-        assert len(data["sessions"]) == num_sessions, (
-            f"Expected {num_sessions} sessions, got {len(data['sessions'])}"
-        )
+        assert (
+            len(data["sessions"]) == num_sessions
+        ), f"Expected {num_sessions} sessions, got {len(data['sessions'])}"
 
         for s in data["sessions"]:
             assert s["created_at"]
