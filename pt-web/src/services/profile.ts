@@ -34,16 +34,16 @@ export type UserTestResults = {
   sessions: TestSession[];
 };
 
-export async function getUserProfile(): Promise<UserProfile> {
-  return apiClient.get<UserProfile>("/users/me/profile");
+export async function getUserProfile(init?: { signal?: AbortSignal }): Promise<UserProfile> {
+  return apiClient.get<UserProfile>("/users/me/profile", init);
 }
 
 export async function patchUserProfile(update: Partial<Pick<UserProfile, "city" | "phone" | "language">>): Promise<void> {
   await apiClient.patch<void>("/users/me/profile", update);
 }
 
-export async function getUserPersonal(): Promise<UserPersonal> {
-  return apiClient.get<UserPersonal>("/users/me/personal");
+export async function getUserPersonal(init?: RequestInit & { signal?: AbortSignal }): Promise<UserPersonal> {
+  return apiClient.get<UserPersonal>("/users/me/personal", init);
 }
 
 export async function getUserTestResults(testId: string): Promise<UserTestResults> {

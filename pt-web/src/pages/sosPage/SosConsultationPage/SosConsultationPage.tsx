@@ -42,6 +42,14 @@ export function SosConsultationPage() {
 
   const [sentId, setSentId] = useState<string | null>(null);
   const [sendError, setSendError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [topic, setTopic] = useState("");
+  const [preferredAt, setPreferredAt] = useState("");
+  const [message, setMessage] = useState("");
 
   if (!dictionary) {
     return (
@@ -53,17 +61,13 @@ export function SosConsultationPage() {
 
   const onSubmit: React.FormEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault();
+
+    if (isSubmitting) {
+      return;
+    }
+
     setSendError(null);
-
-    const form = event.currentTarget;
-    const data = new FormData(form);
-
-    const name = String(data.get("name") ?? "");
-    const email = String(data.get("email") ?? "");
-    const phone = String(data.get("phone") ?? "");
-    const topic = String(data.get("topic") ?? "");
-    const preferredAt = String(data.get("preferredAt") ?? "");
-    const message = String(data.get("message") ?? "");
+    setIsSubmitting(true);
 
     try {
       const id = await sendConsultationEmail({
@@ -75,9 +79,16 @@ export function SosConsultationPage() {
         message,
       });
       setSentId(id);
-      form.reset();
+      setName("");
+      setEmail("");
+      setPhone("");
+      setTopic("");
+      setPreferredAt("");
+      setMessage("");
     } catch {
       setSendError(dictionary.form.error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -110,6 +121,8 @@ export function SosConsultationPage() {
                   required
                   minLength={2}
                   autoComplete="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                 />
               </label>
 
@@ -121,6 +134,8 @@ export function SosConsultationPage() {
                   name="email"
                   required
                   autoComplete="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </label>
 
@@ -132,6 +147,8 @@ export function SosConsultationPage() {
                   inputMode="tel"
                   autoComplete="tel"
                   placeholder={dictionary.form.placeholders.phone}
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
                 />
               </label>
 
@@ -143,6 +160,8 @@ export function SosConsultationPage() {
                   required
                   minLength={2}
                   placeholder={dictionary.form.placeholders.topic}
+                  value={topic}
+                  onChange={(e) => setTopic(e.target.value)}
                 />
               </label>
 
@@ -152,6 +171,8 @@ export function SosConsultationPage() {
                   className={styles.input}
                   name="preferredAt"
                   placeholder={dictionary.form.placeholders.preferredAt}
+                  value={preferredAt}
+                  onChange={(e) => setPreferredAt(e.target.value)}
                 />
               </label>
 
@@ -163,6 +184,8 @@ export function SosConsultationPage() {
                   rows={6}
                   maxLength={2000}
                   placeholder={dictionary.form.placeholders.message}
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
                 />
               </label>
 
@@ -174,12 +197,14 @@ export function SosConsultationPage() {
                 <button
                   className={styles.submit}
                   type="submit"
+                  disabled={isSubmitting}
+                  aria-disabled={isSubmitting}
                 >
-                  {dictionary.form.submit}
+                  {isSubmitting ? "…" : dictionary.form.submit}
                 </button>
 
                 <Link
-                  to={PATHS.SOS.CONSULTATION}
+                  to={PATHS.SOS.PAGE}
                   className={styles.secondary}
                 >
                   {dictionary.form.backToSupport}

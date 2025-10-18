@@ -1,30 +1,104 @@
-import React from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {useAtomValue} from "jotai";
 import {PhoneCall} from "lucide-react";
 import {Button} from "src/components/Button/Button";
 import {PageHeader} from "src/components/PageHeader/PageHeader";
+import {SupportPlan} from "src/constants/userPlans";
 import {DictionaryKey} from "src/dictionary/dictionaryLoader";
 import {useDictionary} from "src/dictionary/useDictionary";
 import {PATHS} from "src/routes/routes";
+import {getPaymentLink} from "src/services/payment";
+import {getUserPersonal, type UserPersonal} from "src/services/profile";
+import {getDoctorAvailability} from "src/services/support";
 import {accessTokenAtomWithPersistence} from "src/state/authAtom";
 import styles from "src/pages/sosPage/SosPage.module.scss";
 
-const hotlineNumber = import.meta.env.VITE_HOTLINE_PHONE as string | undefined;
+type SelfhelpItem = {
+  id: string;
+  link: string;
+  title: string;
+  desc: string;
+};
 
-type SelfhelpItem = { id: string; link: string; title: string; desc: string };
 type SosDictionary = {
   page: { title: string; subtitle: string };
-  emergency: { title: string; callNow: string; ariaLabel: string };
+  emergency: { title: string; callNow: string; ariaLabel: string; busyText: string };
   consultation: { title: string; lead: string; cta: string };
   selfhelp: { title: string; lead: string };
   selfhelpItems: SelfhelpItem[];
 };
 
+const NOTICE_TIMEOUT = 5000;
+
 export function SosPage() {
   const dictionary = useDictionary(DictionaryKey.SOS) as SosDictionary | null;
 
-  const access = useAtomValue(accessTokenAtomWithPersistence);
-  const isAuthenticated = Boolean(access?.token);
+  const [paymentLink, setPaymentLink] = useState<string | null>(null);
+
+  useEffect(() => {
+    const link = getPaymentLink();
+    setPaymentLink(link);
+  }, []);
+
+  const accessTokens = useAtomValue(accessTokenAtomWithPersistence);
+  const isAuthenticated = Boolean(accessTokens?.token);
+
+  const [userPersonal, setUserPersonal] = useState<UserPersonal | null>(null);
+  const [availableDoctors, setAvailableDoctors] = useState<number>(0);
+  const [noticeMessage, setNoticeMessage] = useState<string>("");
+
+  const isPaidSupportPlan = (userPersonal?.plan ?? SupportPlan.FREE) !== SupportPlan.FREE;
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function load(): Promise<void> {
+      try {
+        if (isAuthenticated) {
+          const personal = await getUserPersonal({signal: controller.signal});
+          setUserPersonal(personal);
+        } else {
+          setUserPersonal(null);
+        }
+      } catch {
+        setUserPersonal(null);
+      }
+
+      try {
+        const count = await getDoctorAvailability({signal: controller.signal});
+        setAvailableDoctors(count);
+      } catch {
+        setAvailableDoctors(0);
+      }
+    }
+
+    load();
+
+    return () => {
+      controller.abort();
+    };
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (!noticeMessage) {
+      return;
+    }
+    const messageTime = setTimeout(() => setNoticeMessage(""), NOTICE_TIMEOUT);
+
+    return () => clearTimeout(messageTime);
+  }, [noticeMessage]);
+
+  const onUnavailableClick = useCallback((): void => {
+    if (!dictionary) {
+      return;
+    }
+    setNoticeMessage(dictionary.emergency.busyText);
+  }, [dictionary]);
+
+  const onInternetCallClick = useCallback((): void => {
+    setNoticeMessage("Internet call will be available soon.");
+    // TODO: real data
+  }, []);
 
   if (!dictionary) {
     return (
@@ -33,8 +107,6 @@ export function SosPage() {
       </div>
     );
   }
-
-  const telHref = hotlineNumber ? `tel:${hotlineNumber}` : undefined;
 
   return (
     <div className={styles.page}>
@@ -50,19 +122,56 @@ export function SosPage() {
         <h2 className={styles.cardTitleHero}>
           {dictionary.emergency.title}
         </h2>
+
         <div className={styles.heroRow}>
-          <a
-            href={telHref}
-            className={`${styles.callNowBtn} ${isAuthenticated ? styles.callNowOk : styles.callNowBad}`}
-            aria-label={dictionary.emergency.ariaLabel}
-          >
-            <PhoneCall
-              className={styles.callNowIcon}
-              aria-hidden="true"
-            />
-            {dictionary.emergency.callNow}
-          </a>
+          {!isPaidSupportPlan && paymentLink && (
+            <a
+              href={paymentLink}
+              className={`${styles.callNowBtn} ${styles.callNowBad}`}
+              aria-label={dictionary.emergency.ariaLabel}
+            >
+              <PhoneCall
+                className={styles.callNowIcon}
+                aria-hidden="true"
+              />
+              {dictionary.emergency.callNow}
+            </a>
+          )}
+
+          {isPaidSupportPlan && availableDoctors > 0 && (
+            <button
+              type="button"
+              className={`${styles.callNowBtn} ${styles.callNowOk}`}
+              aria-label={dictionary.emergency.ariaLabel}
+              onClick={onInternetCallClick}
+            >
+              <PhoneCall
+                className={styles.callNowIcon}
+                aria-hidden="true"
+              />
+              {dictionary.emergency.callNow}
+            </button>
+          )}
+
+          {isPaidSupportPlan && availableDoctors <= 0 && (
+            <button
+              type="button"
+              className={`${styles.callNowBtn} ${styles.callNowBad}`}
+              aria-label={dictionary.emergency.ariaLabel}
+              onClick={onUnavailableClick}
+            >
+              <PhoneCall
+                className={styles.callNowIcon}
+                aria-hidden="true"
+              />
+              {dictionary.emergency.callNow}
+            </button>
+          )}
         </div>
+
+        {noticeMessage && <p className={styles.notice}>
+          {noticeMessage}
+        </p>}
       </section>
 
       <section
