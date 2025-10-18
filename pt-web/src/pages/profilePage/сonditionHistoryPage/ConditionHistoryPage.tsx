@@ -32,9 +32,9 @@ function formatDate(iso?: string | null): string {
   if (!iso) {
     return "—";
   }
-  const d = new Date(iso);
+  const date = new Date(iso);
 
-  return Number.isNaN(d.getTime()) ? "—" : d.toLocaleString();
+  return Number.isNaN(date.getTime()) ? "—" : date.toLocaleString();
 }
 
 function getSessionLabel(session: TestSession, index: number): string {
@@ -63,6 +63,7 @@ export function ConditionHistoryPage() {
 
         return;
       }
+
       setLoading(true);
       setError(null);
       try {
@@ -75,8 +76,8 @@ export function ConditionHistoryPage() {
         if (!mounted) {
           return;
         }
-        const msg = e instanceof Error ? e.message : "Failed to load test results";
-        setError(msg);
+        const message = e instanceof Error ? e.message : "Failed to load test results";
+        setError(message);
       } finally {
         if (mounted) {
           setLoading(false);
@@ -134,11 +135,10 @@ export function ConditionHistoryPage() {
           title={`${dict.history.titlePrefix} —`}
           subtitle=""
         />
-        <section
-          className={styles.card}
-          style={{color: "crimson"}}
-        >
-          {error}
+        <section className={styles.card}>
+          <div className={styles.errorMessage}>
+            {error}
+          </div>
         </section>
       </div>
     );

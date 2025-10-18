@@ -234,33 +234,36 @@ export function Header() {
       mental: {
         list: mentalItems,
         title: dictionary.dock.allStates,
-        promo: <Promo
-          to={buildPath.supportConsultation()}
-          img={promoMental}
-          title={dictionary.promo.consultCta}
-        />,
+        promo:
+  <Promo
+    to={buildPath.supportConsultation()}
+    img={promoMental}
+    title={dictionary.promo.consultCta}
+  />,
         buildLink: (id) => buildPath.conditionsDetail(id),
         listPath: PATHS.CONDITIONS.LIST,
       },
       tests: {
         list: testItems,
         title: dictionary.dock.allTests,
-        promo: <Promo
-          to={isAuthenticated ? PATHS.PROFILE.PAGE : buildPath.auth()}
-          img={promoTests}
-          title={dictionary.promo.registerCta}
-        />,
+        promo:
+  <Promo
+    to={isAuthenticated ? PATHS.PROFILE.PAGE : buildPath.auth()}
+    img={promoTests}
+    title={dictionary.promo.registerCta}
+  />,
         buildLink: (id) => buildPath.testsDetail(id),
         listPath: PATHS.TESTS.LIST,
       },
       biohacking: {
         list: bioItems,
         title: dictionary.dock.allArticles,
-        promo: <Promo
-          to={isAuthenticated ? PATHS.PROFILE.PAGE : buildPath.auth()}
-          img={promoBio}
-          title={dictionary.promo.subscribeCta}
-        />,
+        promo:
+  <Promo
+    to={isAuthenticated ? PATHS.PROFILE.PAGE : buildPath.auth()}
+    img={promoBio}
+    title={dictionary.promo.subscribeCta}
+  />,
         buildLink: (id) => buildPath.biohackingDetail(id),
         listPath: PATHS.BIOHACKING.LIST,
       },

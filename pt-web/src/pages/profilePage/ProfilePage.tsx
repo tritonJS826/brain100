@@ -4,10 +4,12 @@ import {useAtomValue, useSetAtom} from "jotai";
 import {Pencil, PhoneCall} from "lucide-react";
 import {Button} from "src/components/Button/Button";
 import {PageHeader} from "src/components/PageHeader/PageHeader";
+import {SupportPlan} from "src/constants/userPlans";
 import {DictionaryKey} from "src/dictionary/dictionaryLoader";
 import {useDictionary} from "src/dictionary/useDictionary";
 import {buildPath, PATHS} from "src/routes/routes";
 import {logoutUser} from "src/services/auth";
+import {getPaymentLink} from "src/services/payment";
 import {
   getUserPersonal,
   getUserProfile,
@@ -244,11 +246,16 @@ export function ProfilePage() {
     return null;
   }
 
-  const isPaidSupportPlan = (userPersonal?.plan ?? "FREE") !== "FREE";
+  const isPaidSupportPlan = (userPersonal?.plan ?? SupportPlan.FREE) !== SupportPlan.FREE;
   const planTitle =
     isPaidSupportPlan ? (dictionary?.plan.supportTitle ?? "Paid") : (dictionary?.plan.baseTitle ?? "Base");
-  const hotlineNumber = import.meta.env.VITE_HOTLINE_PHONE as string | undefined;
-  const paymentUrl = import.meta.env.VITE_PAYMENT_URL as string | undefined;
+  const hotlineNumber = "+49 123 4567890";
+  const [paymentLink, setPaymentLink] = useState<string | null>(null);
+
+  useEffect(() => {
+    const link = getPaymentLink();
+    setPaymentLink(link);
+  }, []);
 
   const handleLogout = async (): Promise<void> => {
     await logoutUser();
@@ -286,7 +293,7 @@ export function ProfilePage() {
 
       {!isLoading && pageError && (
         <section className={styles.card}>
-          <div style={{color: "crimson"}}>
+          <div className={styles.errorMessage}>
             {pageError}
           </div>
         </section>
@@ -382,10 +389,10 @@ export function ProfilePage() {
                     {dictionary.plan.scheduleBtn}
                   </Button>
 
-                  {!isPaidSupportPlan && (
+                  {!isPaidSupportPlan && typeof paymentLink === "string" && (
                     <a
                       className={styles.upgradeBtn}
-                      href={paymentUrl}
+                      href={paymentLink}
                       target="_blank"
                       rel="noreferrer"
                     >

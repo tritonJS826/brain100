@@ -8,6 +8,43 @@
   gap: vars.$gap-lg;
 }
 
+.card {
+  background: vars.$color-bg;
+  border: 1px solid vars.$color-border;
+  border-radius: vars.$radius-lg;
+  box-shadow: 0 12px 28px rgb(0 0 0 / 12%);
+  padding: vars.$pad-lg;
+  display: grid;
+  gap: vars.$gap-md;
+}
+
+.errorMessage {
+  color: crimson;
+  font-weight: 600;
+}
+
+.sessionBlock {
+  border: 1px solid vars.$color-border;
+  border-radius: vars.$radius-md;
+  background: #fff;
+  overflow: hidden;
+}
+
+.sessionSummary {
+  display: block;
+  padding: 12px 14px;
+  font-weight: 700;
+  color: vars.$color-primary;
+  cursor: pointer;
+  background: #fafafa;
+  user-select: none;
+}
+
+.sessionEmpty {
+  padding: 12px 14px;
+  color: vars.$color-text-secondary;
+}
+
 .tableWrap {
   width: 100%;
   overflow-x: auto;
