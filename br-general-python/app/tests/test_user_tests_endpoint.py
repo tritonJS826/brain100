@@ -7,8 +7,6 @@ from app.main import app
 from app.settings import settings
 from app.db import db
 
-pytestmark = pytest.mark.asyncio(loop_scope="session")
-
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("index", range(1, 6))  # 5 users
@@ -41,18 +39,18 @@ async def test_multiple_users_tests_results(index):
         )
         user_id = decoded["sub"]
 
-        # 2. create topic (or reuse existing)
-        topic_title = "Focus and Attention"
+        # 2 create topic (or reuse existing)
+        topic_title = f"Topic-{index} Focus"
         topic = await db.topic.find_first(where={"title": topic_title})
         if not topic:
             topic = await db.topic.create(data={"title": topic_title})
 
-        # 2.1 create fake test under this topic
+        # 2.1 create fake test and session for this user
         test = await db.test.create(
             data={
                 "title": f"TEST-{index} Focus Evaluation",
                 "description": f"TEST-{index} Evaluates attention and response speed.",
-                "topicId": topic.id,
+                "topic": {"connect": {"id": topic.id}},
             }
         )
 
@@ -95,9 +93,9 @@ async def test_multiple_users_tests_results(index):
         print(f"✅ User {index}: {email} — {len(data['sessions'])} session(s) OK")
 
 
-@pytest.fixture(autouse=True)
-async def cleanup_users():
-    """Cleans up test users after each test file."""
+@pytest.fixture(scope="function", autouse=True)
+async def setup_db():
+    await db.connect()
     yield
     # cleanup all test data after run
     await db.testsession.delete_many(
@@ -105,3 +103,4 @@ async def cleanup_users():
     )
     await db.test.delete_many(where={"title": {"contains": "TEST-"}})
     await db.user.delete_many(where={"email": {"contains": "test_user_tests_"}})
+    await db.disconnect()

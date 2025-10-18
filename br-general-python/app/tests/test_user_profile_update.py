@@ -7,8 +7,6 @@ from app.main import app
 from app.settings import settings
 from app.db import db
 
-pytestmark = pytest.mark.asyncio(loop_scope="session")
-
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("index", range(1, 6))  # 5 users
@@ -63,18 +61,17 @@ async def test_multiple_users_profile_and_tests(index):
         assert db_user.phone == update_data["phone"]
         assert db_user.language == update_data["language"]
 
-        # 4. create topic (or reuse existing)
-        topic_title = "Focus and Attention"
+        # 4 Create a topic and test + sessions
+        topic_title = f"Topic-{index} Focus"
         topic = await db.topic.find_first(where={"title": topic_title})
         if not topic:
             topic = await db.topic.create(data={"title": topic_title})
 
-        # 4.1 create fake test under this topic
         test = await db.test.create(
             data={
                 "title": f"TEST-{index} Focus Evaluation",
                 "description": f"TEST-{index} Evaluates attention and response speed.",
-                "topicId": topic.id,
+                "topic": {"connect": {"id": topic.id}},
             }
         )
 
@@ -95,7 +92,7 @@ async def test_multiple_users_profile_and_tests(index):
         assert response.status_code == 200, response.text
         data = response.json()
 
-        # 6 Validate response
+        # 6️⃣ Validate response
         assert data["test_id"] == test.id
         assert data["title"] == test.title
         assert data["description"] == test.description
@@ -110,9 +107,9 @@ async def test_multiple_users_profile_and_tests(index):
         print(f"✅ User {index} ({email}) — Profile & {num_sessions} session(s) OK")
 
 
-@pytest.fixture(autouse=True)
-async def cleanup_users():
-    """Cleans up test users after each test file."""
+@pytest.fixture(scope="function", autouse=True)
+async def setup_db():
+    await db.connect()
     yield
     # Cleanup test data
     await db.testsession.delete_many(
@@ -120,3 +117,4 @@ async def cleanup_users():
     )
     await db.test.delete_many(where={"title": {"contains": "TEST-"}})
     await db.user.delete_many(where={"email": {"contains": "test_user_profile_"}})
+    await db.disconnect()
