@@ -40,6 +40,10 @@ class Settings(BaseSettings):
         case_sensitive=True,
     )
 
+    yookassa_shop_id: str = Field(..., alias="YOOKASSA_SHOP_ID")
+    yookassa_secret: str = Field(..., alias="YOOKASSA_SECRET")
+    frontend_url: str = Field(..., alias="FRONTEND_URL")
+
     @property
     def base_url(self) -> str:
         """Return base URL for local or test usage."""

@@ -61,11 +61,17 @@ async def test_multiple_users_profile_and_tests(index):
         assert db_user.phone == update_data["phone"]
         assert db_user.language == update_data["language"]
 
-        # 4 Create test + sessions
+        # 4 Create a topic and test + sessions
+        topic_title = f"Topic-{index} Focus"
+        topic = await db.topic.find_first(where={"title": topic_title})
+        if not topic:
+            topic = await db.topic.create(data={"title": topic_title})
+
         test = await db.test.create(
             data={
                 "title": f"TEST-{index} Focus Evaluation",
                 "description": f"TEST-{index} Evaluates attention and response speed.",
+                "topic": {"connect": {"id": topic.id}},
             }
         )
 
