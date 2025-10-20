@@ -43,6 +43,10 @@ model User {
   phone    String?
   // e.g. "Deutsch, English"
   language String?
+
+  // Online status
+  is_online    Boolean  @default(false)
+  last_seen_at DateTime @default(now())
 }
 
 model Topic {

@@ -1,6 +1,6 @@
 # Description: API router for the application, including health, user, and email endpoints.
 
-from . import users, health, email, auth, tests, payments
+from . import users, health, email, auth, tests, payments, doctors
 from fastapi import APIRouter
 from app.settings import settings
 
@@ -15,3 +15,6 @@ api_router.include_router(
 # For production, disable email send and user create endpoints
 if settings.env_type != "prod":
     api_router.include_router(email.router, prefix="/br-general/email", tags=["email"])
+api_router.include_router(
+    doctors.router, prefix="/br-general/doctors", tags=["doctors"]
+)
