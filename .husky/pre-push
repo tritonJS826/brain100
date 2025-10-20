@@ -1,24 +1,47 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# Pre-push hook to block pushes to main and ensure tests pass.
 
 SCRIPT_NAME="Pre-push Hook"
+set -euo pipefail
 
-#!/usr/bin/env sh
-# Use a more robust way to get the branch name, handling detached HEAD
-# BRANCH=$(git symbolic-ref HEAD 2>/dev/null || git rev-parse --short HEAD)
+# ----------------------------
+# 1. Protect the main branch
+# ----------------------------
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
 PROTECTED_MAIN="main"
 
+if [[ "$BRANCH" == "$PROTECTED_MAIN" ]]; then
+  echo -e "\n🚫 Error: Pushing directly to '$BRANCH' is not allowed."
+  echo "👉 Please create a feature branch and open a Pull Request instead.\n"
+  exit 1
+fi
 
-case $BRANCH in
-    "$PROTECTED_MAIN")
-        echo -e "\n🚫 Error: Pushing to protected branch '$BRANCH' is not allowed. Create a new branch and use a Pull Request.\n" >&2 && exit 1
-    ;;
+echo -e "✅ $SCRIPT_NAME: Branch name check passed.\n"
 
-#   Fedora | CentOS)
-#     echo -n "@@@@@@"
-#     ;;
-esac
+# ----------------------------
+# 2. Run backend tests
+# ----------------------------
+echo "Running backend tests before push (br-general-python)..."
+cd br-general-python || {
+  echo "Could not change directory to br-general-python."
+  exit 1
+}
 
+# Activate virtual environment if present
+if [[ -d ".venv" ]]; then
+  source .venv/bin/activate
+else
+  echo "No .venv found; assuming dependencies are available globally."
+fi
 
-echo -e ">> $SCRIPT_NAME: Branch name check passed \n==="
-exit 0
+# Run tests quietly but stop on first failure
+pytest --maxfail=1 --disable-warnings -q
+TEST_EXIT_CODE=$?
+
+if [[ $TEST_EXIT_CODE -eq 0 ]]; then
+  echo "All backend tests passed or skipped. Proceeding with push."
+  exit 0
+else
+  echo "Tests failed. Push aborted."
+  exit 1
+fi
