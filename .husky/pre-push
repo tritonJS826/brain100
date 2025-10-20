@@ -2,7 +2,7 @@
 # Pre-push hook to block pushes to main and ensure tests pass.
 
 SCRIPT_NAME="Pre-push Hook"
-set -euo pipefail
+set -e
 
 # ----------------------------
 # 1. Protect the main branch
