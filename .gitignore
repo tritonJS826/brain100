@@ -57,3 +57,4 @@ __pycache__/
 *.pyd
 *.pyo
 /.coverage
+/gateway/certs/
