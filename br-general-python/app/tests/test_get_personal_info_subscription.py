@@ -121,7 +121,7 @@ async def test_existing_subscription_branch():
         )
         user_id = decoded["sub"]
 
-        # ✅ Pre-create subscription
+        # Pre-create subscription
         plan = random.choice([Plan.FREE, Plan.BASIC])
         await db.subscription.create(
             data={
