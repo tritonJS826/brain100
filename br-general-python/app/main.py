@@ -26,7 +26,12 @@ app.add_middleware(
     allow_origins=[settings.webapp_domain],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=[
+        "Authorization",
+        "Content-Type",
+        "x-refresh-token",  # custom header now allowed
+        "X-Requested-With",
+    ],
 )
 
 app.include_router(api_router)

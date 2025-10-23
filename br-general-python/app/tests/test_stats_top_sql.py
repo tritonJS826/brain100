@@ -5,6 +5,8 @@ from app.main import app
 from app.settings import settings
 from app.db import db
 
+pytestmark = pytest.mark.asyncio(loop_scope="session")
+
 
 async def _pgss_installed() -> bool:
     """Checking pg_stat_statements was installed into current db."""
@@ -19,10 +21,7 @@ async def _pgss_installed() -> bool:
 
 @pytest.mark.asyncio
 async def test_stats_top_sql_works():
-    await db.connect()
-
     if not await _pgss_installed():
-        await db.disconnect()
         pytest.skip("pg_stat_statements is not installed in this database")
 
     for i in range(15):
@@ -49,5 +48,3 @@ async def test_stats_top_sql_works():
 
         r3 = await client.get("/br-general/stats/top-sql?sort_by=bad")
         assert r3.status_code in (400, 422)
-
-    await db.disconnect()

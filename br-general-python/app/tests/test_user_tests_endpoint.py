@@ -92,7 +92,7 @@ async def test_multiple_users_tests_results(index):
             assert "answers" in s
             assert isinstance(s["answers"], list)
 
-        print(f"✅ User {index}: {email} — {len(data['sessions'])} session(s) OK")
+        print(f"User {index}: {email} — {len(data['sessions'])} session(s) OK")
 
 
 @pytest.fixture(autouse=True)

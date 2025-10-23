@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from fastapi import APIRouter, HTTPException, Query
 from app.db import db
 
-router = APIRouter(tags=["stats"])
+router = APIRouter()
 
 ORDER_MAP = {
     "total": "total_exec_time DESC",
