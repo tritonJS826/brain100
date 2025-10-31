@@ -35,10 +35,19 @@ services:
   br-gateway:
     image: nginx:1.24.0-alpine
     container_name: nginx
+    depends_on:
+      - br-general-python
+      - br-web
     ports:
       - "80:80"
+      - "443:443"
     volumes:
-      - ./gateway/local.docker.nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./gateway/nginx.conf:/etc/nginx/nginx.conf:ro
+      - /home/user/docker-certs/brain100.help/fullchain.pem:/etc/ssl/certs/fullchain.pem:ro
+      - /home/user/docker-certs/brain100.help/privkey.pem:/etc/ssl/private/privkey.pem:ro
+      #      - ./gateway/certs/fullchain.pem:/etc/ssl/certs/fullchain.pem:ro
+      #      - ./gateway/certs/privkey.pem:/etc/ssl/private/privkey.pem:ro
+
     networks:
       - app-network
 
