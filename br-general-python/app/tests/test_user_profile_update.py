@@ -107,7 +107,7 @@ async def test_multiple_users_profile_and_tests(index):
             assert "answers" in s
             assert isinstance(s["answers"], list)
 
-        print(f"✅ User {index} ({email}) — Profile & {num_sessions} session(s) OK")
+        print(f"User {index} ({email}) — Profile & {num_sessions} session(s) OK")
 
 
 @pytest.fixture(autouse=True)
