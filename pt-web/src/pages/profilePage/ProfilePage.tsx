@@ -253,8 +253,18 @@ export function ProfilePage() {
   const [paymentLink, setPaymentLink] = useState<string | null>(null);
 
   useEffect(() => {
-    const link = getPaymentLink();
-    setPaymentLink(link);
+    async function fetchPaymentLink() {
+      try {
+        const link = await getPaymentLink();
+        setPaymentLink(link);
+      } catch (error) {
+        // eslint-disable-next-line no-console
+        console.error("Error fetching payment link:", error);
+        setPaymentLink(null);
+      }
+    }
+
+    fetchPaymentLink();
   }, []);
 
   const handleLogout = async (): Promise<void> => {
@@ -389,12 +399,18 @@ export function ProfilePage() {
                     {dictionary.plan.scheduleBtn}
                   </Button>
 
-                  {!isPaidSupportPlan && typeof paymentLink === "string" && (
+                  {!isPaidSupportPlan && (
                     <a
                       className={styles.upgradeBtn}
-                      href={paymentLink}
+                      href={paymentLink ?? "#"}
                       target="_blank"
                       rel="noreferrer"
+                      onClick={(e) => {
+                        if (!paymentLink) {
+                          e.preventDefault();
+                          alert("Платёжная ссылка ещё загружается. Попробуйте позже.");
+                        }
+                      }}
                     >
                       {dictionary.plan.buyBtn}
                     </a>

@@ -144,3 +144,38 @@
   font-weight: 800;
   text-decoration: none;
 }
+
+.paywall {
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 12px;
+  text-align: center;
+  background: #f8fafc;
+}
+
+.paywallTitle {
+  font-weight: 800;
+  margin-bottom: 8px;
+  color: #0f172a;
+}
+
+.paywallText {
+  color: #64748b;
+  margin-bottom: 12px;
+}
+
+.paywallBtn {
+  display: inline-block;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 2px solid #0e7490;
+  color: #0e7490;
+  text-decoration: none;
+  font-weight: 800;
+}
+
+.paywallBtn:hover {
+  background: #0e7490;
+  color: #fff;
+}
