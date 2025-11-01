@@ -28,7 +28,7 @@ type SosDictionary = {
   selfhelpItems: SelfhelpItem[];
 };
 
-const NOTICE_TIMEOUT = 5000;
+const NOTICE_TIMEOUT = 10000;
 
 export function SosPage() {
   const dictionary = useDictionary(DictionaryKey.SOS) as SosDictionary | null;
@@ -124,54 +124,38 @@ export function SosPage() {
         </h2>
 
         <div className={styles.heroRow}>
-          {!isPaidSupportPlan && paymentLink && (
-            <a
-              href={paymentLink}
-              className={`${styles.callNowBtn} ${styles.callNowBad}`}
-              aria-label={dictionary.emergency.ariaLabel}
-            >
-              <PhoneCall
-                className={styles.callNowIcon}
-                aria-hidden="true"
-              />
-              {dictionary.emergency.callNow}
-            </a>
-          )}
-
-          {isPaidSupportPlan && availableDoctors > 0 && (
-            <button
-              type="button"
-              className={`${styles.callNowBtn} ${styles.callNowOk}`}
-              aria-label={dictionary.emergency.ariaLabel}
-              onClick={onInternetCallClick}
-            >
-              <PhoneCall
-                className={styles.callNowIcon}
-                aria-hidden="true"
-              />
-              {dictionary.emergency.callNow}
-            </button>
-          )}
-
-          {isPaidSupportPlan && availableDoctors <= 0 && (
-            <button
-              type="button"
-              className={`${styles.callNowBtn} ${styles.callNowBad}`}
-              aria-label={dictionary.emergency.ariaLabel}
-              onClick={onUnavailableClick}
-            >
-              <PhoneCall
-                className={styles.callNowIcon}
-                aria-hidden="true"
-              />
-              {dictionary.emergency.callNow}
-            </button>
-          )}
+          <button
+            type="button"
+            className={`${styles.callNowBtn} ${availableDoctors > 0 ? styles.callNowOk : styles.callNowBad}`}
+            aria-label={dictionary.emergency.ariaLabel}
+            onClick={() => {
+              if (availableDoctors > 0) {
+                if (isPaidSupportPlan) {
+                  onInternetCallClick();
+                } else {
+                  if (paymentLink) {
+                    window.location.href = paymentLink;
+                  } else {
+                    setNoticeMessage("Ошибка: не удалось получить ссылку на оплату.");
+                  }
+                }
+              } else {
+                onUnavailableClick();
+              }
+            }}
+          >
+            <PhoneCall
+              className={styles.callNowIcon}
+              aria-hidden="true"
+            />
+            {dictionary.emergency.callNow}
+          </button>
         </div>
-
-        {noticeMessage && <p className={styles.notice}>
-          {noticeMessage}
-        </p>}
+        {noticeMessage && (
+          <p className={`${styles.notice} ${styles.noticeVisible}`}>
+            {noticeMessage}
+          </p>
+        )}
       </section>
 
       <section
