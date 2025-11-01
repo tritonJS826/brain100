@@ -1,7 +1,9 @@
+import {useState} from "react";
 import {Link, useParams} from "react-router-dom";
 import {DictionaryKey} from "src/dictionary/dictionaryLoader";
 import {useDictionary} from "src/dictionary/useDictionary";
 import {PATHS} from "src/routes/routes";
+import {getPaymentLink} from "src/services/payment";
 import styles from "src/pages/biohackingListPage/articles/BiohackingDetailPage.module.scss";
 
 type ParagraphNode = { type: "paragraph"; text: string };
@@ -33,6 +35,21 @@ type BiohackingDictionary = {
 export function BiohackingDetailPage() {
   const routeParams = useParams<{ id: string }>();
   const dictionary = useDictionary(DictionaryKey.BIOHACKING) as BiohackingDictionary | null;
+
+  const [isLoadingPayment, setIsLoadingPayment] = useState(false);
+
+  const handleBuyClick = async () => {
+    try {
+      setIsLoadingPayment(true);
+      const link = await getPaymentLink();
+      window.location.href = link;
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error("Error while fetching payment link:", error);
+      setIsLoadingPayment(false);
+      alert("Failed to retrieve payment link. Please try again later.");
+    }
+  };
 
   if (!dictionary) {
     return (
@@ -154,12 +171,13 @@ export function BiohackingDetailPage() {
           <div className={styles.paywallText}>
             {dictionary.paywallText}
           </div>
-          <Link
-            to={PATHS.PROFILE.PAGE}
+          <button
             className={styles.paywallBtn}
+            onClick={handleBuyClick}
+            disabled={isLoadingPayment}
           >
-            {dictionary.buyBtn}
-          </Link>
+            {isLoadingPayment ? "Loading..." : dictionary.buyBtn}
+          </button>
         </div>
       )}
     </article>

@@ -33,21 +33,32 @@ const NOTICE_TIMEOUT = 10000;
 export function SosPage() {
   const dictionary = useDictionary(DictionaryKey.SOS) as SosDictionary | null;
 
-  const [paymentLink, setPaymentLink] = useState<string | null>(null);
-
-  useEffect(() => {
-    const link = getPaymentLink();
-    setPaymentLink(link);
-  }, []);
-
   const accessTokens = useAtomValue(accessTokenAtomWithPersistence);
   const isAuthenticated = Boolean(accessTokens?.token);
 
   const [userPersonal, setUserPersonal] = useState<UserPersonal | null>(null);
   const [availableDoctors, setAvailableDoctors] = useState<number>(0);
   const [noticeMessage, setNoticeMessage] = useState<string>("");
+  const [paymentLink, setPaymentLink] = useState<string | null>(null);
 
   const isPaidSupportPlan = (userPersonal?.plan ?? SupportPlan.FREE) !== SupportPlan.FREE;
+
+  useEffect(() => {
+    async function fetchPaymentLink() {
+      try {
+        const link = await getPaymentLink();
+        setPaymentLink(link);
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error("Error fetching payment link:", err);
+        setPaymentLink(null);
+      }
+    }
+
+    if (!isPaidSupportPlan) {
+      fetchPaymentLink();
+    }
+  }, [isPaidSupportPlan]);
 
   useEffect(() => {
     const controller = new AbortController();
