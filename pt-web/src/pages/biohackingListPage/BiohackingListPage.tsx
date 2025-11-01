@@ -13,6 +13,7 @@ type BioItem = {
   subtitle?: string;
   excerpt?: string;
   img?: string;
+  isPaid?: boolean;
 };
 
 type BioDictionary = {
@@ -22,6 +23,7 @@ type BioDictionary = {
   ariaSearchLabel: string;
   cta: string;
   empty: string;
+  loading: string;
   articlesItems: BioItem[];
 };
 
@@ -31,12 +33,12 @@ export function BiohackingListPage() {
   if (!dictionary) {
     return (
       <div>
-        Loading...
+        Loading…
       </div>
     );
   }
 
-  const items = dictionary.articlesItems;
+  const articleItems = dictionary.articlesItems;
 
   return (
     <section
@@ -49,19 +51,23 @@ export function BiohackingListPage() {
       />
 
       <ul className={styles.grid}>
-        {items.map((item) => (
+        {articleItems.map((articleItem) => (
           <li
-            key={item.id}
+            key={articleItem.id}
             className={styles.card}
           >
-            {item.img && (
+            {articleItem.isPaid && <span className={styles.lockBadge}>
+              PRO
+            </span>}
+
+            {articleItem.img && (
               <Link
-                to={buildPath.biohackingDetail(item.id)}
+                to={buildPath.biohackingDetail(articleItem.id)}
                 className={styles.coverLink}
               >
                 <img
-                  src={item.img}
-                  alt={item.title}
+                  src={articleItem.img}
+                  alt={articleItem.title}
                   className={styles.cover}
                   loading="lazy"
                 />
@@ -71,23 +77,23 @@ export function BiohackingListPage() {
             <div className={styles.cardBody}>
               <h2 className={styles.cardTitle}>
                 <Link
-                  to={buildPath.biohackingDetail(item.id)}
+                  to={buildPath.biohackingDetail(articleItem.id)}
                   className={styles.cardLink}
                 >
-                  {item.title}
+                  {articleItem.title}
                 </Link>
               </h2>
 
-              {item.subtitle && <p className={styles.cardSubtitle}>
-                {item.subtitle}
+              {articleItem.subtitle && <p className={styles.cardSubtitle}>
+                {articleItem.subtitle}
               </p>}
-              {item.excerpt && <p className={styles.cardText}>
-                {item.excerpt}
+              {articleItem.excerpt && <p className={styles.cardText}>
+                {articleItem.excerpt}
               </p>}
             </div>
 
             <div className={styles.cardFoot}>
-              <Button to={buildPath.biohackingDetail(item.id)}>
+              <Button to={buildPath.biohackingDetail(articleItem.id)}>
                 {dictionary.cta}
               </Button>
             </div>
@@ -95,7 +101,7 @@ export function BiohackingListPage() {
         ))}
       </ul>
 
-      {items.length === 0 && <EmptyState message={dictionary.empty} />}
+      {articleItems.length === 0 && <EmptyState message={dictionary.empty} />}
     </section>
   );
 }

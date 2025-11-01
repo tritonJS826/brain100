@@ -8,19 +8,43 @@ type ParagraphNode = { type: "paragraph"; text: string };
 type QuoteNode = { type: "quote"; text: string; author?: string };
 type ContentNode = ParagraphNode | QuoteNode;
 
+type Article = {
+  id: string;
+  title: string;
+  subtitle?: string;
+  img?: string;
+  isPaid?: boolean;
+  paywallAtIndex?: number;
+  content: ContentNode[];
+};
+
+type BiohackingDictionary = {
+  loading: string;
+  notFound: string;
+  backToAll: string;
+  back: string;
+  articleEyebrow: string;
+  buyBtn: string;
+  paywallTitle: string;
+  paywallText: string;
+  articles: Article[];
+};
+
 export function BiohackingDetailPage() {
-  const {id} = useParams<{ id: string }>();
-  const dictionary = useDictionary(DictionaryKey.BIOHACKING);
+  const routeParams = useParams<{ id: string }>();
+  const dictionary = useDictionary(DictionaryKey.BIOHACKING) as BiohackingDictionary | null;
 
   if (!dictionary) {
     return (
       <div>
-        Loading...
+        Loading…
       </div>
     );
   }
 
-  const article = dictionary.articles.find((a: { id: string }) => a.id === id);
+  const currentArticleId = routeParams.id;
+  const article = dictionary.articles.find((articleItem) => articleItem.id === currentArticleId);
+
   if (!article) {
     return (
       <section className={styles.wrap}>
@@ -39,9 +63,15 @@ export function BiohackingDetailPage() {
     );
   }
 
-  const content: ContentNode[] = Array.isArray(article.content)
-    ? (article.content as ContentNode[])
-    : [];
+  const contentNodes: ContentNode[] = Array.isArray(article.content) ? article.content : [];
+
+  const isPaidArticle = Boolean(article.isPaid);
+  const hasValidCutIndex =
+    typeof article.paywallAtIndex === "number" && article.paywallAtIndex >= 0;
+
+  const cutIndex = hasValidCutIndex ? (article.paywallAtIndex as number) : Number.POSITIVE_INFINITY;
+  const visibleContentNodes = isPaidArticle ? contentNodes.slice(0, cutIndex) : contentNodes;
+  const shouldShowPaywall = isPaidArticle && contentNodes.length > visibleContentNodes.length;
 
   return (
     <article
@@ -82,39 +112,56 @@ export function BiohackingDetailPage() {
       </header>
 
       <div className={styles.content}>
-        {content.map((node, i) => {
-          switch (node.type) {
-            case "paragraph":
-              return (
-                <p
-                  key={i}
-                  className={styles.p}
-                >
-                  {node.text}
-                </p>
-              );
-            case "quote":
-              return (
-                <figure
-                  key={i}
-                  className={styles.quote}
-                >
-                  <blockquote className={styles.q}>
-                    {node.text}
-                  </blockquote>
-                  {node.author && (
-                    <figcaption className={styles.caption}>
-                      —
-                      {node.author}
-                    </figcaption>
-                  )}
-                </figure>
-              );
-            default:
-              return null;
+        {visibleContentNodes.map((contentNode, nodeIndex) => {
+          if (contentNode.type === "paragraph") {
+            return (
+              <p
+                key={nodeIndex}
+                className={styles.p}
+              >
+                {contentNode.text}
+              </p>
+            );
           }
+          if (contentNode.type === "quote") {
+            return (
+              <figure
+                key={nodeIndex}
+                className={styles.quote}
+              >
+                <blockquote className={styles.q}>
+                  {contentNode.text}
+                </blockquote>
+                {contentNode.author && (
+                  <figcaption className={styles.caption}>
+                    —
+                    {contentNode.author}
+                  </figcaption>
+                )}
+              </figure>
+            );
+          }
+
+          return null;
         })}
       </div>
+
+      {shouldShowPaywall && (
+        <div className={styles.paywall}>
+          <div className={styles.paywallTitle}>
+            {dictionary.paywallTitle}
+          </div>
+          <div className={styles.paywallText}>
+            {dictionary.paywallText}
+          </div>
+          <Link
+            to={PATHS.PROFILE.PAGE}
+            className={styles.paywallBtn}
+          >
+            {dictionary.buyBtn}
+          </Link>
+        </div>
+      )}
     </article>
   );
 }
