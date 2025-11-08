@@ -11,6 +11,7 @@ import {ConditionArticleDetailPage} from "src/pages/conditionsListPage/condition
 import {ConditionsListPage} from "src/pages/conditionsListPage/ConditionsListPage";
 import {HomePage} from "src/pages/homePage/Homepage";
 import {NotFoundPage} from "src/pages/notFoundPage/NotFoundPage";
+import {PaymentSuccessPage} from "src/pages/PaymentSuccessPage/PaymentSuccessPage";
 import {ProfilePage} from "src/pages/profilePage/ProfilePage";
 import {ConditionHistoryPage} from "src/pages/profilePage/сonditionHistoryPage/ConditionHistoryPage";
 import {SosConsultationPage} from "src/pages/sosPage/SosConsultationPage/SosConsultationPage";
@@ -91,6 +92,10 @@ export function App() {
           <Route
             path={PATHS.NOT_FOUND}
             element={<NotFoundPage />}
+          />
+          <Route
+            path="/payment/success"
+            element={<PaymentSuccessPage />}
           />
         </Routes>
       </main>

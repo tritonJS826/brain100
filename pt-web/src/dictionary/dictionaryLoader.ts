@@ -14,6 +14,8 @@ import type {HeaderDictEn} from "src/dictionary/dictionaries/header/header.en";
 import type {HeaderDictRu} from "src/dictionary/dictionaries/header/header.ru";
 import type {HomeDictEn} from "src/dictionary/dictionaries/home/home.en";
 import type {HomeDictRu} from "src/dictionary/dictionaries/home/home.ru";
+import type {PaymentSuccessDictEn} from "src/dictionary/dictionaries/payment/paymentDict.en";
+import type {PaymentSuccessDictRu} from "src/dictionary/dictionaries/payment/paymentDict.ru";
 import type {ProfileDictEn} from "src/dictionary/dictionaries/profile/profile.en";
 import type {ProfileDictRu} from "src/dictionary/dictionaries/profile/profile.ru";
 import type {SosDictEn} from "src/dictionary/dictionaries/sos/sos.en";
@@ -34,6 +36,7 @@ export enum DictionaryKey {
   PROFILE = "profile",
   AUTH = "auth",
   NOT_FOUND = "notFound",
+  PAYMENT_SUCCESS = "paymentSuccess",
 }
 
 export type Language = "en" | "ru";
@@ -51,6 +54,7 @@ export type DictionaryMap = {
   [DictionaryKey.PROFILE]: ProfileDictEn | ProfileDictRu;
   [DictionaryKey.AUTH]: AuthDictEn | AuthDictRu;
   [DictionaryKey.NOT_FOUND]: NotFoundDictEn | NotFoundDictRu;
+  [DictionaryKey.PAYMENT_SUCCESS]: PaymentSuccessDictEn | PaymentSuccessDictRu;
 };
 
 const loaders: {
@@ -105,6 +109,10 @@ const loaders: {
   [DictionaryKey.NOT_FOUND]: {
     en: async () => (await import("./dictionaries/common/common.en")).notFoundDict,
     ru: async () => (await import("./dictionaries/common/common.ru")).notFoundDict,
+  },
+  [DictionaryKey.PAYMENT_SUCCESS]: {
+    en: async () => (await import("./dictionaries/payment/paymentDict.en")).paymentSuccessDictEn,
+    ru: async () => (await import("./dictionaries/payment/paymentDict.ru")).paymentSuccessDictRu,
   },
 };
 
