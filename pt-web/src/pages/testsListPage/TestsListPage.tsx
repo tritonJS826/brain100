@@ -5,7 +5,7 @@ import {PageHeader} from "src/components/PageHeader/PageHeader";
 import {DictionaryKey} from "src/dictionary/dictionaryLoader";
 import {useDictionary} from "src/dictionary/useDictionary";
 import {buildPath} from "src/routes/routes";
-import styles from "src/pages/testsListPage/TestsListPage.module.scss";
+import styles from "src/pages/testsListPage/testsListPage.module.scss";
 
 type TestItem = {
   id: string;
