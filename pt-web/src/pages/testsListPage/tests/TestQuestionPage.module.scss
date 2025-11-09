@@ -1,0 +1,116 @@
+@use "src/styles/variables" as vars;
+
+.wrap {
+  max-width: vars.$container-max;
+  margin-inline: auto;
+  padding: vars.$section-py vars.$container-gap;
+  background-color: vars.$color-bg;
+  display: grid;
+  gap: 30px;
+}
+
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 15px 20px;
+  background: #fff;
+  border-radius: vars.$radius;
+  border: 1px solid vars.$color-border;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 5%);
+}
+
+.pageHeader {
+  text-align: right;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  color: vars.$color-primary;
+}
+
+.subtitle {
+  font-size: 15px;
+  color: vars.$color-text;
+  opacity: 0.8;
+  margin-top: 2px;
+}
+
+.block {
+  background-color: #fff;
+  padding: 30px;
+  border: 1px solid vars.$color-border;
+  border-radius: vars.$radius;
+  max-width: 800px;
+  margin-inline: auto;
+  display: grid;
+  gap: 24px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 5%);
+}
+
+.label {
+  font-size: 21px;
+  font-weight: 600;
+  color: vars.$color-primary;
+  line-height: 1.5;
+}
+
+.options {
+  display: grid;
+  gap: 16px;
+}
+
+.radioOption {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 17px;
+  color: vars.$color-text;
+  cursor: pointer;
+
+  input {
+    margin-top: 2px;
+    accent-color: vars.$color-cta-bg;
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover span {
+    color: vars.$color-cta-bg;
+  }
+}
+
+.hint {
+  color: vars.$color-primary;
+  font-size: 15px;
+  text-align: center;
+  margin-top: 5px;
+}
+
+.submit {
+  margin: 0 auto;
+  padding: 12px 30px;
+  font-size: 17px;
+  font-weight: 500;
+  border: none;
+  border-radius: vars.$radius-pill;
+  background-color: vars.$color-cta-bg;
+  color: #fff;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    transform 0.1s ease;
+
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+
+  &:hover:enabled {
+    background-color: vars.$color-cta-bg;
+    transform: translateY(-1px);
+  }
+}

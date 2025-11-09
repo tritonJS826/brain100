@@ -20,6 +20,8 @@ import type {ProfileDictEn} from "src/dictionary/dictionaries/profile/profile.en
 import type {ProfileDictRu} from "src/dictionary/dictionaries/profile/profile.ru";
 import type {SosDictEn} from "src/dictionary/dictionaries/sos/sos.en";
 import type {SosDictRu} from "src/dictionary/dictionaries/sos/sos.ru";
+import type {MainTestEn} from "src/dictionary/dictionaries/tests/mainTest.en";
+import type {MainTestRu} from "src/dictionary/dictionaries/tests/mainTest.ru";
 import type {TestsDictEn} from "src/dictionary/dictionaries/tests/tests.en";
 import type {TestsDictRu} from "src/dictionary/dictionaries/tests/tests.ru";
 
@@ -37,6 +39,7 @@ export enum DictionaryKey {
   AUTH = "auth",
   NOT_FOUND = "notFound",
   PAYMENT_SUCCESS = "paymentSuccess",
+  MAIN_TEST = "mainTest",
 }
 
 export type Language = "en" | "ru";
@@ -55,6 +58,7 @@ export type DictionaryMap = {
   [DictionaryKey.AUTH]: AuthDictEn | AuthDictRu;
   [DictionaryKey.NOT_FOUND]: NotFoundDictEn | NotFoundDictRu;
   [DictionaryKey.PAYMENT_SUCCESS]: PaymentSuccessDictEn | PaymentSuccessDictRu;
+  [DictionaryKey.MAIN_TEST]: typeof MainTestEn | typeof MainTestRu;
 };
 
 const loaders: {
@@ -113,6 +117,10 @@ const loaders: {
   [DictionaryKey.PAYMENT_SUCCESS]: {
     en: async () => (await import("./dictionaries/payment/paymentDict.en")).paymentSuccessDictEn,
     ru: async () => (await import("./dictionaries/payment/paymentDict.ru")).paymentSuccessDictRu,
+  },
+  [DictionaryKey.MAIN_TEST]: {
+    en: async () => (await import("src/dictionary/dictionaries/tests/mainTest.en")).MainTestEn,
+    ru: async () => (await import("src/dictionary/dictionaries/tests/mainTest.ru")).MainTestRu,
   },
 };
 

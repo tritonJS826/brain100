@@ -1,0 +1,55 @@
+@use "src/styles/variables" as vars;
+
+.wrap {
+  max-width: vars.$container-max;
+  margin-inline: auto;
+  padding: vars.$section-py vars.$container-gap;
+  display: grid;
+  gap: vars.$section-py;
+  background-color: vars.$color-bg;
+}
+
+.startBlock {
+  max-width: 800px;
+  margin-inline: auto;
+  background-color: #fff;
+  padding: 40px 30px;
+  border: 1px solid vars.$color-border;
+  border-radius: vars.$radius;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 4%);
+  display: grid;
+  gap: 24px;
+  text-align: center;
+}
+
+.description {
+  font-size: clamp(16px, 1.4vw, 18px);
+  color: vars.$color-primary;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.startButton {
+  margin: 30px auto 0;
+  width: fit-content;
+  padding: 12px 32px;
+  font-size: 17px;
+  font-weight: 500;
+  border: none;
+  background-color: vars.$color-cta-bg;
+  color: #fff;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    transform 0.1s ease;
+
+  &:hover {
+    background-color: vars.$color-cta-bg;
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+}

@@ -16,7 +16,9 @@ import {ProfilePage} from "src/pages/profilePage/ProfilePage";
 import {ConditionHistoryPage} from "src/pages/profilePage/сonditionHistoryPage/ConditionHistoryPage";
 import {SosConsultationPage} from "src/pages/sosPage/SosConsultationPage/SosConsultationPage";
 import {SosPage} from "src/pages/sosPage/SosPage";
-import {Test} from "src/pages/testsListPage/tests/Test";
+import {TestDetailRoute} from "src/pages/testsListPage/tests/TestDetailRoute";
+import {TestQuestionPage} from "src/pages/testsListPage/tests/TestQuestionPage";
+import {TestResultPage} from "src/pages/testsListPage/tests/TestResultPage";
 import {TestsList} from "src/pages/testsListPage/TestsListPage";
 import {PATHS} from "src/routes/routes";
 import {DevApi} from "src/services/health";
@@ -42,7 +44,6 @@ export function App() {
             path={PATHS.ABOUT}
             element={<AboutPage />}
           />
-
           <Route
             path={PATHS.CONDITIONS.LIST}
             element={<ConditionsListPage />}
@@ -51,16 +52,22 @@ export function App() {
             path={PATHS.CONDITIONS.DETAIL}
             element={<ConditionArticleDetailPage />}
           />
-
           <Route
             path={PATHS.TESTS.LIST}
             element={<TestsList />}
           />
           <Route
             path={PATHS.TESTS.DETAIL}
-            element={<Test />}
+            element={<TestDetailRoute />}
           />
-
+          <Route
+            path={PATHS.TESTS.QUESTION}
+            element={<TestQuestionPage />}
+          />
+          <Route
+            path={PATHS.TESTS.RESULT}
+            element={<TestResultPage />}
+          />
           <Route
             path={PATHS.BIOHACKING.LIST}
             element={<BiohackingListPage />}
@@ -90,12 +97,12 @@ export function App() {
             element={<ConditionHistoryPage />}
           />
           <Route
-            path={PATHS.NOT_FOUND}
-            element={<NotFoundPage />}
+            path={PATHS.PAYMENT.SUCCESS}
+            element={<PaymentSuccessPage />}
           />
           <Route
-            path="/payment/success"
-            element={<PaymentSuccessPage />}
+            path={PATHS.NOT_FOUND}
+            element={<NotFoundPage />}
           />
         </Routes>
       </main>
